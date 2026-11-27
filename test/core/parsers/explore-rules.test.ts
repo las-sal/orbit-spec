@@ -388,12 +388,13 @@ describe('parseExploreRules — sections, files, the header', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Fixtures: the body's two exemplars, and the archived exploration (task 2.3)
+// Fixtures: the skill's two exemplars (in references/mechanism-entries.md since cut-explore-onboard), and the archived
+// exploration (task 2.3)
 // ---------------------------------------------------------------------------
 
 describe('parseExploreRules — the shipped exemplars', () => {
-  it('the explore body\'s two exemplars parse to accounted: D-bcs-3 SOURCED, D-bcs-12 BOUNDED with both slots', () => {
-    const skill = getExploreSkillTemplate().instructions;
+  it('the explore skill\'s two exemplars parse to accounted: D-bcs-3 SOURCED, D-bcs-12 BOUNDED with both slots', () => {
+    const skill = getExploreSkillTemplate().references!.find((r) => r.name === 'mechanism-entries.md')!.content;
     const start = skill.indexOf('```markdown\n### D-bcs-3 — ');
     expect(start).toBeGreaterThan(-1);
     const end = skill.indexOf('\n```', start + 12);

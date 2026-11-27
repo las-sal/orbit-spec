@@ -179,10 +179,23 @@ scenarios:
   # records-by-setting (task 2.3) — two scenarios of the Decision-writing discipline that are an AI's conduct in a live session.
   - key: "orbit-conventions :: Decision-writing discipline :: A stop already in the trail is answered at the defaults"
     kind: untestable
-    why: "The THEN is an AI writing a resolution in a live session after the user answers a stop, with chaining just turned off; no test runs that session. orbit decisions status reporting write false at the defaults is behaviour-tested, and the basic content saying a resolution answering a stop already in the trail is still written is text-tested in test/core/decision-writing-parity.test.ts."
+    why: "The THEN is an AI writing a resolution in a live session after the user answers a stop, with chaining just turned off; no test runs that session. orbit decisions status reporting write false at the defaults is behaviour-tested, and the basic content saying, on write false, still write a resolution answering a stop already in the trail is text-tested in test/core/decision-writing-parity.test.ts."
   - key: "orbit-conventions :: Decision-writing discipline :: A reading finding is fixed at the defaults"
     kind: untestable
-    why: "The THEN is an AI-run walk writing a replacement of a ledger entry a system review's reading step found unclear; no test runs a walk session. The write gate accepting a replacement is behaviour-tested, and the basic content saying a replacement fixing a record already there is still written is text-tested in test/core/decision-writing-parity.test.ts."
+    why: "The THEN is an AI-run walk writing a replacement of a ledger entry a system review's reading step found unclear; no test runs a walk session. The write gate accepting a replacement is behaviour-tested, and the basic content saying, on write false, still write a replacement fixing a record there is text-tested in test/core/decision-writing-parity.test.ts."
+  # cut-explore-onboard (task 6.3) — four scenarios of explore's modifications that are a live session's conduct.
+  - key: "orbit-explore-modifications :: Upstream explore stance preserved :: Bare invocation"
+    kind: untestable
+    why: "The THEN is a live explore session behaving as upstream's: conversation in think-mode, no file created; no test runs that session. The body's Mode A row (upstream behaviour, no file, no staging directory) and its bare-mode non-emission (ZERO files) are text-tested in test/core/templates/run-summary-read-cue.test.ts and test/core/templates/verify-scenario-map.test.ts."
+  - key: "orbit-explore-modifications :: Upstream explore stance preserved :: Implementation guardrail preserved"
+    kind: untestable
+    why: "The THEN is an explore session refusing to implement and reminding the user to exit explore mode; no test runs that session. The opening's IMPORTANT paragraph that states the refusal, still in the body once the Guardrails line restating it is removed, is text-tested in test/core/templates/explore-upstream-removals.test.ts and by the restated pair in test/core/templates/cut-ledger.test.ts."
+  - key: "orbit-explore-modifications :: Nine moves applied per rule in the Mechanism section :: A rule's entry records all nine moves"
+    kind: untestable
+    why: "The THEN is an AI writing a live rule's Mechanism entry in a named session; no test runs that session. The grammar the entry follows is carried by the skill's references/mechanism-entries.md (text-tested in test/core/templates/orbit-generated-surface.test.ts), and the engine's form parse of an entry's table, closure token, residual slots and nine move lines is behaviour-tested in test/core/parsers/explore-rules.test.ts."
+  - key: "orbit-explore-modifications :: Nine moves applied per rule in the Mechanism section :: A defect that fits no move grows the set through the trail"
+    kind: untestable
+    why: "The THEN is a walk or review classifying a defect no move names, then leaving an @review: marker and a finding against the requirement; no test runs that session. The growth rule the AI follows is carried by references/mechanism-entries.md, held byte-equal to its source by its moved pair in test/core/templates/cut-ledger.test.ts."
   # replay-set (task 4.1) — the CI validation runs Claude Code's validator, which is not installed where `npm test` runs.
   - key: "orbit-replay-set :: CI validates the generated skill surface :: A malformed skill fails the check"
     kind: untestable

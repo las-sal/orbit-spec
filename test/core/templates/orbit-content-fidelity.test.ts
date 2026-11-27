@@ -64,7 +64,8 @@ import { EXPLORE_MECHANISM_ENTRY_PRODUCTION } from '../../../src/core/explore-gr
 // the write gate refuses. The sentence is stated in four bodies; this pin is what keeps the
 // qualifier from dropping out of one of them silently.
 const RELOCATED: Array<[string, () => SkillTemplate, string[]]> = [
-  ['explore', getExploreSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'BACK-FILLED counts']],
+  // cut-explore-onboard (E2): the BEGIN emit's back-filled counts are its references/run-summary-emit.md's; the body keeps the moment.
+  ['explore', getExploreSkillTemplate, ['Execution disciplines', 'Run-summary emit', 'BEGIN emit', 'orbit emit explore', 'No retro-fire', 'back-fill `explore.md` FIRST, then fire']],
   // rc13c (propose-consumes-mechanism): the concluded refuse in Step 0, live-only naming inference, the
   // section-list mirror, the Mechanism read after the last file write, the Step 0c.6 record and its
   // no-engine-record header, the rule-answer note at Step 0b. Position and parity assertions live in
@@ -517,9 +518,21 @@ describe('orbit content fidelity (B1 relocation)', () => {
       ]);
     });
 
-    it('explore declares exactly capture-formats.md (D5 body-economy move)', () => {
+    it('explore declares exactly its eight references: capture-formats.md (D5), the six of cut-explore-onboard, decision-records.md', () => {
       const refs = getExploreSkillTemplate().references ?? [];
-      expect(refs.map((r) => r.name)).toEqual(['capture-formats.md', 'decision-records.md']);
+      expect(refs.map((r) => r.name)).toEqual([
+        'capture-formats.md',
+        'mechanism-entries.md',
+        'decision-entries.md',
+        'concluding.md',
+        'crystallization.md',
+        'new-exploration.md',
+        'run-summary-emit.md',
+        'decision-records.md',
+      ]);
+      // Each is named by the body, by path (orbit-skill-generation: a reference is one level from the body).
+      const body = getExploreSkillTemplate().instructions;
+      for (const r of refs) expect(body, r.name).toContain(`references/${r.name}`);
     });
 
     it('every other workflow declares only the shared decision-record reference, and its emit section when it has one in scope', () => {

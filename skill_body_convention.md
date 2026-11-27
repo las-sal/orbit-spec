@@ -29,11 +29,9 @@ R-rop-3, R-rop-4, R-rop-8). `test/core/templates/skill-body-budget.test.ts` poin
   the body, and its steps' headings move with its reference, where citations of them resolve.
 - **Every body stays the same under every configuration.** The body's text never depends on a setting; a setting
   changes only what a command returns.
-- **The budget holds.** Each generated body stays under its character ceiling, and under 500 lines (explore under its
-  own line ceiling, which only goes down; it rose once, from 664 to 669, for the five lines the decision-writing
-  bullet's labelled sub-bullets added in stage `tighten-bodies`, and came back to 664 in stage `records-by-setting`,
-  when that bullet became its one-line basic content). Fix a breach by moving a step's procedure as above,
-  never by raising a ceiling.
+- **The budget holds.** Each generated body stays under its character ceiling, and under 500 lines. Explore is under
+  500 lines too since stage `cut-explore-onboard`, which deleted the line ceiling of its own it was held by until then.
+  Fix a breach by moving a step's procedure as above, never by raising a ceiling.
 
 ## Examples
 
@@ -49,7 +47,7 @@ At the defaults `orbit pr commit` returns `action: off`, so the session never op
 the agent reads `references/commit-step.md`, which holds the whole step (`COMMIT_STEP`), and acts on the record it
 already has.
 
-The run-summary emit step, carried by eleven bodies with one read cue (`RUN_SUMMARY_READ_CUE`). New's body keeps:
+The run-summary emit step, carried by twelve bodies with one read cue (`RUN_SUMMARY_READ_CUE`). New's body keeps:
 
 ````markdown
 ## Run-summary emit (one-shot at command completion — via the engine emit surface)
@@ -75,4 +73,5 @@ Address-reviews' step 7 reads `references/account-walk-step.md` after the logs a
 
 ## Exceptions
 
-No step is exempt by design. Not yet brought under the convention: explore (its emit step among them) and onboard, untouched until `reduce-orbit-phase1`'s evaluation decides what follows.
+No step is exempt by design, and no body is outside the convention: explore and onboard, the last two, came under it at
+`reduce-orbit-phase2`'s `cut-explore-onboard`.

@@ -13,7 +13,7 @@ the inventory decided once for every body carrying it (D-inv-2) and which no ear
 ## What Changes
 
 - **explore's body** keeps the stance, the epitome, the three modes, the re-entry table, the six-section scaffold, the
-  status header and Decisions-entry productions, the capture types and the offer rules. It moves five procedures to
+  status header and Decisions-entry productions, the capture types and the offer rules. It moves six procedures to
   references read at the moment each serves:
   - D-inv-5: the Mechanism-entry grammar, the closure outcomes, the nine moves and the two exemplar entries go to
     `references/mechanism-entries.md`, read when a session captures a rule or writes a Mechanism entry. Concluding and
@@ -29,6 +29,9 @@ the inventory decided once for every body carrying it (D-inv-2) and which no ear
     is tightened before the move, so the body and the reference carry one wording.
   - E3: the minimal `.openspec.yaml` and the citation offer go to `references/new-exploration.md`, read when a new
     named exploration is scaffolded, a confirmed crystallization's included.
+  - E4 (Sal, at apply, 2026-11-27): the Decisions entry's classification prose goes to `references/decision-entries.md`,
+    read before the session's first Decisions entry. Its production fence and the slot defaults stay in the body. Explore
+    was still 914 characters over after every planned cut, and Sal chose this move.
 
   "Composition with `/orbit:propose`" becomes at most two sentences keeping its three facts (R2), and the prose that stays is tightened, with no step
   removed (R3).
@@ -77,12 +80,12 @@ replay set's `explore` case breaks the body's emit section, so its `break:` foll
 
 ## Impact
 
-- `src/core/templates/workflows/explore.ts` (body and five new references), `onboard.ts`; `src/core/disciplines.ts`
+- `src/core/templates/workflows/explore.ts` (body and six new references), `onboard.ts`; `src/core/disciplines.ts`
   (`DECISION_WRITING_BASIC`), which the thirteen carrying bodies interpolate.
 - `replay/cases/explore/case.yaml` (its `break:`).
 - Tests that read the moved, removed or reworded text follow it (listed in design.md's Touchpoints); the cut ledger and
   the tighten-bodies ledger; `skill-body-budget`'s ceilings; `skill-templates-parity`' hashes.
-- An adopter's explore skill gains five reference files at the next `orbit update`. Nothing in engine behaviour changes.
+- An adopter's explore skill gains six reference files at the next `orbit update`. Nothing in engine behaviour changes.
 
 ## Size
 

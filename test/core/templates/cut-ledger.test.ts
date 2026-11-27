@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { generateSkillContent, getCommandContents, getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import { RETIRED_COMMAND_IDS, RETIRED_SKILL_DIRS } from '../../../src/core/profile-sync-drift.js';
-import { CHAIN_END_STEP_SKILLS } from '../../../src/core/disciplines.js';
+import { CHAIN_END_STEP_SKILLS, DECISION_WRITING_BASIC } from '../../../src/core/disciplines.js';
 import { CUT_BODIES, CUT_PAIRS, CUT_RECORDED, CUT_STAGES, type CutPair, cutFailure, movedSpan, sha, skillRefs } from './cut-ledger-pairs.js';
 
 /**
@@ -49,7 +49,7 @@ function restatedFailure(p: CutPair, text: string): string | null {
 }
 
 /** The ruling each stage's `removed` and `retired` pairs name. */
-const STAGE_RULING: Record<string, string> = { 'cut-review-walk': 'R-rop2-12', 'cut-propose-archive': 'R-rop2-11' };
+const STAGE_RULING: Record<string, string> = { 'cut-review-walk': 'R-rop2-12', 'cut-propose-archive': 'R-rop2-11', 'cut-explore-onboard': 'R-rop2-13' };
 
 /**
  * Why a `retired` pair fails: a generated skill or launcher still carries its directory or id, the retired registry lacks
@@ -72,9 +72,15 @@ function retiredFailure(
 }
 
 describe('cut ledger (reduce-orbit-phase2)', () => {
-  it('records a hash for each body each stage edits: six for cut-review-walk, five for cut-propose-archive', () => {
+  it('records a hash for each body each stage edits: six for cut-review-walk, five for cut-propose-archive, fourteen for cut-explore-onboard', () => {
     expect(Object.keys(CUT_RECORDED['cut-review-walk'])).toHaveLength(6);
     expect(Object.keys(CUT_RECORDED['cut-propose-archive']).sort()).toEqual(['orbit-apply-change', 'orbit-archive-change', 'orbit-onboard', 'orbit-propose', 'orbit-sync-specs']);
+    // cut-explore-onboard (design D5): explore, onboard and the twelve other carriers of the decision-writing bullet.
+    expect(Object.keys(CUT_RECORDED['cut-explore-onboard']).sort()).toEqual(
+      ['orbit-explore', 'orbit-onboard', ...skills.filter((s) => s.template.instructions.includes(DECISION_WRITING_BASIC)).map((s) => s.dirName)]
+        .filter((d, i, a) => a.indexOf(d) === i)
+        .sort(),
+    );
     for (const stage of CUT_STAGES) {
       for (const dir of Object.keys(CUT_RECORDED[stage])) {
         expect(skills.find((s) => s.dirName === dir), dir).toBeDefined();
@@ -213,18 +219,30 @@ describe('cut ledger (reduce-orbit-phase2)', () => {
 
   // @scenario text orbit-conventions :: A cut ledger names every body edit a cut stage makes :: A shared constant is undone in each carrier
   it('the chain end step\'s tag paragraph is one shared pair, undone in each of its five carriers', () => {
-    const shared = CUT_PAIRS.filter((p) => p.shared);
-    expect(shared.map((p) => p.id)).toEqual(['chain-tags']);
+    const shared = CUT_PAIRS.filter((p) => p.shared && p.id === 'chain-tags');
+    expect(CUT_PAIRS.filter((p) => p.shared).map((p) => p.id)).toEqual(['chain-tags', 'DW-bullet']);
     expect([...shared[0].bodies].sort()).toEqual([...CHAIN_END_STEP_SKILLS].sort());
     for (const dir of shared[0].bodies) expect(cutFailure(dir, body(dir)), dir).toBeNull();
-    // Mutation: a carrier that still holds the paragraph fails its undo (ff: no later stage records it, so the
-    // cut-review-walk undo is the first to meet the paragraph).
+    // Mutation: a carrier that still holds the paragraph fails its undo. Every carrier is recorded by
+    // cut-explore-onboard (the decision-writing bullet), so that later stage's own hash check names it first.
     const r = movedSpan(shared[0], 'orbit-ff-change');
     const span = 'span' in r ? r.span : '';
     expect(span.length).toBeGreaterThan(0);
-    expect(cutFailure('orbit-ff-change', body('orbit-ff-change').replace(shared[0].after, span))).toMatch(/chain-tags's after occurs 0 times/);
-    // In a body a later stage records too, the later stage's own hash check names it first.
-    expect(cutFailure('orbit-apply-change', body('orbit-apply-change').replace(shared[0].after, span))).toBe('orbit-apply-change: the undone body does not match its recorded hash (cut-propose-archive)');
+    for (const dir of ['orbit-ff-change', 'orbit-apply-change']) {
+      expect(cutFailure(dir, body(dir).replace(shared[0].after, span))).toBe(`${dir}: the undone body does not match its recorded hash (cut-explore-onboard)`);
+    }
+  });
+
+  it('the decision-writing bullet is one shared pair, undone in each of its thirteen carriers (cut-explore-onboard, design D3)', () => {
+    const p = CUT_PAIRS.find((x) => x.id === 'DW-bullet')!;
+    expect(p.stage).toBe('cut-explore-onboard');
+    expect(p.after).toBe(DECISION_WRITING_BASIC);
+    const carriers = skills.filter((s) => s.template.instructions.includes(DECISION_WRITING_BASIC)).map((s) => s.dirName);
+    expect(carriers).toHaveLength(13);
+    expect([...p.bodies].sort()).toEqual([...carriers].sort());
+    for (const dir of p.bodies) expect(cutFailure(dir, body(dir)), dir).toBeNull();
+    // Mutation: a carrier still holding the old bullet fails this stage's undo.
+    expect(cutFailure('orbit-new-change', body('orbit-new-change').replace(p.after, p.before!))).toMatch(/DW-bullet's after occurs 0 times/);
   });
 
   // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A blind pair walks in two logs

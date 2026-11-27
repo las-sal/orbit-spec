@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { getSkillTemplates } from '../../../src/core/shared/skill-generation.js';
 import {
@@ -17,10 +16,11 @@ import { NEW_RUN_SUMMARY_EMIT, NEW_RUN_SUMMARY_EMIT_BASIC } from '../../../src/c
 import { PROPOSE_RUN_SUMMARY_EMIT, PROPOSE_RUN_SUMMARY_EMIT_BASIC } from '../../../src/core/templates/workflows/propose.js';
 import { REVIEW_RUN_SUMMARY_EMIT, REVIEW_RUN_SUMMARY_EMIT_BASIC } from '../../../src/core/templates/workflows/review.js';
 import { VERIFY_RUN_SUMMARY_EMIT, VERIFY_RUN_SUMMARY_EMIT_BASIC } from '../../../src/core/templates/workflows/verify-change.js';
+import { EXPLORE_RUN_SUMMARY_EMIT, EXPLORE_RUN_SUMMARY_EMIT_BASIC } from '../../../src/core/templates/workflows/explore.js';
 
 /**
  * once-per-session-detail, task 3.3 — `orbit-run-summary-emit`'s `A body reads its run-summary detail before the
- * session's first run-summary emit`: each of the eleven emit steps in scope keeps when the emit fires, its command and the chat
+ * session's first run-summary emit`: each of the twelve emit steps in scope (explore's since cut-explore-onboard) keeps when the emit fires, its command and the chat
  * behaviour beside them, and carries the shared READ CUE; its skill ships `references/run-summary-emit.md` holding the
  * emit section whole (byte-equal to the text before the change: `moved-blocks.test.ts` holds each section's sha256).
  */
@@ -53,6 +53,7 @@ const STEPS: Record<(typeof RUN_SUMMARY_EMIT_SKILLS)[number], { section: string;
   'orbit-continue-change': { section: CONTINUE_RUN_SUMMARY_EMIT, basic: CONTINUE_RUN_SUMMARY_EMIT_BASIC, command: 'orbit emit continue --change <name>' },
   'orbit-new-change': { section: NEW_RUN_SUMMARY_EMIT, basic: NEW_RUN_SUMMARY_EMIT_BASIC, command: 'orbit emit new --change <name>' },
   'orbit-audit-drift': { section: AUDIT_DRIFT_RUN_SUMMARY_EMIT, basic: AUDIT_DRIFT_RUN_SUMMARY_EMIT_BASIC, command: 'orbit emit audit-drift --change <name>' },
+  'orbit-explore': { section: EXPLORE_RUN_SUMMARY_EMIT, basic: EXPLORE_RUN_SUMMARY_EMIT_BASIC, command: 'orbit emit explore --change <name>' },
 };
 
 describe('the read cue', () => {
@@ -60,11 +61,11 @@ describe('the read cue', () => {
     expect(RUN_SUMMARY_READ_CUE).toBe(
       "Before the session's first run-summary emit, read `references/run-summary-emit.md` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:"
     );
-    expect(RUN_SUMMARY_EMIT_SKILLS).toHaveLength(11);
+    expect(RUN_SUMMARY_EMIT_SKILLS).toHaveLength(12);
   });
 
   // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Every emit step in scope carries the read cue
-  it('each of the eleven bodies carries the cue once, byte-equal, followed by its command block, and ships run-summary-emit.md', () => {
+  it('each of the twelve bodies carries the cue once, byte-equal, followed by its command block, and ships run-summary-emit.md', () => {
     for (const dir of RUN_SUMMARY_EMIT_SKILLS) {
       const b = body(dir);
       expect(count(b, RUN_SUMMARY_READ_CUE), dir).toBe(1);
@@ -206,29 +207,47 @@ describe('what stays is in the body', () => {
   });
 });
 
-/**
- * Explore's emit section, recorded at 9c43eee3; its template is not edited by this change. (Bulk-archive's was recorded
- * here too until its removal: cut-propose-archive, R-rop2-11.)
- */
-const UNTOUCHED: Array<[string, string, string]> = [
-  ['orbit-explore', '## Run-summary emit (named-mode only)', '6f93ba6d6296ec2e61a7e3ea803718bd8f4d1e22d7db16df5c0bbd223540b78a'],
-];
-const section = (text: string, heading: string): string => {
-  const at = text.indexOf(heading);
-  if (at < 0) throw new Error(`no heading ${heading}`);
-  const level = heading.match(/^#+/)?.[0] ?? '##';
-  const rest = text.slice(at + heading.length);
-  const next = rest.search(new RegExp(`\\n#{1,${level.length}} `));
-  return (heading + (next < 0 ? rest : rest.slice(0, next))).trimEnd();
-};
-
-describe('explore is left as it is', () => {
-  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Explore is left as it is
-  it('its emit section reads as before, and it neither ships run-summary-emit.md nor carries the cue', () => {
-    for (const [dir, heading, recorded] of UNTOUCHED) {
-      expect(createHash('sha256').update(section(body(dir), heading)).digest('hex'), dir).toBe(recorded);
-      expect(reference(dir, RUN_SUMMARY_EMIT_REFERENCE_NAME), dir).toBeUndefined();
-      expect(body(dir).includes(RUN_SUMMARY_READ_CUE), dir).toBe(false);
+describe("explore's emit step (cut-explore-onboard, design D1)", () => {
+  const b = body('orbit-explore');
+  const ref = emitRef('orbit-explore');
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Explore's emit step keeps its timing in the body
+  it('keeps the cue, the command, the BEGIN moment with Mode C back-filling first, the two boundary rules, the sweep and bare non-emission; the payload detail is in its reference', () => {
+    const kept = [
+      RUN_SUMMARY_READ_CUE,
+      'orbit emit explore --change <name> --payload <payload-file>',
+      'Fire the begin emit right after the scaffold and its `.openspec.yaml` are written. Mode C (crystallization): back-fill `explore.md` FIRST, then fire',
+      '1. **User explicitly signals stop or pause**',
+      '2. **AI-initiated wrap**',
+      '**Boundary residency sweep — "no emit without sweep"**',
+      'before EVERY boundary emit',
+      'Bare-mode `/orbit:explore` does NOT emit: with no name it writes ZERO files.',
+    ];
+    for (const k of kept) expect(EXPLORE_RUN_SUMMARY_EMIT_BASIC, k).toContain(k);
+    const moved = [
+      'compose the narrative payload (`final_assessment` + the required nullable `model`)',
+      'The ENGINE owns everything else',
+      '`final_assessment` records the scaffold + the citation decision (cited or declined)',
+      'emitting before a name exists would pollute project scope',
+      'The sweep rides this existing boundary trigger',
+    ];
+    for (const m of moved) {
+      expect(ref, m).toContain(m);
+      expect(b, m).not.toContain(m);
     }
+  });
+
+  // @scenario text orbit-run-summary-emit :: A body reads its run-summary detail before the session's first run-summary emit :: Explore's crystallization is read before any file is written
+  it('reads crystallization.md before writing any file when a bare exploration is named; that reference holds the warning and the gate, and reads new-exploration.md after confirmation', () => {
+    const at = b.indexOf('### Crystallization to named change');
+    expect(at).toBeGreaterThan(-1);
+    expect(b.slice(at)).toContain('read `references/crystallization.md` and follow it before writing any file');
+    expect(b).toContain('or accepts the Mode C prompt');
+    const crystallization = reference('orbit-explore', 'crystallization.md')!;
+    expect(crystallization).toContain('the warning MUST mention all 4 consequences');
+    for (const n of ['1. A new directory', '2. The first run-summary JSON', '3. The change will become visible', '4. Abandonment after this point']) expect(crystallization, n).toContain(n);
+    expect(crystallization).toContain('**Confirmation gate**');
+    expect(crystallization).toContain('(and the minimal `.openspec.yaml`, reading `references/new-exploration.md` first)');
+    expect(ref).not.toContain('**Confirmation gate**');
+    expect(ref).not.toContain('all 4 consequences');
   });
 });

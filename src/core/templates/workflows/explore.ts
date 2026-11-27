@@ -5,7 +5,7 @@
  * templates file into workflow-focused modules.
  */
 import type { SkillTemplate, CommandTemplate } from '../types.js';
-import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC } from '../../disciplines.js';
+import { DECISION_RECORDS_REFERENCE, DECISION_WRITING_BASIC, RUN_SUMMARY_EMIT_REFERENCE_NAME, RUN_SUMMARY_READ_CUE, runSummaryEmitReference } from '../../disciplines.js';
 import {
   EXPLORE_STATUS_HEADER_PRODUCTION,
   EXPLORE_DECISION_ENTRY_PRODUCTION,
@@ -68,417 +68,12 @@ Heuristic for new file vs append: if user mentions a topic and \`<topic>_convent
 \`\`\`
 `;
 
-export function getExploreSkillTemplate(): SkillTemplate {
-  return {
-    name: 'orbit-explore',
-    description: 'Enter explore mode - a thinking partner for exploring ideas, investigating problems, and clarifying requirements. Use when the user wants to think through something before or during a change.',
-    instructions: `Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
-
-**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first and create a change proposal. You MAY create orbit artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.
-
-**This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.
-
----
-
-## The Stance
-
-- **Curious, not prescriptive** - Ask questions that emerge naturally, don't follow a script
-- **Open threads, not interrogations** - Surface multiple interesting directions and let the user follow what resonates. Don't funnel them through a single path of questions.
-- **Visual** - Use ASCII diagrams liberally when they'd help clarify thinking
-- **Adaptive** - Follow interesting threads, pivot when new information emerges
-- **Patient** - Don't rush to conclusions, let the shape of the problem emerge
-- **Grounded** - Explore the actual codebase when relevant, don't just theorize
-
----
-
-## What You Might Do
-
-Depending on what the user brings, you might:
-
-**Explore the problem space**
-- Ask clarifying questions that emerge from what they said
-- Challenge assumptions
-- Reframe the problem
-- Find analogies
-
-**Investigate the codebase**
-- Map existing architecture relevant to the discussion
-- Find integration points
-- Identify patterns already in use
-- Surface hidden complexity
-
-**Compare options**
-- Brainstorm multiple approaches
-- Build comparison tables
-- Sketch tradeoffs
-- Recommend a path (if asked)
-
-**Visualize**
-\`\`\`
-┌─────────────────────────────────────────┐
-│     Use ASCII diagrams liberally        │
-├─────────────────────────────────────────┤
-│                                         │
-│      ┌────────┐         ┌────────┐      │
-│      │ State  │────────▶│ State  │      │
-│      │   A    │         │   B    │      │
-│      └────────┘         └────────┘      │
-│                                         │
-│   System diagrams, state machines,      │
-│   data flows, architecture sketches,    │
-│   dependency graphs, comparison tables  │
-│                                         │
-└─────────────────────────────────────────┘
-\`\`\`
-
-**Surface risks and unknowns**
-- Identify what could go wrong
-- Find gaps in understanding
-- Suggest spikes or investigations
-
----
-
-## Orbit Awareness
-
-You have full context of the orbit system. Use it naturally, don't force it.
-
-### Check for context
-
-At the start, quickly check what exists:
-\`\`\`bash
-orbit list --json
-\`\`\`
-
-This tells you:
-- If there are active changes
-- Their names, schemas, and status
-- What the user might be working on
-
-### When no change exists
-
-Think freely. When insights crystallize, you might offer:
-
-- "This feels solid enough to start a change. Want me to create a proposal?"
-- Or keep exploring - no pressure to formalize
-
-### When a change exists
-
-If the user mentions a change or you detect one is relevant:
-
-1. **Read existing artifacts for context**
-   - \`orbit/changes/<name>/proposal.md\`
-   - \`orbit/changes/<name>/design.md\`
-   - \`orbit/changes/<name>/tasks.md\`
-   - etc.
-
-2. **Reference them naturally in conversation**
-   - "Your design mentions using Redis, but we just realized SQLite fits better..."
-   - "The proposal scopes this to premium users, but we're now thinking everyone..."
-
-3. **Offer to capture when decisions are made**
-
-    | Insight Type               | Where to Capture               |
-    |----------------------------|--------------------------------|
-    | New requirement discovered | \`specs/<capability>/spec.md\` |
-    | Requirement changed        | \`specs/<capability>/spec.md\` |
-    | Design decision made       | \`design.md\`                  |
-    | Scope changed              | \`proposal.md\`                |
-    | New work identified        | \`tasks.md\`                   |
-    | Assumption invalidated     | Relevant artifact              |
-
-   Example offers:
-   - "That's a design decision. Capture it in design.md?"
-   - "This is a new requirement. Add it to specs?"
-   - "This changes scope. Update the proposal?"
-
-4. **The user decides** - Offer and move on. Don't pressure. Don't auto-capture.
-
----
-
-## What You Don't Have To Do
-
-- Follow a script
-- Ask the same questions every time
-- Produce a specific artifact
-- Reach a conclusion
-- Stay on topic if a tangent is valuable
-- Be brief (this is thinking time)
-
----
-
-## Handling Different Entry Points
-
-**User brings a vague idea:**
-\`\`\`
-User: I'm thinking about adding real-time collaboration
-
-You: Real-time collab is a big space. Let me think about this...
-
-      COLLABORATION SPECTRUM
-      ════════════════════════════════════════════
-
-      Awareness          Coordination         Sync
-          │                   │                 │
-          ▼                   ▼                 ▼
-      ┌────────┐         ┌────────┐        ┌────────┐
-      │Presence│         │Cursors │        │  CRDT  │
-      │  "3    │         │ Multi  │        │Conflict│
-      │online" │         │ select │        │  free  │
-      └────────┘         └────────┘        └────────┘
-          │                   │                 │
-       trivial            moderate           complex
-
-      Where's your head at?
-\`\`\`
-
-**User brings a specific problem:**
-\`\`\`
-User: The auth system is a mess
-
-You: [reads codebase]
-
-     ┌─────────────────────────────────────────────┐
-     │              CURRENT AUTH FLOW              │
-     └─────────────────────────────────────────────┘
-                        │
-          ┌─────────────┼─────────────┐
-          ▼             ▼             ▼
-     ┌─────────┐  ┌─────────┐  ┌─────────┐
-     │ Google  │  │  GitHub │  │  Email  │
-     │  OAuth  │  │  OAuth  │  │  Magic  │
-     └────┬────┘  └────┬────┘  └────┬────┘
-          │             │             │
-          └─────────────┼─────────────┘
-                        ▼
-                  ┌───────────┐
-                  │  Session  │
-                  └─────┬─────┘
-                        │
-                        ▼
-                  ┌───────────┐
-                  │   Perms   │
-                  └───────────┘
-
-     I see three tangles. Which one's burning?
-\`\`\`
-
-**User is stuck mid-implementation:**
-\`\`\`
-User: /orbit:explore add-auth-system
-      The OAuth integration is more complex than expected
-
-You: [reads change artifacts]
-
-     You're on task 4: "Implement OAuth flow"
-
-     Let me trace what's involved...
-
-     [draws diagram, explores options, suggests paths]
-
-     Want to update the design to reflect this?
-     Or add a spike task to investigate?
-\`\`\`
-
-**User wants to compare options:**
-\`\`\`
-User: Should we use Postgres or SQLite?
-
-You: Generic answer is boring. What's the context?
-
-User: A CLI tool that tracks local dev environments
-
-You: That changes everything.
-
-     ┌─────────────────────────────────────────────────┐
-     │          CLI TOOL DATA STORAGE                  │
-     └─────────────────────────────────────────────────┘
-
-     Key constraints:
-     • No daemon running
-     • Must work offline
-     • Single user
-
-                  SQLite          Postgres
-     Deployment   embedded ✓      needs server ✗
-     Offline      yes ✓           no ✗
-     Single file  yes ✓           no ✗
-
-     SQLite. Not even close.
-
-     Unless... is there a sync component?
-\`\`\`
-
----
-
-## Ending Discovery
-
-There's no required ending. Discovery might:
-
-- **Flow into a proposal**: "Ready to start? I can create a change proposal."
-- **Result in artifact updates**: "Updated design.md with these decisions"
-- **Just provide clarity**: User has what they need, moves on
-- **Continue later**: "We can pick this up anytime"
-
-When it feels like things are crystallizing, you might summarize:
-
-\`\`\`
-## What We Figured Out
-
-**The problem**: [crystallized understanding]
-
-**The approach**: [if one emerged]
-
-**Open questions**: [if any remain]
-
-**Next steps** (if ready):
-- Create a change proposal
-- Keep exploring: just keep talking
-\`\`\`
-
-But this summary is optional. Sometimes the thinking IS the value.
-
----
-
-## Guardrails
-
-- **Don't implement** - Never write code or implement features. Creating orbit artifacts is fine, writing application code is not.
-- **Don't fake understanding** - If something is unclear, dig deeper
-- **Don't rush** - Discovery is thinking time, not task time
-- **Don't force structure** - Let patterns emerge naturally
-- **Don't auto-capture** - Offer to save insights, don't just do it
-- **Do visualize** - A good diagram is worth many paragraphs
-- **Do explore the codebase** - Ground discussions in reality
-- **Do question assumptions** - Including the user's and your own
-
-# Orbit additions
-
-The sections below describe orbit-specific additions on top of upstream's "stance, not workflow" character. The upstream content above is as \`orbit-conventions\`' \`Generated-file disposition\` records it; orbit layers capture affordances, an \`explore.md\` authoring convention, and three invocation modes that activate when the conversation produces material worth keeping.
-
-## Execution disciplines (epitome)
-
-The disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
-
-- **Read-before-reference (authoring-time)**: before a captured artifact names a specific construct, read its actual definition; unverifiable → ask the user or leave a \`@review:\` marker instead of guessing.
-- **Change completeness (modification-time)**: section moves in \`explore.md\` land whole (a resolved Open question MOVES to Decisions — never left in both); re-read the section after to confirm.
-- **Pushback (review-time)**: when the conversation flags something as already-decided, verify against \`explore.md\` before treating it as new; don't re-litigate captured decisions.
-- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_BASIC}
-
-## Three invocation modes
-
-| Mode | Trigger | What happens |
-|---|---|---|
-| **A — Bare** | \`/orbit:explore\` with no argument and no crystallization trigger | Upstream behavior. Conversational think-mode, no file created, no staging directory. |
-| **B — Named** | \`/orbit:explore <name>\` | Resolve the name by the re-entry table below (nine cells, four refused). **New** — no staging directory AND no active change of that name: scaffold the six sections AND the minimal \`.openspec.yaml\` (see below). **Resume** — \`orbit/explore/<name>/explore.md\` exists with the \`exploring\` token AND no active change of that name: read the existing file as authoritative; a pre-D2 staging directory lacking \`.openspec.yaml\` gains it on resume (add-only, citation still optional); a file lacking a \`## Mechanism\` section gains one (add-only). |
-| **C — Crystallized** | Bare invocation that produces 2+ substantive decisions | Prompt the user: "We have enough material here to capture — what should we call this exploration?" On accept, transition to Mode B and back-fill what's been discussed (the minimal \`.openspec.yaml\` is written as in Mode B). On decline, continue Mode A and don't re-prompt this shape. |
-
-### Re-entry resolution (Mode B) — one table
-
-\`/orbit:explore <name>\` resolves the name against FOUR facts — a staging directory exists; it is concluded (per the status-header production below; defined only when the directory exists); an active change of that name exists; that change carries an \`explore.md\` (defined only when the change exists) — as ONE table, nine cells, four refused:
-
-| staging dir | concluded | active change | change carries \`explore.md\` | resolution |
-|---|---|---|---|---|
-| no | — | no | — | Mode B new |
-| yes | no | no | — | Mode B resume |
-| yes | yes | no | — | state the conclusion and its \`Re-entry:\` trigger, ask nothing else; REOPEN only on the user's word |
-| no | — | yes | yes | resume IN PLACE against \`orbit/changes/<name>/explore.md\`, say so, scaffold nothing |
-| no | — | yes | no | Mode B new IN the change directory — the file is created beside the artifacts; no staging directory is scaffolded |
-| yes | either | yes | either | REFUSED — second claim on one truth; name both paths and stop (neither resume nor scaffold) |
-
-*Mirror of \`orbit-explore-modifications\`' "Re-entry resolution and the conclude verb" — that requirement owns this table; the generated-surface parity test holds this copy byte-equal to it (R-crc-14's mirror corollary).*
-
-One edge the table's second fact implies: a staging directory WITHOUT \`explore.md\`, or whose header carries neither fixed token, resolves as not-concluded and resumes with the stub or header added (add-only) — never MALFORMED. The status-header production is read on the change-directory file too: a \`concluded\` header inside \`orbit/changes/<name>/explore.md\` (a name promoted without reopening) resolves as the third row — state the conclusion and its trigger, reopen only on the user's word — never as a silent resume.
-
-### Minimal explore metadata (\`.openspec.yaml\`, D-arc Stage D2)
-
-Mode B/C explorations carry \`orbit/explore/<name>/.openspec.yaml\` — the same metadata genre as
-changes. Base fields: \`schema: spec-driven\` + \`created: <YYYY-MM-DD>\` (placeholders written via
-the unchanged change-metadata helpers, whose validation requires a registered schema; both are
-superseded at promotion, where \`/orbit:propose\`'s merge writes fresh
-\`schema\`/\`created\`/\`schema_version\` — the placeholder never leaks into a change).
-
-**Optional \`architecture: {doc: <name>, stage: <id>}\` citation**: when the exploration serves a
-declared stage of an architecture doc (the name or the conversation indicates it — e.g. the
-exploration was opened from a program stage's charter), OFFER to record the citation; on accept,
-write it into the metadata. Otherwise omit it — a standalone exploration carries zero citation
-ceremony. The citation makes the stage's computed state render \`exploring\` in
-\`orbit architecture status\`; it carries forward into the change at promotion.
-
-### What counts as a "substantive decision" for Mode C crystallization
-
-A decision counts toward the 2+ threshold if it:
-
-- (a) Resolves between two or more named alternatives (e.g., "go with X instead of Y")
-- (b) Locks a name, structure, or format ("we'll call it Z", "the file will have these sections")
-- (c) Supersedes an earlier choice ("change our mind on X, go with Y instead")
-
-Does NOT count: exploratory thinking, speculation, "let me think about X", or restating something already established.
-
-## explore.md six-section convention
-
-When a named exploration exists (Mode B/C), \`orbit/explore/<name>/explore.md\` follows this structure — SIX sections in this order. The format is \`orbit-conventions\`' (its requirement keeps its historical title for delta identity; the format it specifies is six). The three productions in this section — the status header, the Decisions entry, the Mechanism entry — are MIRRORS of the productions \`orbit-conventions\` owns, carried here because a generated skill cannot resolve that spec at runtime; a parity test holds each byte-equal to its owner (R-crc-14's mirror corollary), and every other mention in this body points at them.
-
-\`\`\`markdown
-> **Status**: exploring. Promoted to proposal/design/specs via /orbit:propose when decisions firm up.
-
-# Exploration: <name>
-
-## Premise
-<the problem space; why this exploration; what we're trying to figure out>
-
-## Mechanism
-<one entry per live rule in Decisions, keyed by the rule's ID, in the entry grammar below: the domain as a table, the closure token, the residual slots iff BOUNDED, nine move lines; \`### Case <n>\` blocks hold the evidence the move lines cite>
-
-## Decisions
-<dated entries in the entry format below; each captures ONE claim, a brief rationale, and its \`Kind:\`>
-
-## Open questions
-<things we don't know yet; resolved later by moving to Decisions, deferred as @review: markers via /orbit:propose, or abandoned to Considered & out. EVERY entry carries the slot line \`Standing recommendation: <the current leaning verbatim>\` — or the literal \`Standing recommendation: none yet\` when no leaning exists; never an entry with the slot absent (D-arc Stage D5, leak-hardening layer 1)>
-
-## Considered & out
-<options that came up and got rejected, with brief rationale + date>
-
-## References
-<files, URLs, prior changes, prior conversations worth reading during artifact generation>
-\`\`\`
-
-When creating a new file, all six sections are scaffolded (empty content under each heading). When resuming, read the existing file as authoritative; a file written before this format, with no \`## Mechanism\` section, is read and not rejected — the section is added on next touch (a format note, never a blocker).
-
-### The status header — one production
-
-The file's first non-blank line carries one of TWO fixed tokens, matched by this production:
-
-\`\`\`
-${EXPLORE_STATUS_HEADER_PRODUCTION}
-\`\`\`
-
-*Mirror of \`orbit-conventions\`' \`explore.md\` format requirement (its retained title names the old section count; the format is six sections) — the owner of this production.*
-
-- \`> **Status**: exploring. …\` — the working token; the rest of the line is free prose.
-- \`> **Status**: concluded <YYYY-MM-DD>.\` — the ONLY other legal token, written by the conclude flow ("Concluding an exploration" below).
-
-Any other first line is NEITHER token: the file resolves as not-concluded and the header is added on next touch (add-only) — never MALFORMED. A status line is a pointer, not an entry.
-
-### Decisions entries — the ENTRY is the key
-
-Each Decisions entry is a top-level list item whose opener is the ID slot — the opener every exploration on record already writes, formalized rather than replaced (zero migration). One production. A slot is matched anywhere within the lines that belong to the entry's list item — a lazy-continuation line or a nested bullet both qualify, which is what the optional bullet prefix admits; the \` — \` in the opener is the literal em-dash:
-
-\`\`\`
-${EXPLORE_DECISION_ENTRY_PRODUCTION}
-\`\`\`
-
-*Mirror of \`orbit-conventions\`' "Decision entry identity and classification" — the owner of this production.*
-
-**One claim under obligation per entry.** A Decision is a RULE when it PRESCRIBES or CONSTRAINS how something must be done across a SET of situations — the test is "in which situations does this apply?", applied to the claim's NORMATIVE force, never to its grammar. A quantified EMPIRICAL claim ("heading count has never correlated with readiness under any conditions") has a logical domain and is a FACT: it describes one world and is falsifiable by evidence. A SCOPE choice (in / out / deferred) is one-off. The test applies PER CLAIM as an authoring rule: an entry carrying more than one claim under obligation is SPLIT by the author into entries with distinct IDs (the rule entry owes a Mechanism entry; the finding carries \`Kind: fact\`). There are no claim-level identifiers.
-
-- \`Kind: rule | fact | scope\` — **absent means \`rule\`.** The demanding default turns an omission into a rule that owes a Mechanism entry (rendered as open by ID once a reader parses it) rather than an invisible escape; opting out is WRITTEN. A rule the author never entered at all remains outside every reader's sight — the stated residual, per \`Mechanism entry grammar and accounted closure\` (R-crc-10).
-- \`Disposition: live | superseded <ID or pointer> | assigned <stage-id>\` — absent means \`live\`. ONE meaning for every entry: \`live\` says the claim STANDS; \`superseded\` and \`assigned\` say it does not, and point to what does. Two consequences: a RULE is IN the accounting obligation only while its Kind is rule (or absent) AND its Disposition is live (or absent); a CONCLUDED entry's \`Re-entry:\` slot is the live one only while its Disposition is live (or absent). Leaving the obligation is a NAMED act — an entry left \`live\` with a bare prose note ("overtaken", "moot") is still in it.
-
-A Decisions entry without a well-formed ID is a format violation corrected on next touch.
-
-### Mechanism entries — the grammar
-
-The Mechanism section carries one entry per LIVE rule (\`Kind:\` rule or absent AND \`Disposition:\` live or absent), keyed by the rule's ID. The grammar, stated normatively so a parser can be written from it alone:
+// cut-explore-onboard (reduce-orbit-phase2, design D1; Sal's ruling at apply for the Decisions entries): each step's
+// procedure is a reference read at the moment it serves, the body keeping its heading and basic content. Every
+// reference is a one-line title followed by its constant, which is the text the body carried, byte-equal.
+
+/** "Mechanism entries — the grammar" from the grammar on, the closure outcomes, the nine moves and the exemplar. */
+export const EXPLORE_MECHANISM_ENTRIES = `The grammar, stated normatively so a parser can be written from it alone:
 
 \`\`\`
 ${EXPLORE_MECHANISM_ENTRY_PRODUCTION}
@@ -503,7 +98,7 @@ The obligation is that no domain be open SILENTLY, and two outcomes discharge it
 
 A BOUNDED residual names its KIND (what lies outside the named set) and its METHOD (how a member would be found), in the two slots. "There may be others" discharges nothing: it is the sentence the obligation exists to forbid, wearing the obligation's vocabulary. *"I can name no more"* is NOT a form — it is the state every failed enumeration on this program's record was in, and from the inside it is indistinguishable from closure. Classifying a record FALSIFIES an enumeration and never closes one.
 
-**The tier difference is VISIBILITY, never BLOCKING.** An OPEN-DECLARED domain does not block readiness; its residual is SURFACED and TRAVELS rather than dying in the exploration. The two slots are the ORIGIN every downstream reader reads. Where it travels: into the requirement's own text as a named limit (the OWNER, because only spec text survives archive) and into \`design.md\`'s Risks as a pointer — a residual carried in design alone is lost at archive. The mechanisms that move it are OWNED elsewhere: \`orbit-run-summary-emit\`'s \`Named-mode explore recommendation by maturity\` surfaces it beside its rung, and \`orbit-propose-modifications\`' \`Mechanism section consumption\` carries it into spec text at promotion (see "Composition with /orbit:propose").
+**The tier difference is VISIBILITY, never BLOCKING.** An OPEN-DECLARED domain does not block readiness; its residual is SURFACED and TRAVELS rather than dying in the exploration. The two slots are the ORIGIN every downstream reader reads. Where it travels: into the requirement's own text as a named limit (the OWNER, because only spec text survives archive) and into \`design.md\`'s Risks as a pointer — a residual carried in design alone is lost at archive. The mechanisms that move it are OWNED elsewhere: \`orbit-run-summary-emit\`'s \`Named-mode explore recommendation by maturity\` surfaces it beside its rung, and \`orbit-propose-modifications\`' \`Mechanism section consumption\` carries it into spec text at promotion (the body's "Composition with \`/orbit:propose\`").
 
 ### The nine moves, applied per rule
 
@@ -584,25 +179,34 @@ Moves:
 - FEASIBILITY: not applied — nine lines per rule, one each
 - CONSUME: applied — rc13b's parser reads move lines by name and must know all nine; this entry is the BOUNDED shape its fixture must also parse
 - INVOKE: applied — fires on every Mechanism entry, since each move line names a member
-\`\`\`
+\`\`\``;
+export const EXPLORE_MECHANISM_ENTRIES_REFERENCE = `# Reference: Mechanism entries (the grammar, closure, the nine moves, two exemplars)
 
-**Section-evolution rules**:
+## Contents
 
-- **Resolving an Open question** → move the entry to Decisions with a dated rationale, as an entry with an ID opener and its \`Kind:\`; acknowledge in chat ("captured").
-- **Rejecting a considered option** → move it to Considered & out with brief rationale + date.
-- **New decision emerges** → append to Decisions proactively (with brief chat acknowledgment), with its ID opener and \`Kind:\`.
-- **A rule is captured** → write its Mechanism entry IN THE SAME SITTING (domain table, closure token, residual slots iff BOUNDED, nine move lines) — or leave the entry with \`Kind: rule\` and no Mechanism entry as a VISIBLE open domain; never downgrade the Kind to escape the obligation. This is the one statement of that rule; the residency sweep points here.
-- **A rule is replaced or handed to another stage** → its entry gains \`Disposition: superseded <ID or pointer>\` or \`Disposition: assigned <stage-id>\`.
-- **A leaning emerges on an open question** (discussed but not yet a decision) → write it into that entry's \`Standing recommendation:\` slot verbatim — a pending leaning always has a file-resident home; \`none yet\` is only for questions with no leaning at all.
-- **Reference cited** → append to References (offer first when in doubt).
+- Closure is ACCOUNTED, not CLOSED
+- The nine moves, applied per rule
+- Exemplar — two conforming entries, one per closure outcome
 
-### Concluding an exploration
+${EXPLORE_MECHANISM_ENTRIES}
+`;
 
-An exploration MAY conclude in nothing, and the record says so in TWO engine-observable tokens — both written ONLY on the USER'S declared word inside a named session. Recommend, never infer: when you judge an exploration should stop and the user has not said so, recommend concluding and write nothing. Conclude is NOT a consent-marked seam — no gate, no prompt, no \`consent\` field on the explore emit — and there is no new command; the surface stays as it is.
+/** The Decisions entry's classification prose: the one-claim test and what each slot means. */
+export const EXPLORE_DECISION_ENTRIES = `**One claim under obligation per entry.** A Decision is a RULE when it PRESCRIBES or CONSTRAINS how something must be done across a SET of situations — ask "in which situations does this apply?" of its NORMATIVE force, never its grammar. A quantified EMPIRICAL claim ("heading count has never correlated with readiness") is a FACT, describing one world, falsifiable by evidence. A SCOPE choice (in / out / deferred) is one-off. The test is PER CLAIM: an entry with more than one claim under obligation is SPLIT into entries with distinct IDs (the rule owes a Mechanism entry; the finding is \`Kind: fact\`).
+
+- \`Kind: rule | fact | scope\` — **absent means \`rule\`.** An omission is then a rule owing a Mechanism entry, open to any reader, never an invisible escape; opting out is WRITTEN. A rule never entered stays outside every reader's sight: the stated residual.
+- \`Disposition: live | superseded <ID or pointer> | assigned <stage-id>\` — absent means \`live\`. \`live\`: the claim STANDS; \`superseded\`, \`assigned\`: it does not, pointing to what does. A RULE is IN the accounting obligation only while its Kind is rule (or absent) AND its Disposition live (or absent); a CONCLUDED entry's \`Re-entry:\` slot is live only while its Disposition is. Leaving the obligation is a NAMED act: an entry left \`live\` with a prose note ("overtaken", "moot") is still in it.`;
+export const EXPLORE_DECISION_ENTRIES_REFERENCE = `# Reference: Decisions entries (the claim test and the slots)
+
+${EXPLORE_DECISION_ENTRIES}
+`;
+
+/** "Concluding an exploration", after its first sentence: the conclude verb, what it leaves, and reopening. */
+export const EXPLORE_CONCLUDING = `An exploration MAY conclude in nothing, and the record says so in TWO engine-observable tokens — both written ONLY on the USER'S declared word inside a named session. Recommend, never infer: when you judge an exploration should stop and the user has not said so, recommend concluding and write nothing. Conclude is NOT a consent-marked seam — no gate, no prompt, no \`consent\` field on the explore emit — and there is no new command; the surface stays as it is.
 
 The conclude verb, in this ORDER:
 
-1. the boundary residency sweep (below, under "Run-summary emit");
+1. the boundary residency sweep (the body's "Run-summary emit");
 2. ONE CONCLUDED Decisions entry — what was decided, WHY nothing is built — carrying \`Kind: scope\` and a \`Re-entry: <what would reopen it>\` slot (the owner of the trigger; exactly one LIVE entry carries the slot);
 3. the status header flips to \`> **Status**: concluded <YYYY-MM-DD>.\` (the pointer; per the status-header production);
 4. THEN the final boundary emit, whose \`final_assessment\` states the conclusion in the author's words. The emit's engine-computed counts describe the concluded file; its \`next_recommended\` is the Concluded rung's prose (\`orbit-run-summary-emit\`'s \`Named-mode explore recommendation by maturity\`).
@@ -611,60 +215,60 @@ Nothing is written to \`.openspec.yaml\`: the change-metadata helpers' schema ST
 
 **Owned, since shipped**: the stage-state reader reads the header token from the staging directory the kept citation locates and observes a stage cited only by a concluded exploration as \`concluded\` (\`orbit-architecture-engine\`'s \`Computed stage state with completion-as-ratification\`); the orientation row's next line renders the concluded rung from the trail's terminal emit (\`orbit-orientation\`'s \`Next-recommendation sourcing is time-shifted, never live\`); and \`/orbit:propose <name>\` refuses a concluded exploration, naming its \`Re-entry:\` slot (\`orbit-propose-modifications\`' \`Consume mode when staging directory exists\`). None of the three is a limit of concluding; each is named here so a reader of the conclude flow knows who owns the behaviour the conclusion depends on.
 
-**Reopening** is the inverse edit, on the user's word: the header returns to \`exploring\`; a dated Decisions entry records why (the trigger fired, or a new reason); the prior CONCLUDED entry gains \`Disposition: superseded <the reopening entry's ID>\`, so its \`Re-entry:\` slot is no longer the live one; then a boundary emit. **A second conclusion** writes a NEW CONCLUDED entry carrying the live \`Re-entry:\` slot; the earlier one stays as superseded history; the header token flips again — exactly one live entry carries the slot at every point in the cycle.
+**Reopening** is the inverse edit, on the user's word: the header returns to \`exploring\`; a dated Decisions entry records why (the trigger fired, or a new reason); the prior CONCLUDED entry gains \`Disposition: superseded <the reopening entry's ID>\`, so its \`Re-entry:\` slot is no longer the live one; then a boundary emit. **A second conclusion** writes a NEW CONCLUDED entry carrying the live \`Re-entry:\` slot; the earlier one stays as superseded history; the header token flips again — exactly one live entry carries the slot at every point in the cycle.`;
+export const EXPLORE_CONCLUDING_REFERENCE = `# Reference: concluding and reopening an exploration
 
-## Five capture types and where each lands
+${EXPLORE_CONCLUDING}
+`;
 
-| Type | Trigger | Target file | Offer or auto? |
-|---|---|---|---|
-| **Decision** (Mode B/C only) | Explicit decision in named exploration | \`orbit/explore/<name>/explore.md\` Decisions | Auto-capture + brief chat acknowledgment ("captured") |
-| **Convention** | "we always do X" / "let's standardize on…" | \`<topic>_convention.md\` at project root (e.g., \`naming_convention.md\`) | **Offer** — one-sentence offer naming the target file |
-| **Perspective** | User describes a caller/client ("Claude Desktop calls our MCP server", "from the Swift host's POV") | \`orbit/lenses/perspectives.md\` | **Offer** |
-| **Critical path** | User describes a critical user flow ("the typical user flow is…", "users typically…") | \`orbit/lenses/critical-paths.md\` | **Offer** |
-| **Reference** | URL, file, prior change, prior conversation worth reading later | \`explore.md\` References section | **Offer** when in doubt; quick add when the relevance is obvious |
+/** "Crystallization to named change", after its heading: the warning, the confirmation gate, what follows. */
+export const EXPLORE_CRYSTALLIZATION = `When the user requests crystallization during a bare-mode explore (e.g., "save this as \`<name>\`", "let's give this a name and capture it", or equivalent intent), the AI **MUST surface an explicit warning describing the persistence consequences BEFORE creating any files**.
 
-### Capture entry formats
+**Required warning content** — the warning MUST mention all 4 consequences:
 
-The exact file formats — the four-section \`<topic>_convention.md\` shape (create-vs-append heuristic, contradiction handling) and the \`orbit/lenses/perspectives.md\` / \`critical-paths.md\` entry shapes — live in \`references/capture-formats.md\`; load it when writing an accepted capture.
+1. A new directory \`orbit/explore/<name>/\` will be created with \`explore.md\` capturing decisions to date.
+2. The first run-summary JSON (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`) will start the change's audit trail.
+3. The change will become visible to any consumer that scans \`orbit/explore/\` (e.g., a downstream status reader). Note: upstream \`orbit list\` does NOT scan \`orbit/explore/\`; the change appears in \`orbit list\` only after \`/orbit:propose\` moves the staging directory to \`orbit/changes/<name>/\`.
+4. Abandonment after this point requires formal archive/discard, not just deleting the directory once it's been moved to \`orbit/changes/<name>/\` by \`/orbit:propose\`; before promotion, an exploration that will build nothing is CONCLUDED in place (the body's "Concluding an exploration"), not deleted.
 
-## Offer-don't-auto rule
+**Confirmation gate**: the AI MUST wait for explicit user confirmation before proceeding with file creation. Examples of confirmation: "yes", "go ahead", "create it", "do it". If the user expresses any hesitation or asks a clarifying question, treat as not-yet-confirmed and answer the question rather than proceed.
 
-For **conventions, perspectives, critical paths, and references**: the command offers to capture; the user decides. **Decisions** in named explorations are the exception — they're proactively captured with brief acknowledgment.
+After confirmation: (1) create \`orbit/explore/<name>/explore.md\` (and the minimal \`.openspec.yaml\`, reading \`references/new-exploration.md\` first), back-filling Premise and Decisions with what's been discussed; (2) THEN fire the BEGIN emit as the body's "BEGIN emit" says — the engine computes the back-filled counts and a maturity-consistent recommendation.
 
-**Offer phrasing**: pause briefly and emit a one-sentence offer naming the target file. Example: \`That sounds like a convention. Capture in naming_convention.md?\`
+This warning convention aligns with orbit's don't-auto-invoke-commands and inflection-points-surface-consequences conventions.`;
+export const EXPLORE_CRYSTALLIZATION_REFERENCE = `# Reference: crystallization to a named exploration
 
-**Group offers when natural**: when multiple capture-worthy items of the same type emerge in close succession (e.g., three conventions in one paragraph), group them into a single offer rather than asking three times.
+${EXPLORE_CRYSTALLIZATION}
+`;
 
-**User veto**: if the user says "don't capture that" or similar, the proposed capture is not written and the conversation continues unaffected.
+/** "Minimal explore metadata", after its heading: the base fields and the citation offer. */
+export const EXPLORE_NEW_EXPLORATION = `Mode B/C explorations carry \`orbit/explore/<name>/.openspec.yaml\` — the same metadata genre as
+changes. Base fields: \`schema: spec-driven\` + \`created: <YYYY-MM-DD>\` (placeholders written via
+the unchanged change-metadata helpers, whose validation requires a registered schema; both are
+superseded at promotion, where \`/orbit:propose\`'s merge writes fresh
+\`schema\`/\`created\`/\`schema_version\` — the placeholder never leaks into a change).
 
-## Decline tracking
+**Optional \`architecture: {doc: <name>, stage: <id>}\` citation**: when the exploration serves a
+declared stage of an architecture doc (the name or the conversation indicates it — e.g. the
+exploration was opened from a program stage's charter), OFFER to record the citation; on accept,
+write it into the metadata. Otherwise omit it — a standalone exploration carries zero citation
+ceremony. The citation makes the stage's computed state render \`exploring\` in
+\`orbit architecture status\`; it carries forward into the change at promotion.`;
+export const EXPLORE_NEW_EXPLORATION_REFERENCE = `# Reference: a new named exploration's metadata
 
-Within a single conversation, track recent capture declines. If the user has declined a specific convention capture, **don't re-offer** that same convention later in the same conversation. (Tracking is per-conversation; declines don't persist across sessions.)
+${EXPLORE_NEW_EXPLORATION}
+`;
 
-## Sibling captures supported
-
-The staging directory \`orbit/explore/<name>/\` can hold additional files beyond \`explore.md\`:
-
-- \`orbit/explore/<name>/sketches/<sketch-name>.md\` — design sketches that don't yet warrant being a Decision
-- \`orbit/explore/<name>/<draft-convention>.md\` — draft convention files that aren't ready to live at project root
-
-These sibling files persist alongside \`explore.md\` and move into \`orbit/changes/<name>/\` together when \`/orbit:propose\` consumes the exploration.
-
-## Composition with \`/orbit:propose\`
-
-When the user runs \`/orbit:propose <name>\` and \`orbit/explore/<name>/explore.md\` exists, propose switches to **consume mode**: reads \`explore.md\` as authoritative, prompts for Open question handling, generates \`proposal.md\` / \`design.md\` / \`specs/\` / \`tasks.md\`, and **moves** the staging directory to \`orbit/changes/<name>/\`. The exploration record persists as historical context alongside the generated artifacts.
-
-This means: durable capture in explore → seamless promotion to formal change. The user doesn't re-type what was already discussed; the AI doesn't paraphrase what was already decided.
-
-The Mechanism section travels with the file. A BOUNDED residual's two slots are carried at promotion into the requirement's own text (the owner) and into \`design.md\`'s Risks (a pointer) — that transfer is \`orbit-propose-modifications\`' \`Mechanism section consumption\` (Step 0c.6 of the propose body). A concluded exploration is REFUSED at propose and REOPENED here first (see "Concluding an exploration").
-
-## Run-summary emit (named-mode only)
+/** The emit section whole, its crystallization subsection apart; shipped as `references/run-summary-emit.md`. */
+export const EXPLORE_RUN_SUMMARY_EMIT = `## Run-summary emit (named-mode only)
 
 (Per \`orbit-run-summary-emit\`; composed and written via the engine emit surface, \`orbit-emit-composition\`.)
 
-Named-mode \`/orbit:explore <name>\` emits TWICE per session shape (D-arc Stage D3): once at BEGIN and once at each conversation boundary.
+Named-mode \`/orbit:explore <name>\` emits at BEGIN and at each conversation boundary.
 
-**Boundary residency sweep — "no emit without sweep"** (D-arc Stage D5, leak-hardening layer 2; begin emits excepted — nothing has been discussed yet): before EVERY boundary emit, sweep the conversation since the last emit for decisions, leanings, rejections, and citations that are not yet file-resident, and write each into its slot — Decisions (with the entry's ID opener and \`Kind:\`) / a rule's Mechanism entry (its domain table, its closure token and residual slots, or a move's disposition) / an open question's \`Standing recommendation:\` / Considered & out / References — BEFORE invoking the emit. A rule whose domain, closure or a move disposition was settled in conversation and whose entry does not yet carry it is written into the entry before the emit; a rule left with no entry stays a visible open domain (per the "A rule is captured" section-evolution rule). The sweep rides this existing boundary trigger — no new prompt, no user-facing step — so the engine-computed attestation counts describe the SWEPT file, and \`orbit-audit-drift\`'s cross-check closes the loop.
+**Boundary residency sweep — "no emit without sweep"** (begin emits excepted: nothing has been discussed yet): before EVERY boundary emit, write into its slot each decision, leaning, rejection and citation since the last emit that is not yet file-resident — Decisions (ID opener, \`Kind:\`), a rule's Mechanism entry (domain table, closure token, residual slots, move dispositions), an open question's \`Standing recommendation:\`, Considered & out, References. A rule left with no entry stays a visible open domain (the "A rule is captured" rule).
+
+The sweep rides this existing boundary trigger — no new prompt, no user-facing step — so the engine-computed attestation counts describe the SWEPT file, and \`orbit-audit-drift\`'s cross-check closes the loop.
 
 Both emits fire the same invocation — compose the narrative payload (\`final_assessment\` + the required nullable \`model\`) into a temp file, then:
 
@@ -672,51 +276,381 @@ Both emits fire the same invocation — compose the narrative payload (\`final_a
 orbit emit explore --change <name> --payload <payload-file>
 \`\`\`
 
-The ENGINE owns everything else: the spine, the trail path (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`), timestamp + collision handling, the decisions/open-questions counts read fresh from \`explore.md\`, and the maturity-graded \`next_recommended\` (per \`orbit-run-summary-emit\`'s maturity requirement, which owns the rungs and their inputs). Never hand-compose the JSON. Bare-mode \`/orbit:explore\` does NOT emit — see "Crystallization to named change" below.
+The ENGINE owns everything else: the spine, the trail path (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`), timestamp + collision handling, the decisions/open-questions counts read fresh from \`explore.md\`, and the maturity-graded \`next_recommended\` (per \`orbit-run-summary-emit\`'s maturity requirement, which owns the rungs and their inputs). Never hand-compose the JSON. Bare-mode \`/orbit:explore\` does NOT emit — see the body's "Crystallization to named change".
 
-### BEGIN emit (D-arc Stage D3 — mode-aware)
+### BEGIN emit
 
-Fire the begin emit immediately after the staging scaffold + \`.openspec.yaml\` are written, so the trail records the workstream from minute zero (the \`premised → exploring\` transition). Mode B (new named exploration): the scaffold is empty, so the engine's counts render 0 and the recommendation renders Early; \`final_assessment\` records the scaffold + the citation decision (cited or declined). Mode C (crystallization): back-fill \`explore.md\` FIRST, then fire — the engine computes the BACK-FILLED counts, so the trail's first record states true on-disk state, never a knowingly-false zero; this begin emit IS the crystallization's first emit.
+Fire the begin emit right after the scaffold and its \`.openspec.yaml\` are written. Mode C (crystallization): back-fill \`explore.md\` FIRST, then fire — this begin emit IS the crystallization's first emit.
 
-**No retro-fire**: resuming a pre-D3 staging dir that has no emits does NOT retroactively fire a begin emit (add-only, no backdating) — the next boundary emit covers it.
+The trail then records the workstream from minute zero (the \`premised → exploring\` transition). In Mode B the scaffold is empty, so the engine's counts render 0 and the recommendation renders Early; \`final_assessment\` records the scaffold + the citation decision (cited or declined). In Mode C the engine computes the BACK-FILLED counts, so the trail's first record states true on-disk state, never a knowingly-false zero.
+
+**No retro-fire**: resuming a staging dir that has no emits does NOT retroactively fire a begin emit (add-only, no backdating) — the next boundary emit covers it.
 
 ### Conversation boundary detection
 
-Per \`orbit-run-summary-emit\`'s \`Emit timing semantics\` requirement, a conversation boundary for multi-turn conversational commands like \`/orbit:explore\` is EITHER:
+A conversation boundary is EITHER:
 
-1. **User explicitly signals stop or pause** — "stop", "pause", "that's it for now", "we'll come back to this later", or equivalent intent
-2. **AI-initiated wrap** — AI says something like "I've captured everything; type \`/orbit:propose <name>\` when ready" or equivalent intent (an explicit suggestion of the next workflow step)
+1. **User explicitly signals stop or pause** — "stop", "that's it for now", "we'll come back to this later", or equivalent intent
+2. **AI-initiated wrap** — AI explicitly suggests the next workflow step ("I've captured everything; type \`/orbit:propose <name>\` when ready")
 
-**Canonical orbit UX convention**: when handing control back to the user after substantive explore work, include an explicit wrap phrase suggesting the next step. This turns the handoff into a rule-2 signal and triggers the emit naturally without needing to predict future user behavior.
+**Canonical orbit UX convention**: when handing control back after substantive explore work, end with an explicit wrap phrase suggesting the next step (a rule-2 boundary).
 
 **NOT a boundary** (no emit): AI returning control mid-thought to ask a clarifying question; user tangent and return; AI tool-use sequences within a single turn.
 
 ### Bare-mode non-emission
 
-Bare-mode \`/orbit:explore\` (no name) writes ZERO files — exploration without a name is pre-commitment, ephemeral thinking. Emitting before a name exists would pollute project scope and accidentally seed partial changes the user didn't intend to start.
+Bare-mode \`/orbit:explore\` does NOT emit: with no name it writes ZERO files.
+
+Exploration without a name is pre-commitment, ephemeral thinking: emitting before a name exists would pollute project scope and accidentally seed partial changes the user didn't intend to start.`;
+/** The body's emit section: when each emit fires, the read cue and the command. */
+export const EXPLORE_RUN_SUMMARY_EMIT_BASIC = `## Run-summary emit (named-mode only)
+
+Named-mode \`/orbit:explore <name>\` emits at BEGIN and at each conversation boundary.
+
+**Boundary residency sweep — "no emit without sweep"** (begin emits excepted: nothing has been discussed yet): before EVERY boundary emit, write into its slot each decision, leaning, rejection and citation since the last emit that is not yet file-resident — Decisions (ID opener, \`Kind:\`), a rule's Mechanism entry (domain table, closure token, residual slots, move dispositions), an open question's \`Standing recommendation:\`, Considered & out, References. A rule left with no entry stays a visible open domain (the "A rule is captured" rule).
+
+${RUN_SUMMARY_READ_CUE}
+
+\`\`\`bash
+orbit emit explore --change <name> --payload <payload-file>
+\`\`\`
+
+### BEGIN emit
+
+Fire the begin emit right after the scaffold and its \`.openspec.yaml\` are written. Mode C (crystallization): back-fill \`explore.md\` FIRST, then fire — this begin emit IS the crystallization's first emit.
+
+**No retro-fire**: resuming a staging dir that has no emits does NOT retroactively fire a begin emit (add-only, no backdating) — the next boundary emit covers it.
+
+### Conversation boundary detection
+
+A conversation boundary is EITHER:
+
+1. **User explicitly signals stop or pause** — "stop", "that's it for now", "we'll come back to this later", or equivalent intent
+2. **AI-initiated wrap** — AI explicitly suggests the next workflow step ("I've captured everything; type \`/orbit:propose <name>\` when ready")
+
+**Canonical orbit UX convention**: when handing control back after substantive explore work, end with an explicit wrap phrase suggesting the next step (a rule-2 boundary).
+
+**NOT a boundary** (no emit): AI returning control mid-thought to ask a clarifying question; user tangent and return; AI tool-use sequences within a single turn.
+
+### Bare-mode non-emission
+
+Bare-mode \`/orbit:explore\` does NOT emit: with no name it writes ZERO files.`;
+
+export function getExploreSkillTemplate(): SkillTemplate {
+  return {
+    name: 'orbit-explore',
+    description: 'Enter explore mode - a thinking partner for exploring ideas, investigating problems, and clarifying requirements. Use when the user wants to think through something before or during a change.',
+    instructions: `Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
+
+**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first and create a change proposal. You MAY create orbit artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.
+
+**This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.
+
+---
+
+## The Stance
+
+- **Curious, not prescriptive** - Ask questions that emerge naturally, don't follow a script
+- **Open threads, not interrogations** - Surface multiple interesting directions and let the user follow what resonates. Don't funnel them through a single path of questions.
+- **Visual** - Use ASCII diagrams liberally when they'd help clarify thinking
+- **Adaptive** - Follow interesting threads, pivot when new information emerges
+- **Patient** - Don't rush to conclusions, let the shape of the problem emerge
+- **Grounded** - Explore the actual codebase when relevant, don't just theorize
+
+---
+
+## What You Might Do
+
+Depending on what the user brings, you might:
+
+**Explore the problem space**
+- Ask clarifying questions that emerge from what they said
+- Challenge assumptions
+- Reframe the problem
+- Find analogies
+
+**Investigate the codebase**
+- Map existing architecture relevant to the discussion
+- Find integration points
+- Identify patterns already in use
+- Surface hidden complexity
+
+**Compare options**
+- Brainstorm multiple approaches
+- Build comparison tables
+- Sketch tradeoffs
+- Recommend a path (if asked)
+
+**Surface risks and unknowns**
+- Identify what could go wrong
+- Find gaps in understanding
+- Suggest spikes or investigations
+
+---
+
+## Orbit Awareness
+
+You have full context of the orbit system. Use it naturally, don't force it.
+
+### Check for context
+
+At the start, quickly check what exists:
+\`\`\`bash
+orbit list --json
+\`\`\`
+
+This tells you:
+- If there are active changes
+- Their names, schemas, and status
+- What the user might be working on
+
+### When no change exists
+
+Think freely. When insights crystallize, you might offer:
+
+- "This feels solid enough to start a change. Want me to create a proposal?"
+- Or keep exploring - no pressure to formalize
+
+### When a change exists
+
+If the user mentions a change or you detect one is relevant:
+
+1. **Read existing artifacts for context**
+   - \`orbit/changes/<name>/proposal.md\`
+   - \`orbit/changes/<name>/design.md\`
+   - \`orbit/changes/<name>/tasks.md\`
+   - etc.
+
+2. **Reference them naturally in conversation**
+   - "Your design mentions using Redis, but we just realized SQLite fits better..."
+   - "The proposal scopes this to premium users, but we're now thinking everyone..."
+
+3. **Offer to capture when decisions are made**
+
+    | Insight Type               | Where to Capture               |
+    |----------------------------|--------------------------------|
+    | New requirement discovered | \`specs/<capability>/spec.md\` |
+    | Requirement changed        | \`specs/<capability>/spec.md\` |
+    | Design decision made       | \`design.md\`                  |
+    | Scope changed              | \`proposal.md\`                |
+    | New work identified        | \`tasks.md\`                   |
+    | Assumption invalidated     | Relevant artifact              |
+
+   Example offers:
+   - "That's a design decision. Capture it in design.md?"
+   - "This is a new requirement. Add it to specs?"
+   - "This changes scope. Update the proposal?"
+
+4. **The user decides** - Offer and move on. Don't pressure. Don't auto-capture.
+
+---
+
+## What You Don't Have To Do
+
+- Follow a script
+- Ask the same questions every time
+- Produce a specific artifact
+- Reach a conclusion
+- Stay on topic if a tangent is valuable
+- Be brief (this is thinking time)
+
+---
+
+## Ending Discovery
+
+There's no required ending. Discovery might:
+
+- **Flow into a proposal**: "Ready to start? I can create a change proposal."
+- **Result in artifact updates**: "Updated design.md with these decisions"
+- **Just provide clarity**: User has what they need, moves on
+- **Continue later**: "We can pick this up anytime"
+
+When it feels like things are crystallizing, you might summarize what you figured out, but this summary is optional. Sometimes the thinking IS the value.
+
+---
+
+## Guardrails
+
+- **Don't fake understanding** - If something is unclear, dig deeper
+- **Don't auto-capture** - Offer to save insights, don't just do it
+- **Do question assumptions** - Including the user's and your own
+
+# Orbit additions
+
+Orbit adds to the upstream stance above (as \`orbit-conventions\`' \`Generated-file disposition\` records it) capture affordances, an \`explore.md\` authoring convention and three invocation modes, active once the conversation produces material worth keeping.
+
+## Execution disciplines (epitome)
+
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives where each fires.
+
+- **Read-before-reference (authoring-time)**: before a captured artifact names a specific construct, read its definition; unverifiable → ask the user or leave a \`@review:\` marker, never guess.
+- **Change completeness (modification-time)**: section moves in \`explore.md\` land whole (a resolved Open question MOVES to Decisions, never left in both); re-read the section to confirm.
+
+- **Pushback (review-time)**: when the conversation flags something as already-decided, verify against \`explore.md\` before treating it as new; don't re-litigate captured decisions.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_BASIC}
+
+## Three invocation modes
+
+| Mode | Trigger | What happens |
+|---|---|---|
+| **A — Bare** | \`/orbit:explore\` with no argument and no crystallization trigger | Upstream behavior: conversational think-mode, no file, no staging directory. |
+| **B — Named** | \`/orbit:explore <name>\` | Resolve the name by the re-entry table below. **New**: scaffold the six sections and the \`.openspec.yaml\` (\`references/new-exploration.md\`). **Resume**: the existing file is authoritative; one lacking \`.openspec.yaml\` (citation optional) or \`## Mechanism\` gains it, add-only. |
+| **C — Crystallized** | Bare invocation that produces 2+ substantive decisions | Prompt: "We have enough material here to capture — what should we call this exploration?" On accept, read \`references/crystallization.md\` before writing any file, then go on as Mode B (metadata per \`references/new-exploration.md\`), back-filling what's been discussed. On decline, stay in Mode A and don't re-prompt this shape. |
+
+### Re-entry resolution (Mode B) — one table
+
+\`/orbit:explore <name>\` resolves the name against FOUR facts — a staging directory exists; it is concluded (by the status-header production below); an active change of that name exists; that change carries an \`explore.md\` — in ONE table, nine cells, four refused:
+
+| staging dir | concluded | active change | change carries \`explore.md\` | resolution |
+|---|---|---|---|---|
+| no | — | no | — | Mode B new |
+| yes | no | no | — | Mode B resume |
+| yes | yes | no | — | state the conclusion and its \`Re-entry:\` trigger, ask nothing else; REOPEN only on the user's word |
+| no | — | yes | yes | resume IN PLACE against \`orbit/changes/<name>/explore.md\`, say so, scaffold nothing |
+| no | — | yes | no | Mode B new IN the change directory — the file is created beside the artifacts; no staging directory is scaffolded |
+| yes | either | yes | either | REFUSED — second claim on one truth; name both paths and stop (neither resume nor scaffold) |
+
+A staging directory WITHOUT \`explore.md\`, or whose header carries neither token, is not concluded and resumes with the stub or header added (add-only), never MALFORMED. A \`concluded\` header in \`orbit/changes/<name>/explore.md\` (a name promoted without reopening) resolves as the third row, never a silent resume.
+
+### Minimal explore metadata (\`.openspec.yaml\`)
+
+When a new named exploration is scaffolded (Mode B new, or Mode C once confirmed), or a resumed one lacks it, read \`references/new-exploration.md\` and follow it: the base fields and the \`architecture:\` citation to offer.
+
+### What counts as a "substantive decision" for Mode C crystallization
+
+A decision counts toward the 2+ threshold if it:
+
+- (a) Resolves between two or more named alternatives (e.g., "go with X instead of Y")
+- (b) Locks a name, structure, or format ("we'll call it Z", "the file will have these sections")
+- (c) Supersedes an earlier choice ("change our mind on X, go with Y instead")
+
+Does NOT count: exploratory thinking, speculation, "let me think about X", or restating something already established.
+
+## explore.md six-section convention
+
+A named exploration's \`orbit/explore/<name>/explore.md\` has SIX sections, in this order (\`orbit-conventions\`' format). The status-header and Decisions-entry productions are below, the Mechanism-entry production in \`references/mechanism-entries.md\`; every other mention points at them.
+
+\`\`\`markdown
+> **Status**: exploring. Promoted to proposal/design/specs via /orbit:propose when decisions firm up.
+
+# Exploration: <name>
+
+## Premise
+<the problem space; why this exploration; what we're trying to figure out>
+
+## Mechanism
+<one entry per live rule in Decisions, keyed by its ID, in the grammar of \`references/mechanism-entries.md\`; \`### Case <n>\` blocks hold the evidence its move lines cite>
+
+## Decisions
+<dated entries in the entry format below; each captures ONE claim, a brief rationale, and its \`Kind:\`>
+
+## Open questions
+<things we don't know yet; moved to Decisions when resolved, deferred as @review: markers via /orbit:propose, or abandoned to Considered & out. EVERY entry carries \`Standing recommendation: <the current leaning verbatim>\`, or \`Standing recommendation: none yet\` — never absent>
+
+## Considered & out
+<options that came up and got rejected, with brief rationale + date>
+
+## References
+<files, URLs, prior changes, prior conversations worth reading during artifact generation>
+\`\`\`
+
+In a new file all six sections are scaffolded, empty. On resume the existing file is authoritative; one with no \`## Mechanism\` section is read, not rejected, and gains it on next touch.
+
+### The status header — one production
+
+The file's first non-blank line carries one of TWO fixed tokens, matched by this production:
+
+\`\`\`
+${EXPLORE_STATUS_HEADER_PRODUCTION}
+\`\`\`
+
+- \`> **Status**: exploring. …\` — the working token; the rest of the line is free prose.
+- \`> **Status**: concluded <YYYY-MM-DD>.\` — the ONLY other legal token, written by the conclude flow ("Concluding an exploration" below).
+
+Any other first line is NEITHER token: the file resolves as not-concluded and gains the header on next touch (add-only), never MALFORMED. A status line is a pointer, not an entry.
+
+### Decisions entries — the ENTRY is the key
+
+Each Decisions entry is a top-level list item opened by its ID slot. A slot matches anywhere in the entry's list item, a lazy-continuation line or a nested bullet (the optional bullet prefix); the \` — \` in the opener is the literal em-dash:
+
+\`\`\`
+${EXPLORE_DECISION_ENTRY_PRODUCTION}
+\`\`\`
+
+Before writing the session's first Decisions entry, read \`references/decision-entries.md\` and follow it: whether a claim is a rule, a fact or a scope, when an entry is split, and what each slot means (an absent \`Kind:\` means \`rule\`, an absent \`Disposition:\` \`live\`).
+
+A Decisions entry without a well-formed ID is a format violation corrected on next touch.
+
+### Mechanism entries — the grammar
+
+The Mechanism section carries one entry per LIVE rule (\`Kind:\` rule or absent AND \`Disposition:\` live or absent), keyed by the rule's ID.
+
+Before writing or editing a Mechanism entry (a rule captured, an entry swept at a boundary, a resume adding the section), read \`references/mechanism-entries.md\` and follow it: the grammar, what is MALFORMED, the closure outcomes, the nine moves and two exemplar entries.
+
+**Section-evolution rules**:
+
+- **Resolving an Open question** → move it to Decisions (dated rationale, ID opener, \`Kind:\`); acknowledge in chat ("captured").
+- **Rejecting a considered option** → move it to Considered & out (brief rationale + date).
+- **New decision emerges** → append it to Decisions proactively (ID opener, \`Kind:\`), acknowledging briefly in chat.
+- **A rule is captured** → write its Mechanism entry IN THE SAME SITTING, or leave it \`Kind: rule\` with no entry, a VISIBLE open domain; never downgrade the Kind to escape the obligation. The residency sweep points here.
+- **A rule is replaced or handed to another stage** → its entry gains \`Disposition: superseded <ID or pointer>\` or \`Disposition: assigned <stage-id>\`.
+- **A leaning emerges on an open question** → write it verbatim into its \`Standing recommendation:\` slot; \`none yet\` only when there is no leaning.
+- **Reference cited** → append to References (offer first when in doubt).
+
+### Concluding an exploration
+
+An exploration MAY conclude in nothing. Conclude, or reopen, only on the user's declared word in a named session: recommend, never infer — if you judge it should stop and the user has not said so, recommend concluding and write nothing. On that word, read \`references/concluding.md\` and follow it.
+
+## Five capture types and where each lands
+
+| Type | Trigger | Target file | Offer or auto? |
+|---|---|---|---|
+| **Decision** (Mode B/C only) | Explicit decision in a named exploration | \`explore.md\` Decisions | Auto-capture + brief acknowledgment ("captured") |
+| **Convention** | "we always do X" / "let's standardize on…" | \`<topic>_convention.md\` at project root | **Offer** |
+| **Perspective** | User describes a caller/client ("Claude Desktop calls our MCP server") | \`orbit/lenses/perspectives.md\` | **Offer** |
+| **Critical path** | User describes a critical user flow ("the typical user flow is…") | \`orbit/lenses/critical-paths.md\` | **Offer** |
+| **Reference** | URL, file, prior change or conversation worth reading later | \`explore.md\` References | **Offer** when in doubt; quick add when obviously relevant |
+
+### Capture entry formats
+
+The file formats (\`<topic>_convention.md\`'s four sections with create-vs-append and contradictions; the \`orbit/lenses/perspectives.md\` / \`critical-paths.md\` entries) are in \`references/capture-formats.md\`; read it when writing an accepted capture.
+
+## Offer-don't-auto rule
+
+For **conventions, perspectives, critical paths and references** the command offers and the user decides; **Decisions** in named explorations are the exception, captured proactively with brief acknowledgment.
+
+**Offer phrasing**: one sentence naming the target file (\`That sounds like a convention. Capture in naming_convention.md?\`). **Group offers when natural**: one offer for same-type items emerging together. **User veto**: on "don't capture that" or similar, nothing is written and the conversation goes on.
+
+## Decline tracking
+
+If the user declines a convention capture, **don't re-offer** that convention later in the same conversation (declines don't persist across sessions).
+
+## Sibling captures supported
+
+\`orbit/explore/<name>/\` can also hold \`sketches/<sketch-name>.md\` (design sketches, not yet Decisions) and \`<draft-convention>.md\` (drafts not ready for the project root); they move to \`orbit/changes/<name>/\` with \`explore.md\` at \`/orbit:propose\`.
+
+## Composition with \`/orbit:propose\`
+
+\`/orbit:propose <name>\` consumes \`orbit/explore/<name>/explore.md\` as authoritative (the propose skill's consume mode) and **moves** the staging directory, siblings included, to \`orbit/changes/<name>/\`; \`orbit-propose-modifications\`' \`Mechanism section consumption\` carries a BOUNDED residual's two slots at promotion (\`references/mechanism-entries.md\`, closure). A concluded exploration is REFUSED at propose and REOPENED here first (\`references/concluding.md\`).
+
+${EXPLORE_RUN_SUMMARY_EMIT_BASIC}
 
 ### Crystallization to named change (bare-mode → named-mode transition)
 
-When the user requests crystallization during a bare-mode explore (e.g., "save this as \`<name>\`", "let's give this a name and capture it", or equivalent intent), the AI **MUST surface an explicit warning describing the persistence consequences BEFORE creating any files**.
-
-**Required warning content** — the warning MUST mention all 4 consequences:
-
-1. A new directory \`orbit/explore/<name>/\` will be created with \`explore.md\` capturing decisions to date.
-2. The first run-summary JSON (\`orbit/explore/<name>/.orbit-runs/explore-<TS>.json\`) will start the change's audit trail.
-3. The change will become visible to any consumer that scans \`orbit/explore/\` (e.g., a downstream status reader). Note: upstream \`orbit list\` does NOT scan \`orbit/explore/\`; the change appears in \`orbit list\` only after \`/orbit:propose\` moves the staging directory to \`orbit/changes/<name>/\`.
-4. Abandonment after this point requires formal archive/discard, not just deleting the directory once it's been moved to \`orbit/changes/<name>/\` by \`/orbit:propose\`; before promotion, an exploration that will build nothing is CONCLUDED in place (see "Concluding an exploration"), not deleted.
-
-**Confirmation gate**: the AI MUST wait for explicit user confirmation before proceeding with file creation. Examples of confirmation: "yes", "go ahead", "create it", "do it". If the user expresses any hesitation or asks a clarifying question, treat as not-yet-confirmed and answer the question rather than proceed.
-
-After confirmation: (1) create \`orbit/explore/<name>/explore.md\` (and the minimal \`.openspec.yaml\`, as in Mode B), back-filling Premise and Decisions with what's been discussed; (2) THEN fire the BEGIN emit per the mode-aware rules above — the engine computes the back-filled counts and a maturity-consistent recommendation.
-
-This warning convention aligns with orbit's don't-auto-invoke-commands and inflection-points-surface-consequences conventions.
+When a bare exploration is about to be named (the user asks to save it under a name, or accepts the Mode C prompt), read \`references/crystallization.md\` and follow it before writing any file.
 `,
     references: [
       {
         name: 'capture-formats.md',
         content: EXPLORE_CAPTURE_FORMATS_REFERENCE,
       },
+      { name: 'mechanism-entries.md', content: EXPLORE_MECHANISM_ENTRIES_REFERENCE },
+      { name: 'decision-entries.md', content: EXPLORE_DECISION_ENTRIES_REFERENCE },
+      { name: 'concluding.md', content: EXPLORE_CONCLUDING_REFERENCE },
+      { name: 'crystallization.md', content: EXPLORE_CRYSTALLIZATION_REFERENCE },
+      { name: 'new-exploration.md', content: EXPLORE_NEW_EXPLORATION_REFERENCE },
+      { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(EXPLORE_RUN_SUMMARY_EMIT) },
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',

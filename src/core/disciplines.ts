@@ -68,7 +68,7 @@ export const DECISION_WRITING_DISCIPLINE = [
  * (`records-by-setting`, R-rop-3 and R-rop-17): the moment `orbit decisions status` runs, the usual result and the
  * link to the rule. The same text under every configuration (R-rop-5); the command's result picks the branch (R-rop-4).
  */
-export const DECISION_WRITING_BASIC = `- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (\`orbit/config.yaml\` or \`.yml\`), run \`orbit decisions status --json\`. On \`write: true\`, read \`references/${DECISION_RECORDS_REFERENCE_NAME}\` and follow its rule for the rest of the command. On \`write: false\`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.`;
+export const DECISION_WRITING_BASIC = `- **Decision-writing (call-time)**: run \`orbit decisions status --json\` at each command's first step and after this session edits \`orbit/config.yaml\` (or \`.yml\`). On \`write: true\`, follow \`references/${DECISION_RECORDS_REFERENCE_NAME}\` for the rest of the command. On \`write: false\`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).`;
 
 // ---------------------------------------------------------------------------
 // The chain end step (seam-chaining, `orbit-conventions`' `No-chaining contract`)
@@ -494,7 +494,7 @@ export const ACCOUNT_WALK_STEP_BASIC = [
 // and the chat behaviour beside them, and reads its section, whole, from the skill's `references/run-summary-emit.md`.
 // ---------------------------------------------------------------------------
 
-/** The skills whose emit step reads its detail from the reference: every emit step in scope, eleven bodies. */
+/** The skills whose emit step reads its detail from the reference: every emit step in scope, twelve bodies (explore since cut-explore-onboard). */
 export const RUN_SUMMARY_EMIT_SKILLS = [
   'orbit-apply-change',
   'orbit-archive-change',
@@ -507,12 +507,13 @@ export const RUN_SUMMARY_EMIT_SKILLS = [
   'orbit-continue-change',
   'orbit-new-change',
   'orbit-audit-drift',
+  'orbit-explore',
 ] as const;
 
 /** The reference file each of `RUN_SUMMARY_EMIT_SKILLS` ships, holding its emit section whole. */
 export const RUN_SUMMARY_EMIT_REFERENCE_NAME = 'run-summary-emit.md';
 
-/** The READ CUE, carried byte-equal by each of the eleven bodies, immediately before its command block. */
+/** The READ CUE, carried byte-equal by each of the twelve bodies, immediately before its command block. */
 export const RUN_SUMMARY_READ_CUE = `Before the session's first run-summary emit, read \`references/${RUN_SUMMARY_EMIT_REFERENCE_NAME}\` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:`;
 
 /** `references/run-summary-emit.md`: a one-line title, then the emit section whole. */

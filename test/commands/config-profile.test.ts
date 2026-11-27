@@ -132,7 +132,7 @@ describe('config profile interactive flow', () => {
     // decision-writing (design D8): every epitome-carrying skill also ships decision-records.md.
     const DR = 'decision-records.md';
     const editorialRefs: Record<string, string[]> = {
-      'orbit-explore': ['capture-formats.md', DR],
+      'orbit-explore': ['capture-formats.md', 'mechanism-entries.md', 'decision-entries.md', 'concluding.md', 'crystallization.md', 'new-exploration.md', 'run-summary-emit.md', DR],
       // conditional-steps: the commit step and chain end step references, and propose's size brief.
   // once-per-session-detail: each emit step's run-summary-emit.md, and the two account steps' references.
       'orbit-propose': ['pr-choreography.md', 'consume-mode.md', 'size-brief.md', 'run-summary-emit.md', 'commit-step.md', 'chain-end-step.md', DR],

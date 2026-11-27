@@ -54,7 +54,7 @@ const SURFACE: Array<[string, string, string[]]> = [
   ['orbit-sync-specs', 'sync', ['Execution disciplines', 'Consent inheritance']], // gained the orbit layer in D1
   ['orbit-archive-change', 'archive', ['Execution disciplines', 'run summary', 'Stage-line garnish']],
   ['orbit-verify-change', 'verify', ['Execution disciplines', 'Run-summary emit']],
-  ['orbit-onboard', 'onboard', ['Execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', 'architecture mode — D-arc Stage D2']],
+  ['orbit-onboard', 'onboard', ['Execution disciplines', 'self-contained', 'Program architecture', 'orbit/architecture/.orbit-runs/', '(architecture mode).']],
   ['orbit-review', 'review', ['Execution disciplines', 'Paste the output VERBATIM', 'is PROHIBITED in change modes', 'REVIEWER axis', 'references/external-handoff.md', 'references/passes-<mode>.md', 'orbit emit review', 'references/architecture-mode.md', 'First architecture review for this doc']],
   ['orbit-address-reviews', 'address-reviews', ['Execution disciplines', 'Ripple cascade', 'resolution log', 'references/run-summary-emit.md']],
   ['orbit-audit-drift', 'audit-drift', ['Execution disciplines', 'Vocabulary residue', 'Persist the run summary', 'Architecture staleness check']],
@@ -65,7 +65,8 @@ const SURFACE: Array<[string, string, string[]]> = [
 // decision-writing (design D8): every epitome-carrying skill also ships the shared `decision-records.md`.
 const DR = 'decision-records.md';
 const REFERENCE_SKILLS: Record<string, string[]> = {
-  'orbit-explore': ['capture-formats.md', DR],
+  // cut-explore-onboard: explore's five moved procedures, the Decisions entries' prose (Sal's ruling at apply) and its emit step.
+  'orbit-explore': ['capture-formats.md', 'mechanism-entries.md', 'decision-entries.md', 'concluding.md', 'crystallization.md', 'new-exploration.md', 'run-summary-emit.md', DR],
   // D6: propose and ff share ONE choreography reference (see pr-choreography.ts).
   // conditional-steps: the commit step and chain end step references, and propose's size brief.
   // once-per-session-detail: each emit step's run-summary-emit.md, and the two account steps' references.
@@ -334,11 +335,17 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
     // What is NOT asserted, and cannot be from a body: that any enumeration is TRUE, that any
     // residual is honest, or that an author wrote every rule down (R-crc-10 — a record, not a check).
     let skill: string;
+    // cut-explore-onboard (design D1; Sal's ruling at apply): the grammar, closure, nine moves and exemplars are in
+    // references/mechanism-entries.md, the Decisions entries' prose in decision-entries.md, concluding in concluding.md.
+    let mechanism: string;
+    let decisions: string;
+    let concluding: string;
     beforeAll(async () => {
-      skill = await fs.readFile(
-        path.join(testDir, '.claude', 'skills', 'orbit-explore', 'SKILL.md'),
-        'utf-8'
-      );
+      const dir = path.join(testDir, '.claude', 'skills', 'orbit-explore');
+      skill = await fs.readFile(path.join(dir, 'SKILL.md'), 'utf-8');
+      mechanism = await fs.readFile(path.join(dir, 'references', 'mechanism-entries.md'), 'utf-8');
+      decisions = await fs.readFile(path.join(dir, 'references', 'decision-entries.md'), 'utf-8');
+      concluding = await fs.readFile(path.join(dir, 'references', 'concluding.md'), 'utf-8');
     });
 
     const ordered = (haystack: string, needles: string[]) => {
@@ -372,23 +379,35 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(skill).toContain('^\\s*(?:[-*+]\\s+)?Kind:\\s*(rule|fact|scope)\\s*$');
       expect(skill).toContain('Disposition: live | superseded <ID or pointer> | assigned <stage-id>');
       expect(skill).toContain('Re-entry: <what would reopen it>');
-      expect(skill).toContain('**absent means `rule`.**');
-      expect(skill).toContain('absent means `live`');
-      expect(skill).toContain('One claim under obligation per entry');
+      expect(skill).toContain('an absent `Kind:` means `rule`, an absent `Disposition:` `live`');
+      expect(skill).toContain('read `references/decision-entries.md`');
+      expect(decisions).toContain('**absent means `rule`.**');
+      expect(decisions).toContain('absent means `live`');
+      expect(decisions).toContain('One claim under obligation per entry');
+      expect(skill).not.toContain('One claim under obligation per entry');
     });
 
-    it('states the Mechanism grammar once: closure tokens, residual-slot rule, MALFORMED', () => {
-      expect(skill).toContain('<TOKEN> ::= DERIVED | SOURCED | BOUNDED');
-      expect(skill.match(/required iff BOUNDED, forbidden otherwise/g)?.length).toBe(2);
-      expect(skill).toContain('nine lines, one per move, each move exactly once');
-      expect(skill).toContain('**A grammar failure is MALFORMED, naming the line**');
-      expect(skill).toContain('Closure is ACCOUNTED, not CLOSED');
-      expect(skill).toContain('"There may be others" discharges nothing');
-      expect(skill).toContain('VISIBILITY, never BLOCKING');
+    it('states the Mechanism grammar once, in mechanism-entries.md: closure tokens, residual-slot rule, MALFORMED', () => {
+      expect(mechanism).toContain('<TOKEN> ::= DERIVED | SOURCED | BOUNDED');
+      expect(mechanism.match(/required iff BOUNDED, forbidden otherwise/g)?.length).toBe(2);
+      expect(mechanism).toContain('nine lines, one per move, each move exactly once');
+      expect(mechanism).toContain('**A grammar failure is MALFORMED, naming the line**');
+      expect(mechanism).toContain('Closure is ACCOUNTED, not CLOSED');
+      expect(mechanism).toContain('"There may be others" discharges nothing');
+      expect(mechanism).toContain('VISIBILITY, never BLOCKING');
+      expect(skill).not.toContain('<TOKEN> ::= DERIVED | SOURCED | BOUNDED');
+    });
+
+    // @scenario text orbit-explore-modifications :: Nine moves applied per rule in the Mechanism section :: The body reads the grammar before writing an entry
+    it('the body reads mechanism-entries.md before a Mechanism entry is written or edited, and carries neither the nine moves nor an exemplar', () => {
+      expect(skill).toContain('Before writing or editing a Mechanism entry (a rule captured, an entry swept at a boundary, a resume adding the section), read `references/mechanism-entries.md` and follow it');
+      expect(skill).not.toContain('| part of the mechanism |');
+      expect(skill).not.toContain('### D-bcs-3 — ');
+      expect(skill).not.toContain('### D-bcs-12 — ');
     });
 
     it('carries the nine-move table with every move named', () => {
-      const table = skill.slice(skill.indexOf('### The nine moves, applied per rule'), skill.indexOf('### Exemplar'));
+      const table = mechanism.slice(mechanism.indexOf('### The nine moves, applied per rule'), mechanism.indexOf('### Exemplar'));
       for (const move of ['READ', 'ENUMERATE', 'COHERE', 'EXECUTE', 'FALSIFY', 'CONFORM', 'FEASIBILITY', 'CONSUME', 'INVOKE']) {
         expect(table).toContain(`| **${move}** |`);
       }
@@ -449,19 +468,24 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
         table(await ownerText(capability, header), header);
       expect(fence(skill, '^> \\*\\*Status')).toBe(await ownedFence('orbit-conventions', '^> \\*\\*Status'));
       expect(fence(skill, '- **<YYYY-MM-DD> — <ID>: <title>**')).toBe(await ownedFence('orbit-conventions', '- **<YYYY-MM-DD> — <ID>: <title>**'));
-      expect(fence(skill, '## Mechanism\n')).toBe(await ownedFence('orbit-conventions', '## Mechanism\n'));
+      expect(fence(mechanism, '## Mechanism\n')).toBe(await ownedFence('orbit-conventions', '## Mechanism\n'));
       expect(table(skill, '| staging dir | concluded | active change |')).toBe(await ownedTable('orbit-explore-modifications', '| staging dir | concluded | active change |'));
-      expect(table(skill, '| part of the mechanism |')).toBe(await ownedTable('orbit-explore-modifications', '| part of the mechanism |'));
-      // and each mirror says so, naming its owner
-      expect(skill.match(/\*Mirror of `orbit-(conventions|explore-modifications)`'/g)?.length).toBe(5);
+      expect(table(mechanism, '| part of the mechanism |')).toBe(await ownedTable('orbit-explore-modifications', '| part of the mechanism |'));
+      // The body's three mirror notes left with its other provenance (cut-explore-onboard, R3); the two moved with the
+      // grammar and the nine moves stay in mechanism-entries.md, byte-equal, naming their owners.
+      expect(skill.match(/\*Mirror of `orbit-(conventions|explore-modifications)`'/g)).toBeNull();
+      expect(mechanism.match(/\*Mirror of `orbit-(conventions|explore-modifications)`'/g)?.length).toBe(2);
     });
 
     it('states the conclude order and that nothing is written to metadata', () => {
-      const section = skill.slice(skill.indexOf('### Concluding an exploration'));
+      expect(skill.slice(skill.indexOf('### Concluding an exploration'))).toContain('recommend, never infer');
+      expect(skill).toContain('read `references/concluding.md` and follow it');
+      const section = concluding;
       ordered(section, ['residency sweep', 'CONCLUDED Decisions entry', 'status header flips', 'THEN the final boundary emit']);
       expect(section).toContain('Nothing is written to `.openspec.yaml`');
       expect(section).toContain('STAYS IN PLACE');
       expect(section).toContain('Recommend, never infer');
+      expect(section).toContain("(the body's \"Run-summary emit\")");
       expect(section).toContain('superseded <the reopening entry\'s ID>');
     });
 
@@ -473,11 +497,12 @@ describe('generated surface fidelity (real init, all workflows, claude + codex)'
       expect(isMemberRow('| a | b | c |')).toBe(false);
     });
 
-    it('ships exemplars whose lines match the grammar productions — both closure branches', () => {
-      const start = skill.indexOf('```markdown\n### D-bcs-3 — ');
+    // @scenario text orbit-explore-modifications :: Nine moves applied per rule in the Mechanism section :: The exemplar conforms
+    it('ships exemplars, in mechanism-entries.md, whose lines match the grammar productions — both closure branches', () => {
+      const start = mechanism.indexOf('```markdown\n### D-bcs-3 — ');
       expect(start).toBeGreaterThan(-1);
-      const end = skill.indexOf('\n```', start + 12);
-      const block = skill.slice(start + '```markdown\n'.length, end);
+      const end = mechanism.indexOf('\n```', start + 12);
+      const block = mechanism.slice(start + '```markdown\n'.length, end);
       // split into entries at each `### D-` heading
       const entries = block.split(/\n(?=### D-)/).map((e) => e.split('\n').filter((l) => l.length > 0));
       expect(entries.length).toBeGreaterThanOrEqual(2);

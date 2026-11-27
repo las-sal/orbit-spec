@@ -59,6 +59,14 @@ const ONE_PARAGRAPH =
  * replaced. The labelled bullet as `tighten-bodies` left it is the rule with that one clause restored.
  */
 const REPLACED_CLAUSE = { was: 'under every setting,', now: 'when `orbit decisions status` reports `write: true`,' };
+
+/**
+ * The basic content as `records-by-setting` wrote it, which the swap below finds. `cut-explore-onboard` shortened it
+ * (`DECISION_WRITING_BASIC` now, design D3) by a cut-ledger pair undone before the swap, so after the cut ledger's undo
+ * every body carries this text again.
+ */
+const RECORDS_BY_SETTING_BASIC =
+  "- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (`orbit/config.yaml` or `.yml`), run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the command. On `write: false`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.";
 const LABELLED_FORM = DECISION_WRITING_DISCIPLINE.replace(REPLACED_CLAUSE.now, REPLACED_CLAUSE.was);
 
 /** The rule as the reference carries it: the body of its `## When to write a record` section. */
@@ -466,9 +474,9 @@ describe('tighten-bodies edit ledger', () => {
       if ('failure' in cut) return cut;
       text = cut.text;
     }
-    const swaps = text.split(DECISION_WRITING_BASIC).length - 1;
+    const swaps = text.split(RECORDS_BY_SETTING_BASIC).length - 1;
     if (swaps !== 1) return { failure: `${dir}: the decision-writing basic content occurs ${swaps} times` };
-    let t = text.replace(DECISION_WRITING_BASIC, () => LABELLED_FORM);
+    let t = text.replace(RECORDS_BY_SETTING_BASIC, () => LABELLED_FORM);
     for (const p of [...pairs].reverse().filter((x) => x.body === dir)) {
       const n = t.split(p.after).length - 1;
       if (n !== 1) return { failure: `${dir}: a pair's after occurs ${n} times: ${JSON.stringify(p.after.slice(0, 80))}` };
@@ -638,7 +646,13 @@ describe('tighten-bodies edit ledger', () => {
   it('mutation: a body that still carries the labelled bullet, or carries the basic content twice, fails the ledger', () => {
     const dir = 'orbit-explore';
     expect(ledgerFailure(dir, body(dir))).toBeNull();
-    expect(ledgerFailure(dir, body(dir).replace(DECISION_WRITING_BASIC, () => LABELLED_FORM))).toMatch(/basic content occurs 0 times/);
-    expect(ledgerFailure(dir, body(dir) + '\n' + DECISION_WRITING_BASIC)).toMatch(/basic content occurs 2 times/);
+    // Today's bullet is the cut ledger's shared pair (cut-explore-onboard), whose undo meets either mutation first.
+    expect(ledgerFailure(dir, body(dir).replace(DECISION_WRITING_BASIC, () => LABELLED_FORM))).toMatch(/DW-bullet's after occurs 0 times/);
+    expect(ledgerFailure(dir, body(dir) + '\n' + DECISION_WRITING_BASIC)).toMatch(/DW-bullet's after occurs 2 times/);
+    // The swap's own check, on the text the cut ledger's undo leaves: the records-by-setting basic content.
+    const undone = undoCut(dir, body(dir));
+    const text = 'text' in undone ? undone.text : '';
+    expect(text).toContain(RECORDS_BY_SETTING_BASIC);
+    expect(ledgerFailure('orbit-new-change', body('orbit-new-change').replace(DECISION_WRITING_BASIC, () => RECORDS_BY_SETTING_BASIC))).toMatch(/DW-bullet's after occurs 0 times/);
   });
 });

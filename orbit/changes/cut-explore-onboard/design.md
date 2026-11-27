@@ -50,7 +50,7 @@ and verify.
 
 ## Decisions
 
-### D1 — Explore's five moves, each read at the moment it serves
+### D1 — Explore's six moves, each read at the moment it serves
 
 Each move keeps the step's heading and basic content in the body and moves its procedure byte-equal to a reference
 (`skill_body_convention.md`). Every reference is a one-line title followed by its exported constant in `explore.ts`.
@@ -64,13 +64,20 @@ byte-equal to its source.
 | E1 | "Crystallization to named change", whole | `references/crystallization.md` | the heading; that no file is written before the reference's warning is confirmed | when a bare exploration is about to be named: the user asks to save it under a name, or accepts the Mode C prompt |
 | E2 | the emit section (`## Run-summary emit (named-mode only)` and its subsections, crystallization excepted) | `references/run-summary-emit.md`, holding the section whole as the body carried it, its timing reworded first (D2) | when each emit fires: the BEGIN emit after the scaffold (Mode C back-filling first), the two boundary rules and what is not a boundary, the wrap-phrase convention, the residency sweep before every boundary emit, no retro-fire, bare mode's non-emission; the `orbit emit explore` command; the shared read cue | before the session's first emit (the shared cue) |
 | E3 | "Minimal explore metadata", whole | `references/new-exploration.md` | the heading | when a new named exploration is scaffolded (Mode B new, or Mode C after its confirmation), or a resumed one lacks its `.openspec.yaml` |
+| E4 (Sal, at apply) | the Decisions entry's classification prose, after R3: the one-claim RULE/FACT/SCOPE test and the `Kind:` and `Disposition:` bullets | `references/decision-entries.md` | the production fence; the defaults (an absent `Kind:` means `rule`, an absent `Disposition:` `live`); the well-formed-ID sentence | before the session's first Decisions entry |
+
+E4 was added at apply. After every planned move, removal and R3 rewording, and the shortened bullet, explore measured
+20,914 characters (about 5,229 estimated tokens), 914 over. Per Risks the stage raised it to Sal with the candidates,
+and Sal chose this move over further upstream removals or leaving explore over (2026-11-27). The production fence stays
+in the body, since every named session writes entries. The prose that explains the slots is read before the first one.
 
 Mode C's row and the crystallization step's "(and the minimal `.openspec.yaml`, as in Mode B)" are reworded first to name
 `references/new-exploration.md`, so a confirmed crystallization reads the metadata fields and the citation offer before
 it scaffolds, rather than reaching them through Mode B.
 
 The "substantive decision" test stays in the body: the Mode C prompt fires on it, so it is read before any reference.
-The status header and Decisions-entry productions stay in the body, since every named session writes them.
+The status header and Decisions-entry productions stay in the body, since every named session writes them (E4 moves the
+Decisions entry's prose, not its production).
 The paragraph saying the three productions are mirrors is reworded: two are in the body and the Mechanism production is
 in its reference. The six-section scaffold's Mechanism placeholder now points at that reference, where it said "the
 entry grammar below".
@@ -174,7 +181,9 @@ without it:
   values and the default, where the key lives, the citation selecting the target with the uncited fallback, the one-note
   degradation, READY as orbit's terminus, merging as the user's act, the tail's steps and the program PR's append.
 - The longest phase paragraphs (run-summary emission, cold-start orientation, propose, address-reviews, system review)
-  are tightened.
+  are tightened. Measured at apply, these left onboard at about 5,056 tokens. The four next longest (explore, proposal
+  review, apply, archive), the address-reviews table row, the opening notes and the editorial-review bullet were then
+  tightened too, the same way and keeping every fact, so onboard fits.
 - "15 commands" becomes 14, matching the table's fourteen rows. It is residue of bulk-archive's removal at
   `cut-propose-archive`.
 
@@ -191,7 +200,7 @@ hashes, as `cut-propose-archive` set up.
 
 | edit | pair kind |
 |---|---|
-| D1's five moves | `moved`, anchors unique in each new reference |
+| D1's six moves | `moved`, anchors unique in each new reference |
 | the pointers and the emit timing reworded before a move, R2, R3, D2's joined sentence, D4's rewordings | `reworded` |
 | D2's Guardrails lines | `restated` |
 | D2's three upstream removals | `removed`, naming R-rop2-13 |
@@ -253,9 +262,9 @@ lines. That is a lowering (G2), and `skill_body_convention.md`'s budget rule and
 
 ## Touchpoints
 
-- `src/core/templates/workflows/explore.ts` — the body; five new references (`mechanism-entries.md`, `concluding.md`, `crystallization.md`, `run-summary-emit.md`, `new-exploration.md`).
+- `src/core/templates/workflows/explore.ts` — the body; six new references (`mechanism-entries.md`, `decision-entries.md`, `concluding.md`, `crystallization.md`, `run-summary-emit.md`, `new-exploration.md`).
 - `src/core/templates/workflows/onboard.ts` — the body.
-- `src/core/disciplines.ts` — `DECISION_WRITING_BASIC`.
+- `src/core/disciplines.ts` — `DECISION_WRITING_BASIC`; `RUN_SUMMARY_EMIT_SKILLS` gains explore.
 - `src/core/explore-grammar.ts` — read, not edited: its productions are interpolated where D1 puts them.
 - `replay/cases/explore/case.yaml` — its `break:`.
 - `skill_body_convention.md` — the budget rule's line-ceiling sentence, the eleven-body example's count, the Exceptions paragraph.
@@ -265,7 +274,7 @@ lines. That is a lowering (G2), and `skill_body_convention.md`'s budget rule and
 - `orbit/scenario-ledger.yaml` — the two decision-writing `untestable` reasons that cite the bullet's words.
 - `test/core/templates/skill-body-budget.test.ts` — ceilings; explore's line ceiling.
 - `test/core/templates/skill-templates-parity.test.ts` — hashes.
-- `test/core/templates/*.test.ts` — the tests that read moved or reworded text (orbit-generated-surface, orbit-content-fidelity, run-summary-read-cue, verify-scenario-map, commit-step).
+- `test/core/templates/*.test.ts` — the tests that read moved or reworded text (orbit-generated-surface, orbit-content-fidelity, run-summary-read-cue, verify-scenario-map, commit-step, blind-pair-command), and the new explore-upstream-removals.
 - `test/core/explore-grammar-parity.test.ts` + `test/core/parsers/explore-rules.test.ts` — the exemplar's new home.
 - `test/commands/config-profile.test.ts` — explore's reference list.
 - `test/replay/cases.test.ts` — read, not edited: it checks the explore break.

@@ -284,8 +284,9 @@ describe('rc17b — the external-handoff reference (task 4.4)', () => {
 describe('rc17b — onboard points instead of enumerating (task 5.1)', () => {
   // @scenario text orbit-onboard :: Identity statement section :: Enumerates orbit-distinctive layers
   it('names the reviewer axis and leaves its values to the review skill; no "commits findings back"', () => {
-    expect(onboard).toContain('`/orbit:review` also carries a REVIEWER axis');
-    expect(onboard).toContain("its values and their shorthands are the review skill's to state, not this page's");
+    // cut-explore-onboard (design D4): the identity bullet tightened in place, the axis still named and its values left.
+    expect(onboard).toContain('Its REVIEWER axis says who runs the pass');
+    expect(onboard).toContain('the review skill states its values and shorthands');
     expect(onboard).not.toContain('commits findings back');
     expect(onboard).not.toMatch(/--reviewer in-context\\?\|fresh\\?\|external/);
     expect(onboard).toContain('`--reviewer` picks who runs the pass — the review skill lists its values and shorthands.');
