@@ -297,7 +297,7 @@ landed.
 ### Stage cut-explore-onboard — the two bodies whose text is their own
 
 Depends-on: replay-set, inventory
-Complete: [ ]
+Complete: [x] 2026-11-27 (Sal)
 
 The inventory's cut list for explore and onboard, applied (`orbit/explore/inventory/sketches/explore-propose-archive-onboard.md`):
 the text phase 1 left alone, with R-rop2-13's removal of explore's illustrative upstream text.
@@ -416,3 +416,11 @@ Exit criteria:
   CI run 45705173188 on `a351ba56` (the last walk commit): Linux and lint passed, and macOS failed only the known
   zsh-completion test. The run on the archive commit had not finished when Sal ratified. Explore (11,904) and onboard (5,610)
   are the two bodies still over G1. `cut-explore-onboard` is next, the last cut stage, then `close`.
+- 2026-11-27 — Architect session after `cut-explore-onboard`'s archive (`acd4fb81`). Sal ratified it: explore and
+  onboard under 5,000 estimated tokens (4,996 and 4,988 by `npm run size:report`, down from 11,904 and 5,610), so no
+  generated body is over G1; explore's line ceiling deleted and the edited bodies' character ceilings lowered; no cut
+  marked for replay; R-rop2-13's removals named in its Shipped as. The inventory's reopen trigger fired at this apply
+  (explore stayed 914 characters over after every planned cut) and was answered by Sal's ruling there, the sixth move
+  to a reference, so the inventory does not reopen. CI run 46050432669 on `acd4fb81`: lint and the Linux leg passed;
+  macOS failed the known zsh-completion test and `pr/commit.test.ts`'s ignore-rule case, both red before this stage
+  (run 45872674537 on `a71057ea`) and neither touched by it. Every cut stage is now complete; `close` is next.
