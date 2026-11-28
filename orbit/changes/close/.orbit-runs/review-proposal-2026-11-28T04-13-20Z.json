@@ -1,0 +1,156 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-28T04:13:20Z",
+  "change": "close",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 1
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/close/design.md",
+      "line": 23,
+      "title": "The ceiling history's count is wrong: fourteen character ceilings were lowered, not twelve",
+      "recommendation": "Correct the sentence to what the comparison shows: every one of the fourteen surviving bodies' character ceilings is lower at HEAD than at e2eabb02 (explore 49997 to 20000, new-change 4874 to 4797, ... architect 15601 to 15525), bulk-archive's left with its workflow, and explore's line ceiling (664) was deleted. None rose across 9c0fed17, 53c39b77, e48afb0e or 5efa3775. This is the G2 evidence D5 says the archive cites, so the figure should be right before it is copied into the status log.",
+      "reproduction": "git show e2eabb02:test/core/templates/skill-body-budget.test.ts and the HEAD copy, CHARACTER_CEILING maps compared key by key: all 14 keys present at HEAD have a smaller value at HEAD; the 15th key (orbit-bulk-archive-change) is absent at HEAD."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "orbit/changes/close/specs/orbit-skill-generation/spec.md",
+      "line": 8,
+      "title": "The requirement says the suite holds the rule, but its last two rows are held by no test",
+      "recommendation": "Lines 8-9 ('The rule is held by the suite') and line 20 ('the suite carries the rule') claim enforcement for every row, yet rows 5 and 6 (a breach fixed by moving procedure; a ceiling below the cap lowered as a named edit and never raised) are checked by no test, as design D4 itself says ('caught only in review, as today'). Row 6 also makes lowering a lasting obligation on every future change that shrinks a body without saying what a 'named edit' is once the program's stage names no longer apply. State which rows the suite holds and which review holds, and either define the lowering obligation or narrow it.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep all six rows; reword lines 8-9 and 20 so the suite holds rows 1-4 and review holds rows 5-6 (a raise below the cap cannot be told from a re-recording), and define a named edit as the ceiling's comment naming the change and the previous ceiling."
+        },
+        {
+          "label": "B",
+          "body": "Narrow row 6 to 'never raised to fit a body' (drop the lasting lowering obligation, which the program's stages carried), and reword lines 8-9 and 20 as in A."
+        }
+      ]
+    },
+    {
+      "pass": "3",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "orbit/changes/close/design.md",
+      "line": 78,
+      "title": "The archive's CLAUDE.md edit is scoped to the program paragraph, but four other lines name phase 2 live",
+      "recommendation": "D5 (and proposal.md:27, Touchpoints line 97) name only 'the program paragraph'. After archive CLAUDE.md would still say '## Programs: one live' (line 52), automate-dev-flow 'is paused until reduce-orbit-phase2 is done' (line 82), 'reduce-orbit-phase2.md — the live program' (line 116), and 'The live program is orbit/architecture/reduce-orbit-phase2.md; automate-dev-flow is paused until it is done' (When in doubt, line 183). Name every site in D5 and the Touchpoints so the archive tail updates them together, including what the heading becomes when no program is live."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "orbit/changes/close/tasks.md",
+      "line": 8,
+      "title": "The cross-check cannot 'name both figures' when a constant is missing",
+      "recommendation": "Task 2.2 says the function fails naming both figures when either constant is missing, and the spec's third scenario (spec.md:38) says the same; a missing constant has no figure to name. Say the failure names the file and each constant the pattern did not find, and names both figures and their product against the cap when both are present. The scenario's WHEN covers only the disagreeing case; a missing-constant case may want its own clause."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/close/proposal.md",
+      "line": 18,
+      "title": "The proposal states the looser 'never past the cap' rule and omits the no-raise-below-cap row",
+      "recommendation": "proposal.md:18 says a breach is fixed 'never by raising a ceiling past the cap'; skill_body_convention.md:34 says 'never by raising a ceiling', and the spec's row 6 keeps that ('never raised to fit a body'), as D4 says the requirement must ('not a looser one'). Add the row-6 rule to the proposal's list so the three artifacts state one rule."
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/skill-body-budget.test.ts",
+      "line": 15,
+      "title": "The test's doc comment gives explore's line count as 345; the size report reads 344",
+      "recommendation": "When task 3.1 rewrites the doc comments, take explore's line figure from npm run size:report too (344 at HEAD), and consider whether the describe title 'skill body budget (R-rop-8)' should name the new orbit-skill-generation requirement, since the task's aim is to state the cap as a lasting requirement rather than a program's goal."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed every figure the artifacts cite against current state: npm run size:report after a fresh build matches the proposal's numbers (explore 19,984 / 4,996, onboard 19,951, none over); every HEAD ceiling equals its body's size plus 5% rounded up or the 20,000 cap, so the new rule holds on day one; the per-commit ceiling diffs from e2eabb02 through 5efa3775 show no rise; the cap and the report's ceil(chars/4) agree exactly at 20,000/20,001; CI runs npm test, size:report and validate:skills. The anchored-parse approach (D3) is sound given the script's top-level main(). The one baseline text that reads oddly beside the new requirement is orbit-conventions' tighten-bodies ledger row (spec.md:1896) about explore's 664/669 line ceiling, but that requirement is scoped to its own past change, so it is not raised as a finding. Risk texture is low: the change edits a test, two comments and a convention line, touches no generated body, and adopters are unaffected.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change is small, measured and correct in its mechanism: the cap check and the cross-check are well specified, the figures it rests on are verified, and nothing it adds contradicts the baseline. What needs fixing is wording that would otherwise be copied into lasting records: the ceiling-history count that the G2 grade will cite, the requirement's claim that the suite holds rules only review can hold, and the CLAUDE.md sites the archive must update together. Each is an artifact edit at the walk, none changes the design, so it can move forward once those are settled."
+  },
+  "final_assessment": "0 critical, 3 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews close",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "d21034197bf306c743128f3f9b297453744b80c3",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}
