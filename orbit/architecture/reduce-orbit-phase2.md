@@ -40,9 +40,13 @@ Ratified by Sal, 2026-11-20, at the opening session.
   body over.
 - **G2 — Growth is held.** Phase 1's per-body budget test keeps running in the suite and the size report in CI, and no
   ceiling is raised during the program. Fails if a ceiling rises.
-- **G3 — The replay set grades every cut meant to keep behaviour.** No move to a reference and no rewording that changes
-  what a session reads at the defaults lands before the replay set (R-rop2-2) has run on it before and after; a
-  removal under G0 needs none, its ruling being its record. Fails on one such cut landing ungraded.
+- **G3 — The replay set grades every cut postulated to change what a session does.** A cut the inventory's cut list
+  postulates major, one expected to change significantly what a session does at the defaults, lands only after the
+  replay set (R-rop2-2) has run on it before and after, `npm run replay:compare` no worse. A move to a reference read at
+  a named moment, the basic content kept in the body, and a rewording that keeps a step's meaning land without a replay
+  unless postulated major; a removal under G0 needs none, its ruling being its record. Each cut list entry carries its
+  replay mark, which a cut stage's proposal reviewer may contest. Fails on one cut postulated major landing ungraded.
+  (Amended by R-rop2-10, 2026-11-23; as ratified 2026-11-20 it graded every cut meant to keep behaviour.)
 
 ## Rulings index
 
@@ -86,6 +90,59 @@ Ratified by Sal, 2026-11-20, at the opening session.
   stage's archive appends its entry, and Sal merges once at arc-done. From that propose on, the program's work, the
   `inventory` exploration and architect sessions included, is done on that branch. Chosen over a branch and PR per change
   and over no PR handling.
+- **R-rop2-8** (Sal, 2026-11-23) — `replay-set`'s CI repair lands as a direct commit on the program branch, outside the
+  change lifecycle, recorded here (`8a85907f`): its `npm pack --dry-run` check had made CI's npm rebuild `dist/`
+  mid-suite. The stage stays unratified until CI's Linux leg runs green with `validate:skills` executing, its fourth
+  exit criterion. Chosen over a small change citing the stage and over an exploration of the CI picture first.
+- **R-rop2-9** (Sal, 2026-11-23) — Phase 1's concluded exploration `evaluation` stays concluded. Its reopen trigger ("the
+  replay set S15 is built") has fired, and this program answers it: the two replay-gated cuts it deferred (D-eval-1:
+  stage D's mode-only sections moved to references, and the decision-writing bullet) are the `inventory` stage's
+  inputs, which opens as its own named exploration citing this doc. Chosen over reopening `evaluation`, which is cited
+  to phase 1's doc, and over re-weighing all of D-eval-1 to D-eval-8 in the inventory.
+- **R-rop2-10** (Sal, 2026-11-23; the inventory's D-inv-1) — A cut is replayed only when it is postulated to change
+  significantly what a session does ("I'm not as concerned about replay testing now unless we make a major change and
+  postulate that it will significantly change the system"). Each cut list entry carries its replay mark, yes only when
+  postulated major; moves to references read at named moments and rewordings that keep a step's meaning land without a
+  replay, and a removal never needed one (G0). The cut stages' proposals plan a replay task only where an entry's mark
+  says yes, and the baseline stays available to run at any time. Amends G3 (its text edited above) and R-rop2-2's
+  "started by Sal before and after a cut". Chosen over replaying every cut meant to keep behaviour, G3 as ratified.
+- **R-rop2-11** (Sal, 2026-11-23; D-inv-14, G0) — bulk-archive is removed. Evidence (`orbit/explore/inventory/explore.md`):
+  no record of it ever running in this repository (it writes no run summary and no trail names a bulk archive, D-inv-6);
+  orbit is single-user and single-session, concurrency a non-goal; its per-change steps mirror archive's and cost 20
+  template edits since June to keep in step (phase 1's D-eval-2); and the parallel lanes D-eval-2 waited on belong to
+  `automate-dev-flow`, which R-rop2-3 rescopes first. The removal takes the template
+  `src/core/templates/workflows/bulk-archive-change.ts`, the skill `orbit-bulk-archive-change` with its references and
+  its `/orbit:bulk-archive` launcher, and its mentions in the baseline specs `orbit-architect`,
+  `orbit-archive-modifications`, `orbit-base-fingerprints`, `orbit-conventions`, `orbit-engine-gates`,
+  `orbit-lifecycle-consent`, `orbit-run-summary-emit` and `orbit-decision-records`, in onboard's command table, the
+  tests and the docs; D15's full surface goes from 15 workflows to 14. An adopter archives several changes one at a time
+  with `/orbit:archive`. Landed by `cut-propose-archive`. Chosen over keeping it under 5,000 by moving two per-change
+  steps to references (D-inv-3, superseded).
+- **R-rop2-12** (Sal, 2026-11-23; D-inv-15, G0) — address-reviews' batch mode and the blind-pair disagreement test are
+  removed. Evidence: neither fired in the 476 walk logs on this repository's trails (438 `per_finding`, 30 with the
+  legacy value `walk`, 8 written before the field existed, none `batch`, measured 2026-11-24 over the tracked logs; no resolution carries a `disagreement`; D-inv-7). The removal takes the three batch triggers
+  (`--batch`, the verbal phrase, the command-shaped mid-walk switch) and their records (`walk_mode_source`,
+  `walk_mode_shifted_at_finding`), the disagreement rule and its `disagreement` record, and their text in the
+  address-reviews, review, audit-drift and onboard templates and the baseline specs `orbit-address-reviews`,
+  `orbit-decision-records`, `orbit-audit-drift` and `orbit-engine-gates`. Walk mode becomes the only mode, and a
+  contradiction between a pair's halves is walked like any two findings; logs written before the removal keep their
+  fields, and readers keep reading them. Landed by `cut-review-walk`. Chosen over moving both to references.
+- **R-rop2-13** (Sal, 2026-11-23; D-inv-16, G0, R-rop2-4) — explore's illustrative upstream text is removed ("ok to remove
+  some of openspec's original stuff"): the four "Handling Different Entry Points" dialogues, the ASCII box under
+  "Visualize" (the stance already says to use diagrams liberally), "Ending Discovery"'s summary template (its one-line
+  point kept) and the Guardrails lines repeating the opening's "don't implement" and the stance. With the inventory's
+  moves (D-inv-5's two references, the crystallization flow, the emit timing, the new-exploration metadata, the propose
+  composition in one sentence) explore projects from 11,816 to about 4,926 estimated tokens, about 4,430 tightened.
+  Landed by `cut-explore-onboard`. Chosen over keeping one of the four examples (D-inv-11, superseded).
+- **R-rop2-14** (Sal, 2026-11-24, at `cut-review-walk`'s propose) — The chain end step's paragraph saying what the three
+  prompt tags mean and what a chained command records moves from the basic content of the five chaining bodies
+  (propose, ff, apply, review, address-reviews) to `references/chain-end-step.md`, which already carries it. Each body
+  keeps a one-line pointer to it (the inventory's D-inv-2, settled under Sal's delegation). Amends `reduce-orbit-phase1`'s
+  R-rop-6, which kept the paragraph in each chaining body so that a chained command, in this session or in a fresh one,
+  meets no tag its body does not explain. Now the body points at the explanation. Named limit: a chained command in a
+  fresh session, or after a compaction, follows the pointer to learn what its tags mean; `automate-dev-flow`'s rescoping
+  (R-rop2-3) takes this up. The move saves about 250 estimated tokens in each of the five bodies, and address-reviews
+  needs it to fit (G1). Chosen over keeping R-rop-6 and fitting by further tightening.
 
 ## Program stages
 
@@ -95,7 +152,7 @@ three cut stages depend on `replay-set` and `inventory` and not on each other (R
 ### Stage replay-set — the replay set that grades cuts meant to keep behaviour
 
 Depends-on: (none)
-Complete: [ ]
+Complete: [x] 2026-11-23 (Sal)
 
 The brief's S15 as R-rop2-2 sets it: cases, fixtures and a script in this repository that run orbit's built skills as
 real headless sessions, several runs per case, graded by facts orbit records. Never shipped; started by Sal and billed
@@ -109,6 +166,27 @@ Exit criteria:
   shown able to fail on a deliberately broken body.
 - One baseline run on the bodies as phase 1 left them, recorded with its cost.
 - `claude plugin validate` over the generated skills runs in CI beside the size report (R-rop2-5, G2).
+
+Shipped as (2026-11-23; archived as `orbit/changes/archive/2026-11-23-replay-set/`; the charter stands, its second
+exit criterion met in a weaker form for three cases, below). The spike found that `claude plugin eval`'s sandbox makes
+the shell's workspace read-only, so `orbit emit` cannot write a record, and that `skill-creator` runs a case as a
+subagent graded by a model; the fallback was taken, a `claude -p` runner of this repository's own (`replay/`, never
+shipped). Each run packs one commit's build and installs it into a throwaway fixture per case behind a walk-up shim.
+Six cases (explore, propose, apply, the system review, the walk, archive) are seeded at the state just before their
+command by orbit's own emits. Each session is graded only by what orbit printed or wrote: printed paths only from
+orbit's own calls, and only records later than the seed. Each grader is shown failing on its seed and passing on its
+command's result in `npm test`. `npm run replay:compare` says whether a cut is no worse than a baseline: any case a run
+did not fully grade has no verdict. `npm run validate:skills` runs `claude plugin validate --strict` over a freshly
+generated surface as a failing CI step, Claude Code pinned at 2.1.329.
+
+Sal's billed runs cost $14.94: plumbing on Sonnet $1.15 (27 of 27 facts), broken bodies on `claude-opus-5-5` $5.89 over
+three runs, and the baseline on `claude-opus-5-5` $7.90 (three runs a case, all 81 facts, Claude Code 2.1.330,
+`replay/results/2026-11-23T16-08-25Z-6076d85-baseline.json`). Every case was shown able to fail, but the breaks had to
+be strengthened twice. A section cut from a body was recovered from the reference it pointed to. With references cut
+too, the review, walk and archive sessions still rebuilt the emit step from `orbit emit --help`, the write gate's
+refusals and the seeded trail's records of the same kind, and failed only when their whole body was emptied. So those
+three cases catch a cut that loses the workflow, not one that loses only the emit step: evidence for `inventory` (their
+emit sections are recoverable text for this model).
 
 ### Stage inventory — every over-budget body, section by section
 
@@ -131,37 +209,141 @@ Exit criteria:
 ### Stage cut-review-walk — review and address-reviews
 
 Depends-on: replay-set, inventory
-Complete: [ ]
+Complete: [x] 2026-11-25 (Sal)
 
-The inventory's cut list for review and address-reviews, the two largest shared-text bodies, applied and graded.
+The inventory's cut list for review and address-reviews, the two largest shared-text bodies, applied
+(`orbit/explore/inventory/sketches/review.md` and `address-reviews.md`), with R-rop2-12's removal of batch mode and the
+disagreement test.
 
 Exit criteria:
 - Both bodies at most 5,000 estimated tokens (G1), their ceilings lowered (G2).
-- The replay set run before and after, its grades no worse on every cut meant to keep behaviour (G3); every removal
-  named in the archive with its ruling (G0).
+- The replay set run before and after, its grades no worse, on every cut whose replay mark says yes (G3, R-rop2-10);
+  every removal named in the archive with its ruling (G0).
+
+Shipped as (2026-11-25; archived as `orbit/changes/archive/2026-11-25-cut-review-walk/`; the charter stands, with one
+amendment Sal ruled at apply, below). `npm run size:report` at archive reads review at 4,988 estimated tokens and
+address-reviews at 4,990, down from 9,602 and 10,921 (G1). Their character ceilings are 20,000, the G1 line itself
+rather than size plus 5%, so the suite fails as soon as either body regrows past 5,000 tokens. The ceilings of apply,
+ff and propose came down too, and onboard's stayed, its size plus 5% being over it (G2). No cut was marked for the replay
+set, so none was replayed (R-rop2-10). Every edit is named in a new cut ledger (`test/core/templates/cut-ledger.test.ts`
+and `cut-ledger-pairs.ts`, `orbit-conventions`' `A cut ledger names every body edit a cut stage makes`). It records the
+six bodies' hashes before the cut and each edit as moved, removed, reworded, restated or shared. The suite undoes the
+ledger and gets back the recorded bodies byte for byte, and phase 1's tightened-bodies ledger undoes it first (G0).
+Procedure moved to ten new references read at named moments: `discovery.md`, `triage-sources.md`, `sweep-record.md`,
+`reading-findings.md`, `redesign.md`, `report.md` and `cascade.md` for address-reviews, and `verification.md`,
+`fresh-dispatch.md` and `architecture-mode.md` for review. Review's flag and reviewer-selector tables moved into its
+existing `flags-detail.md`, which is read at Step 1. Removed under R-rop2-12: batch mode (the `--batch` flag and its
+phrases now walk finding by finding and say so, a mid-walk "batch the rest" is a delegation, and the payload fields
+`walk_mode_source` and `walk_mode_shifted_at_finding` are refused on a new log while old logs still read), and the blind
+pair's disagreement test (`orbit-address-reviews`' requirement removed). Of the specs D-inv-15 named, `orbit-audit-drift`
+and `orbit-engine-gates` were measured at propose and carry neither, so they are unchanged. Under R-rop2-14 the chain end
+step's tag paragraph left the five chaining bodies for `references/chain-end-step.md`, the bodies keeping a one-line
+pointer. Sal's amendment at apply: moving address-reviews' per-source paragraph and its scope forms out of the body ran
+against `orbit-run-summary-emit`'s `A body reads its run-summary detail before the session's first run-summary emit`, so
+that requirement is MODIFIED to allow it (a sixth capability). The tests that read moved or removed text follow it:
+`orbit-content-fidelity`, `walk-routing`, `discovery-parity`, `sweep-path-parity`, `verification-verdict-parity`,
+`chain-prompt-tags`, `blind-pair-command`, `orbit-generated-surface`, `config-profile`, `review-genre-brief`,
+`review-verification-branch`, `run-summary-read-cue`, `commit-step`, `reference-contents`, `reading-step-surface`,
+`account-reading-walk` and `tightened-bodies`. Three pins moved with dated notes: `moved-blocks`,
+`rc03b-untouched-modules` and eight `skill-templates-parity` hashes. New tests are `batch-mode-removed` and
+`decision-lane`, and the budget test's ceilings were lowered. Both review cycles ran as blind pairs. The system pair's
+external half found five moved reads landing after the decision they govern, and each was put back where a session
+first needs it.
 
 ### Stage cut-propose-archive — propose, archive and bulk-archive
 
 Depends-on: replay-set, inventory
-Complete: [ ]
+Complete: [x] 2026-11-25 (Sal)
 
-The inventory's cut list for propose, archive and bulk-archive, applied and graded; bulk-archive's future (phase 1's
-R-rop-16, a thin loop) is the inventory's to rule on, since it has never run here.
+The inventory's cut list for propose and archive, applied (`orbit/explore/inventory/sketches/explore-propose-archive-onboard.md`),
+and bulk-archive removed as R-rop2-11 rules (its future, phase 1's R-rop-16 thin loop, was the inventory's to rule on).
 
 Exit criteria:
-- The three bodies at most 5,000 estimated tokens, or bulk-archive removed by Sal's ruling (G0, G1); ceilings lowered (G2).
-- The replay set run before and after on every cut meant to keep behaviour (G3); every removal named in the archive.
+- Propose and archive at most 5,000 estimated tokens and bulk-archive removed (G0, G1); ceilings lowered (G2).
+- The replay set run before and after on every cut whose replay mark says yes (G3, R-rop2-10); every removal named in
+  the archive.
+
+Shipped as (2026-11-25; archived as `orbit/changes/archive/2026-11-25-cut-propose-archive/`; the charter stands).
+`npm run size:report` at archive reads propose at 4,616 estimated tokens and archive at 4,877, down from 7,982 and 7,041
+(G1). The character ceilings came down after the last edit: propose 33,523 to 19,386, archive 29,573 to 20,000, apply
+15,591 to 14,876, sync-specs 6,597 to 6,573 and onboard 23,567 to 23,562 (G2). No cut was marked for the replay set, so
+none was replayed (R-rop2-10). One premise the inventory gave for that does not hold (D-inv-4): the replay set's
+`propose` case is a consume-mode run, and its `staging-moved` grader checks Step 0d's move, which now lives only in the
+reference. Under R-rop2-10 the case was not run here, and the design's Risks entry names it. Propose's consume mode moved
+whole to a new `references/consume-mode.md`, read at mode detection's consume outcome. The body keeps the mode's heading
+and its read, and Steps 0a to 0d take their headings with them. `skill_body_convention.md`'s "The step keeps its heading"
+rule gained a sentence for that shape, at the system walk. Archive's AI-mediated consent, user-validation closure and
+failed brief save moved to `consent-at-entry.md`, `user-validation.md` and `brief-save.md`. Its PR entry observation and
+preflight moved into the existing `pr-archive-tail.md`, which gained a contents list, as `consume-mode.md` did. Apply's
+consent half moved to its own `consent-at-entry.md`. Removed under R-rop2-11: bulk-archive. Its template, launcher and
+registry entries are gone, and its skill and command joined the retired registries, so a plain `orbit update` removes
+them from an existing install. The clauses naming it as a live workflow left the specs, and the two Purposes that
+named it were edited in place at archive. What remains in `orbit-conventions`, `orbit-skill-generation` and
+`orbit-architect` names it as retired, or is one of the four historical statements D3 keeps as records of a past stage.
+Onboard, sync-specs and archive's summary schema dropped their mentions, the docs and `CLAUDE.md` count 14 workflows,
+and `docs/commands.md` says to archive several changes one at a time. Every edit is named in the cut
+ledger: 43 pairs (11 moved, 4 removed, 25 reworded, 2 restated, 1 retired), the `retired` kind being new for a deleted
+body. The suite undoes them after `cut-review-walk`'s, newest first (G0). The tests that read moved or removed text
+follow it: `orbit-content-fidelity`, `archive-user-validation`, `brief-save-step`, `signoff-hold-step`,
+`run-summary-read-cue`, `commit-step`, `moved-blocks`, `verify-scenario-map`, `orbit-generated-surface`,
+`chain-prompt-tags`, `pr-references`, `size-declaration-parity`, `deferral-refusals-parity`, and the tests that list the
+workflows. Parity hashes moved with dated notes: five function and five generated-skill hashes at apply, and two more of
+each at the system walk. The proposal was reviewed in-context and externally. The system review ran as a blind pair, and
+its walk put three things right: the consent read cue now says "before any write or anomaly prompt", as the ordering
+invariant does; archive Step 4.9 hands off to the reference's preflight section from the one result it holds; and task
+4.3's two entry-observation tests, missing until then, joined the suite. The verification pass found every resolution
+landed.
 
 ### Stage cut-explore-onboard — the two bodies whose text is their own
 
 Depends-on: replay-set, inventory
-Complete: [ ]
+Complete: [x] 2026-11-27 (Sal)
 
-The inventory's cut list for explore and onboard, applied and graded: the text phase 1 left alone.
+The inventory's cut list for explore and onboard, applied (`orbit/explore/inventory/sketches/explore-propose-archive-onboard.md`):
+the text phase 1 left alone, with R-rop2-13's removal of explore's illustrative upstream text.
 
 Exit criteria:
 - Both bodies at most 5,000 estimated tokens (G1), explore's line ceiling and both character ceilings lowered (G2).
-- The replay set run before and after on every cut meant to keep behaviour (G3); every removal named in the archive.
+- The replay set run before and after on every cut whose replay mark says yes (G3, R-rop2-10); every removal named in
+  the archive.
+
+Shipped as (2026-11-27; archived as `orbit/changes/archive/2026-11-27-cut-explore-onboard/`; the charter stands, with one
+move Sal added at apply and one cut taken at propose, below). `npm run size:report` at archive reads explore at 4,996
+estimated tokens and onboard at 4,988, down from 11,904 and 5,610 (G1), so no generated body is over 5,000. Explore's
+line ceiling was deleted, the body falling from 664 lines to 344, and every edited body's character ceiling came down,
+explore's and onboard's to the 20,000 cap (G2). No cut was marked for the replay set, so none was replayed (R-rop2-10);
+the replay set's `explore` case now also removes explore's emit reference when it breaks the body.
+
+R-rop2-13's removals, each named by `orbit-explore-modifications`' `Upstream explore stance preserved`: the four
+"Handling Different Entry Points" dialogues with their heading, the ASCII box under "Visualize", "Ending Discovery"'s
+summary template (its two neighbouring sentences joined as one), and five Guardrails lines that the opening or a stance
+bullet already states ("Don't implement", "Don't rush", "Don't force structure", "Do visualize", "Do explore the
+codebase"); "Don't auto-capture", "Don't fake understanding" and "Do question assumptions" stay. Explore's procedures
+moved to six references read at the moment each serves: the Mechanism-entry grammar, closure outcomes, nine moves and
+exemplars (`mechanism-entries.md`), concluding and reopening (`concluding.md`), the crystallization warning
+(`crystallization.md`), a new exploration's metadata (`new-exploration.md`), its emit detail (`run-summary-emit.md`,
+explore joining the shared read cue as the twelfth body, its timing kept in the body as `orbit-run-summary-emit`
+requires), and the Decisions-entry explanations (`decision-entries.md`). That sixth move was not on the inventory's list.
+After every planned cut explore was still 914 characters over, and Sal chose it at apply (2026-11-27) over further
+upstream removals or leaving explore over. The orbit prose that stayed was tightened (R2, R3), its mirror notes and
+stage tags removed as `Tightened bodies carry no provenance` removes them elsewhere.
+
+Onboard fits by rewording in place. The inventory's O1, moving its PR-layer paragraphs to a reference, was not taken:
+`orbit-onboard` teaches the PR layer at propose and archive in every project, whatever its `pr:` says. Its
+disciplines list became one line each, its stage tags left (so the "D-arc Stage D2" that `orbit-onboard`'s `Enumerates
+orbit-distinctive layers` scenario names beside program architecture is provenance the body need not carry; neither of
+the scenario's tests asserts it), its longest paragraphs were tightened with every fact kept, and "15 commands" reads
+14. At propose Sal also took the shortening of the decision-writing bullet that thirteen bodies carry (D-inv-2): 514 to
+441 characters, its three branches kept. The cut ledger records fourteen bodies and 81 pairs, the bullet as one shared
+pair, and its undo reproduces every recorded body (G0). The tests that read moved or reworded text follow it:
+`orbit-generated-surface`, `orbit-content-fidelity`, `run-summary-read-cue`, `decision-writing-parity`,
+`tightened-bodies`, `explore-grammar-parity`, `parsers/explore-rules`, `blind-pair-command`, `onboard-orientation`,
+`config-profile`, `skill-body-budget`, `skill-templates-parity`, and the new `explore-upstream-removals`. The system
+review ran as a blind pair, and its walk put four things right: explore reads `decision-entries.md` before stating a
+concluded exploration's trigger, its residency sweep again names an existing entry's settled details, onboard says
+propose prompts for each open question, and the replay README names the build range a broken case supports. Sal kept
+the compaction limit as the delta names it (R-rop-18). The verification pass found every resolution landed. Explore sits
+16 characters under its cap: the next edit to it has to take text out first.
 
 ### Stage close — measure the program against its goals
 
@@ -192,3 +374,53 @@ Exit criteria:
   scope (R-rop2-4). Goals G0 to G3 ratified. Sal then folded three Claude Code skill tools in where each fits (R-rop2-5)
   and chose the six-stage shape with the inventory first (R-rop2-6); the stages are declared. `pr: per-architecture`
   stays (R-rop2-7), and Sal ratified the Premise with two sentences added for G0's removals and R-rop2-4's upstream text.
+- 2026-11-23 — Architect session after `replay-set`'s archive. Offered for ratification, Sal said not yet: its fourth
+  exit criterion is unmet. PR #47's CI had been red since the change's apply. On CI's npm, the runner test's
+  `npm pack --dry-run --ignore-scripts` ran the build and rewrote `dist/` mid-suite, failing five unrelated tests. The
+  job then stopped before the size report and `validate:skills`, so the validation step had never run. Fixed by a
+  direct commit (R-rop2-8, `8a85907f`). The pack check now runs in a scratch replica with no scripts, and the two
+  replay test files get a minute a test. Ratification waits on that run's Linux leg. Phase 1's `evaluation` stays
+  concluded, its reopen trigger answered by `inventory` (R-rop2-9). Open, outside this program: the macOS leg's
+  `completion-offers` test fails on a generated zsh script (`parse error near '<'`, line 32), red on main since
+  `e2eabb02`; filing an issue is Sal's. Open for the cut stages: Claude Code auto-updated between the billed runs
+  (2.1.329 to 2.1.330); holding it steady for the comparisons (`DISABLE_AUTOUPDATER=1`) is Sal's call.
+- 2026-11-23 — Architect session, continued: CI run 45258559650 on `c871f875` showed the Linux leg passing its tests,
+  its size report and `Validate generated skills` (the pinned `npx` copy of Claude Code 2.1.329 printed `Validation
+  passed`), R-rop2-8's condition. Sal ratified `replay-set`: all four exit criteria met, the second in the weaker form
+  its Shipped as records. The macOS leg stays red outside this stage: the zsh-completion test, and three
+  `invoked-coverage-oracle` shards that timed out at 300 s after passing in 73 to 91 s two runs earlier (a re-run of the
+  failed jobs is Sal's). `inventory` is next, as a named exploration citing this doc.
+- 2026-11-23 — Architect session after `inventory` concluded (D-inv-18, its emit `2026-11-24T01-06-24Z`). The stage
+  renders `ended-from-explore`, so it is offered no ratification and its slot stays `[ ]`. Its four decisions for this
+  doc are written as rulings: Sal's replay rule (R-rop2-10, from D-inv-1), amending G3, whose text is edited, and
+  R-rop2-2's "before and after a cut"; and Sal's three removals under G0, bulk-archive (R-rop2-11, D-inv-14),
+  address-reviews' batch mode and the blind-pair disagreement test (R-rop2-12, D-inv-15) and explore's illustrative
+  upstream text (R-rop2-13, D-inv-16). The three cut stages' charters now name their cut lists and removals, and their
+  G3 exit criteria read R-rop2-10's replay mark; `cut-propose-archive` no longer offers bulk-archive's fit as an
+  alternative to its removal. Every remaining body projects under 5,000 estimated tokens (D-inv-17). The three cut
+  stages depend on nothing left undone and not on each other; each proposes its own change from its cut list.
+  Recommended order (not ratified, any order is allowed): `cut-review-walk` first (the two largest bodies, and the most-run
+  command), then `cut-propose-archive`, then `cut-explore-onboard` last, since R-rop2-11 and R-rop2-12 both edit onboard's
+  text, so onboard is cut once, after both removals.
+- 2026-11-25 — Architect session after `cut-review-walk`'s archive (`6152961b`). Sal ratified it: both bodies under
+  5,000 estimated tokens (review 4,988, address-reviews 4,990, by `npm run size:report` at archive), their ceilings
+  capped at 20,000 characters and apply's, ff's and propose's lowered, no cut marked for replay, and every removal named
+  in its Shipped as with its ruling. CI run 45528040946 on `6152961b`: the Linux leg passed its tests, the size report
+  and `Validate generated skills`; the macOS leg failed the known zsh-completion test and `pr/commit.test.ts`'s
+  ignore-rule case, which this stage did not touch, which passed on macOS one run earlier and which flaked once locally
+  during the apply (outside this stage, intermittent). `cut-propose-archive` is next, as the recommended order says.
+- 2026-11-25 — Architect session after `cut-propose-archive`'s archive (`479c7f99`). Sal ratified it: propose and archive
+  under 5,000 estimated tokens (4,616 and 4,877 by `npm run size:report`), bulk-archive removed under R-rop2-11 and
+  named in its Shipped as, the edited bodies' ceilings lowered, and no cut marked for replay. Its Shipped as records that
+  D-inv-4's premise does not hold: the replay set's `propose` case grades the moved Step 0d and was not run (R-rop2-10).
+  CI run 45705173188 on `a351ba56` (the last walk commit): Linux and lint passed, and macOS failed only the known
+  zsh-completion test. The run on the archive commit had not finished when Sal ratified. Explore (11,904) and onboard (5,610)
+  are the two bodies still over G1. `cut-explore-onboard` is next, the last cut stage, then `close`.
+- 2026-11-27 — Architect session after `cut-explore-onboard`'s archive (`acd4fb81`). Sal ratified it: explore and
+  onboard under 5,000 estimated tokens (4,996 and 4,988 by `npm run size:report`, down from 11,904 and 5,610), so no
+  generated body is over G1; explore's line ceiling deleted and the edited bodies' character ceilings lowered; no cut
+  marked for replay; R-rop2-13's removals named in its Shipped as. The inventory's reopen trigger fired at this apply
+  (explore stayed 914 characters over after every planned cut) and was answered by Sal's ruling there, the sixth move
+  to a reference, so the inventory does not reopen. CI run 46050432669 on `acd4fb81`: lint and the Linux leg passed;
+  macOS failed the known zsh-completion test and `pr/commit.test.ts`'s ignore-rule case, both red before this stage
+  (run 45872674537 on `a71057ea`) and neither touched by it. Every cut stage is now complete; `close` is next.

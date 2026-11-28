@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-25T02:31:47Z",
+  "change": "cut-propose-archive",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Standalone propose for stage cut-propose-archive (reduce-orbit-phase2), seeded by the inventory's cut lists (D-inv-9, D-inv-10) and R-rop2-11. Propose's consume mode moves to references/consume-mode.md; archive's consent at entry (apply's likewise), user-validation closure, brief-save table and PR-attached entry/preflight/echo detail move to references; bulk-archive is retired through the retired-artifacts registry, with a new cut-ledger `retired` kind. Ten capabilities, 25 MODIFIED requirements copied whole from their baselines and fingerprinted; the spec sweep read the ten capabilities' specs whole (three parallel readers) and orbit-pr-lifecycle, orbit-onboard, which carry nothing to change. Size breaches (capabilities 10 > 3, requirements 25 > 12) declared by Sal at propose. Projected: propose about 4,640 estimated tokens on its moves; archive about 4,950 on its moves, about 4,450 after R2's tightening, its margin the design's first risk. No cut is postulated major, so none is replayed (R-rop2-10).",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase2",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase2",
+    "url": "https://github.com/las-sal/orbit-spec/pull/47",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review cut-propose-archive — proposal artifacts ready; review before apply"
+}

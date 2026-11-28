@@ -1,0 +1,16 @@
+# Propose from a staged exploration whose decisions are facts and scope only, so no Mechanism entry is owed.
+max_turns: 60
+max_budget_usd: 4
+start:
+  - args: [status, --json]
+    path: sprint
+    matches: '"name":"greet-name","kind":"explore"[\s\S]*"position":"exploring"'
+  - args: [list, --json]
+    path: changes
+    equals: []
+break:
+  # The emit step cut from the body AND its reference (the 2026-11-20 broken run read it).
+  file: .claude/skills/orbit-propose/SKILL.md
+  section: "## Run-summary emit (one-shot at command completion"
+  remove: [references/run-summary-emit.md]
+  grader: propose-emit-printed

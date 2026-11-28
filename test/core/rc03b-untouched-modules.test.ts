@@ -173,6 +173,10 @@ import { fileURLToPath } from "node:url";
  * readings`); a halting reading's `tripwire` stop is composed before the write gate and published, without
  * overwriting, after it and before the emit (`A halting reading writes a tripwire stop`), the archive writing none.
  * Every other hash here is unchanged.
+ * MOVED at cut-review-walk apply (2026-11-24) — a PLANNED act (its task 2.2, design D3, Touchpoints):
+ * `emit-composition.ts` only — address-reviews' `payloadFields` drop `walk_mode_source` and
+ * `walk_mode_shifted_at_finding`, retired with batch mode (`reduce-orbit-phase2`'s R-rop2-12), so a new payload carrying
+ * either is refused as unknown. Every other hash here is unchanged.
  */
 const PINNED: Record<string, string> = {
   "schemas/spec-driven/schema.yaml": "ce8a5274855b9bd8a69220a4691e5a8ba93c4676e8e5b9551afa2d53f6316f6a",
@@ -191,7 +195,7 @@ const PINNED: Record<string, string> = {
   "src/core/artifact-graph/state.ts": "f59f748b94cd94ca2fe022ec5aa66b3251dd1b2c00bddb9a17cbd9273a04d0f2",
   "src/core/artifact-graph/trail.ts": "39b5d110ef53b7e03f49ddf292e86db598a14f426a02e6d84142e16231e37d69",
   "src/core/artifact-graph/types.ts": "d83e0cc6d7fca7b80618ffbb7ce052ee68e35be79e7949a941e989b2e102392c",
-  "src/core/emit-composition.ts": "27d088d3b2496c06ca7094ef3dca8af1c9f0d49199cab0da00e0f77356fb319c",
+  "src/core/emit-composition.ts": "c82ad3cd707ecdf22632f31ae9287d0ea1d47f53e040114029190d66ef73d0dd",
   "src/core/report-render.ts": "d759878995ed8b5e5c70fb1165d88d134f0aeb91acfce99d155654d1506b9f36",
 };
 

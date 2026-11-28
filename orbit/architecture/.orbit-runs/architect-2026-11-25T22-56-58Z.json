@@ -1,0 +1,41 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-25T22:56:58Z",
+  "change": null,
+  "doc": "reduce-orbit-phase2",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Architect session after cut-propose-archive's archive: Sal ratified the stage, its exit criteria met (propose 4,616 and archive 4,877 estimated tokens, bulk-archive removed under R-rop2-11 and named, ceilings lowered, no cut marked for replay). The Shipped as records that D-inv-4's premise does not hold for the replay set's propose case. CI on a351ba56: Linux and lint green, macOS red only on the known zsh-completion test; the archive commit's run was still going. Status log entry written. The program brief is not saved (the program is not finished) and the sign-off hold reads off.",
+  "stages_touched": [
+    "cut-propose-archive"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "cut-propose-archive"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase2.md",
+        "why": "G0 to G3, R-rop2-10 and R-rop2-13, stage cut-explore-onboard's charter, and the two earlier cut stages' Shipped as (cut ledger, ceilings, the D-inv-4 note)"
+      },
+      {
+        "path": "orbit/explore/inventory/sketches/explore-propose-archive-onboard.md",
+        "why": "explore's and onboard's cut lists, with their replay marks"
+      },
+      {
+        "path": "orbit/explore/inventory/explore.md",
+        "why": "D-inv-16's removal of explore's illustrative upstream text and D-inv-5's two explore references"
+      },
+      {
+        "path": "test/core/templates/cut-ledger-pairs.ts",
+        "why": "the cut ledger the last cut stage extends: record the bodies before editing, name every edit"
+      }
+    ],
+    "next_command": "/orbit:propose cut-explore-onboard",
+    "model_hint": null,
+    "seam": "cut-propose-archive is ratified. cut-explore-onboard is the last cut stage (explore 11,904 and onboard 5,610 estimated tokens, the two bodies over G1), then close, on the branch reduce-orbit-phase2 (R-rop2-7)."
+  },
+  "next_recommended": "/orbit:propose cut-explore-onboard"
+}

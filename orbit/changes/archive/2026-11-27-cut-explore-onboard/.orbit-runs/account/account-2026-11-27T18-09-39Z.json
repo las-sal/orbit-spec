@@ -1,0 +1,16 @@
+{
+  "command": "account",
+  "timestamp": "2026-11-27T18:09:39Z",
+  "change": "cut-explore-onboard",
+  "model": "claude-opus-5-5",
+  "built": "The explore and onboard skills now each fit the 5,000 estimated tokens a compaction keeps (explore about 4,996, onboard about 4,988), so every orbit skill body fits. Explore drops openspec's illustrative examples (the four sample dialogues, the diagram box, the summary template and five Guardrails lines that repeat the stance), and six of its procedures now sit in reference files the body reads at the moment each is needed: the Mechanism-entry grammar with the nine moves and two exemplars, the Decisions-entry explanations, concluding and reopening, the crystallization warning, a new exploration's metadata, and the run-summary detail. Onboard keeps all its content and is reworded shorter in place. The one-line decision-writing reminder that thirteen skills carry is shorter, with the same three branches. Every edit is named in the cut ledger, and the character ceilings came down.",
+  "seams": "None. No new question is put to the user, and no setting changes what happens.",
+  "deviations": "Two, both inside the stage's charter goals. The inventory's cut list did not bring explore under 5,000 tokens, so at Sal's word (2026-11-27) a sixth move, not on the list, put the Decisions-entry explanations in a reference file. And onboard needed more rewording than the design first named: four more phase paragraphs, a command-table row, the opening notes and one identity bullet. Every fact was kept, and design.md now names them. No cut was replayed, as R-rop2-10 allows when no cut is expected to change what a session does.",
+  "defines": [
+    {
+      "term": "cut ledger",
+      "definition": "the test file that names every edit a cut stage makes to a skill body, as before-and-after pairs, and checks that undoing them gives back the body recorded before the stage"
+    }
+  ],
+  "replaces": "account-2026-11-27T17-04-20Z.json"
+}

@@ -333,6 +333,7 @@ Body.
         exists: true,
       });
 
+      // @scenario behaviour orbit-base-fingerprints :: Archive-time divergence guard in the spec-apply engine :: Stale snapshot refused
       it('refuses a stale snapshot and shows the sibling content as a deletion', async () => {
         stampFingerprints(tempDir, changeName);
         await fs.writeFile(path.join(capDir(), 'spec.md'), LIVE_WITH_SIBLING);
@@ -351,6 +352,7 @@ Body.
         expect(await fs.readFile(path.join(capDir(), 'spec.md'), 'utf-8')).toBe(LIVE_WITH_SIBLING);
       });
 
+      // @scenario behaviour orbit-base-fingerprints :: Archive-time divergence guard in the spec-apply engine :: Explicit override proceeds
       it('override proceeds and prints the override notice', async () => {
         stampFingerprints(tempDir, changeName);
         await fs.writeFile(path.join(capDir(), 'spec.md'), LIVE_WITH_SIBLING);
@@ -379,6 +381,7 @@ Body.
         expect(explicit.rebuilt).toBe(derived.rebuilt);
       });
 
+      // @scenario behaviour orbit-base-fingerprints :: Archive-time divergence guard in the spec-apply engine :: Own delta already applied (idempotent skip)
       it('idempotent write passes even with a stale fingerprint (own delta already applied)', async () => {
         stampFingerprints(tempDir, changeName);
         // Simulate a mid-flight sync: live now equals exactly what the delta would write
@@ -386,6 +389,32 @@ Body.
         await fs.writeFile(path.join(capDir(), 'spec.md'), applied.rebuilt);
         const { rebuilt } = await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
         expect(rebuilt).toBe(applied.rebuilt);
+      });
+
+      // @scenario behaviour orbit-base-fingerprints :: Archive-time divergence guard in the spec-apply engine :: Matching fingerprints pass clean
+      it('matching fingerprints are silent and write what an unguarded apply writes', async () => {
+        // Before stamping: no fingerprint is recorded, so the engine warns and writes (the pre-guard output).
+        const unstamped = await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
+        (console.log as any).mockClear();
+        stampFingerprints(tempDir, changeName);
+        (console.log as any).mockClear();
+        const { rebuilt } = await buildUpdatedSpec(update(), changeName, { changeDir: changeDir() });
+        expect(rebuilt).toBe(unstamped.rebuilt);
+        const logged = (console.log as any).mock.calls.map((c: any[]) => String(c[0])).join('\n');
+        expect(logged).not.toMatch(/fingerprint|can't verify|divergence/i);
+        expect(checkFingerprints(tempDir, changeName).map((e) => e.status)).toEqual(['verified']);
+      });
+
+      // @scenario behaviour orbit-base-fingerprints :: Archive-time divergence guard in the spec-apply engine :: Touched requirement missing from the live baseline
+      it('a fingerprinted requirement gone from the live baseline aborts on the engine\'s not-found error, writing nothing', async () => {
+        stampFingerprints(tempDir, changeName);
+        const renamed = BASE_SPEC.replace('### Requirement: Slash Command Configuration', '### Requirement: Slash Commands');
+        await fs.writeFile(path.join(capDir(), 'spec.md'), renamed);
+        expect(checkFingerprints(tempDir, changeName).map((e) => e.status)).toEqual(['missing']);
+        await expect(buildUpdatedSpec(update(), changeName, { changeDir: changeDir() })).rejects.toThrow(
+          'MODIFIED failed for header "### Requirement: Slash Command Configuration" - not found'
+        );
+        expect(await fs.readFile(path.join(capDir(), 'spec.md'), 'utf-8')).toBe(renamed);
       });
 
       it('direct call without options is still guarded (no programmatic bypass)', async () => {
@@ -436,6 +465,7 @@ Body.
     });
 
     describe('archive --yes without override', () => {
+      // @scenario behaviour orbit-base-fingerprints :: Archive-time divergence guard in the spec-apply engine :: Non-interactive CLI archive cannot clobber silently
       it('still refuses on divergence (non-interactive CLI path cannot clobber)', async () => {
         stampFingerprints(tempDir, changeName);
         await fs.writeFile(path.join(capDir(), 'spec.md'), LIVE_WITH_SIBLING);

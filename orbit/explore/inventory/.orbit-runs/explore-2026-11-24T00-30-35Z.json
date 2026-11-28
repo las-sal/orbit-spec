@@ -1,0 +1,19 @@
+{
+  "command": "explore",
+  "timestamp": "2026-11-24T00:30:35Z",
+  "change": "inventory",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Sal ruled three removals under G0: bulk-archive (D-inv-14, never run here, concurrency a non-goal), address-reviews' batch mode and blind-pair disagreement test (D-inv-15, neither fired in 476 walks), and explore's illustrative upstream text (D-inv-16: the four entry-point dialogues, the Visualize box, Ending Discovery's template, Guardrails' restatements). Every remaining body now projects under 5,000 estimated tokens (D-inv-17), explore about 4,926 on its cuts alone. No open questions remain; the inventory's exit criteria are met in the file, pending Sal's word to conclude.",
+  "decisions_captured": 17,
+  "open_questions_count": 0,
+  "open_questions_with_recommendation": "0 of 0",
+  "rules_total": 1,
+  "rules_open": [],
+  "key_defects": [],
+  "residuals": [],
+  "status": {
+    "token": "exploring"
+  },
+  "next_recommended": "/orbit:propose inventory — 1 live rule accounted; formalize when you are ready (or /orbit:explore inventory to keep refining)"
+}

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The `/orbit:address-reviews` command — resolves `@review:` markers anywhere in the repo (or review findings ingested via `--from-file` external markdown / internal JSON, or auto-discovered from a change's `.orbit-runs/`) by walking each through pushback → classify → fix → ripple-cascade → remove-marker. Walk-mode is the default (`--batch` opts in); cascade-by-default auto-applies ripple edits to IN-set files (`--no-cascade` opts out). Pushback is the primary discipline: verify against current state before fixing, suppress stale findings with evidence. Output is a resolution log (NOT a scorecard) with ✓ Resolved / ⚠ Stale / ⏸ Deferred / ✗ Escalated counts. Marker-removal invariant ensures markers don't leak into canonical artifacts.
+The `/orbit:address-reviews` command — resolves `@review:` markers anywhere in the repo (or review findings ingested via `--from-file` external markdown / internal JSON, or auto-discovered from a change's `.orbit-runs/`) by walking each through pushback → classify → fix → ripple-cascade → remove-marker. Every walk runs finding by finding; cascade-by-default auto-applies ripple edits to IN-set files (`--no-cascade` opts out). Pushback is the primary discipline: verify against current state before fixing, suppress stale findings with evidence. Output is a resolution log (NOT a scorecard) with ✓ Resolved / ⚠ Stale / ⏸ Deferred / ✗ Escalated counts. Marker-removal invariant ensures markers don't leak into canonical artifacts.
 ## Requirements
 ### Requirement: Address-reviews command available
 
@@ -10,7 +10,7 @@ The system SHALL expose a `/orbit:address-reviews` command that scans for `@revi
 
 **Discovery** (normative) is the fence below, rows tested in order, first match wins.
 
-Markers never suppress trail discovery: a stray marker hiding an outstanding pass is the disagreement this requirement exists to remove. A marker that RESTATES a discovered finding — at that finding's `file`, its text beginning with the finding's title, the form `/orbit:review --mark` writes — is walked AS that finding, in its pass's log, and removed at marker removal; the markers' log omits it, so no finding is walked twice. An audit-drift emit is discovered only while no log names it; once named it is NOT rediscovered, even when that walk left an entry deferred or escalated, because audit-drift is not a gate pass and the body reads no second predicate. The empty-result line lists such emits with their `--from-file` route, so a partially walked audit never reads as clean. A pass whose findings are all SUGGESTION-grade needs no walk for the GATE, which never holds on it, but it is still DISCOVERED while no walk record references it, through `unwalkedPasses`: severity ranks a finding and does not decide whether one is read. A pass with no findings is discovered by neither set. A blocked reviewed gate computes no resolution, and a superseded one gates nothing, so neither contributes passes; a pass of either is reached by `--from-file`. The single-newest-by-`<TS>` recency rule is retired. The body carries the fence below as a CHECKED MIRROR, held byte-equal by a parity test (R-crc-14's mirror corollary: an installed skill cannot open this spec); the fence is the owner's, and the body never edits its copy.
+Markers never suppress trail discovery: a stray marker hiding an outstanding pass is the disagreement this requirement exists to remove. A marker that RESTATES a discovered finding — at that finding's `file`, its text beginning with the finding's title, the form `/orbit:review --mark` writes — is walked AS that finding, in its pass's log, and removed at marker removal; the markers' log omits it, so no finding is walked twice. An audit-drift emit is discovered only while no log names it; once named it is NOT rediscovered, even when that walk left an entry deferred or escalated, because audit-drift is not a gate pass and the body reads no second predicate. The empty-result line lists such emits with their `--from-file` route, so a partially walked audit never reads as clean. A pass whose findings are all SUGGESTION-grade needs no walk for the GATE, which never holds on it, but it is still DISCOVERED while no walk record references it, through `unwalkedPasses`: severity ranks a finding and does not decide whether one is read. A pass with no findings is discovered by neither set. A blocked reviewed gate computes no resolution, and a superseded one gates nothing, so neither contributes passes; a pass of either is reached by `--from-file`. The single-newest-by-`<TS>` recency rule is retired. The skill carries the fence below as a CHECKED MIRROR in its `references/discovery.md`, which the body reads and follows at its discovery step, held byte-equal by a parity test (R-crc-14's mirror corollary: an installed skill cannot open this spec); the fence is the owner's, and the skill never edits its copy.
 
 ```
 DISCOVERY — rows tested in order, first match wins:
@@ -130,6 +130,11 @@ How the discovered work is written — one log per pass — is owned by `One inv
 - **WHEN** a user runs `/orbit:review <change-name>` (without `--mark`) and the pass carries a CRITICAL or WARNING, followed by `/orbit:address-reviews <change-name>`
 - **THEN** the just-written pass is discovered as outstanding and walked; `--mark` stays a stylistic choice
 
+#### Scenario: The fence is read from the skill's reference
+
+- **WHEN** the address-reviews skill is generated
+- **THEN** its body names `references/discovery.md` at the discovery step, and that reference carries the DISCOVERY fence byte-equal to this requirement's
+
 #### Scenario: Archived change reads markers and audit-drift only
 
 - **WHEN** the positional resolves to `orbit/changes/archive/<YYYY-MM-DD>-foo/`
@@ -196,11 +201,11 @@ The system SHALL accept a `--from-file <path>` flag and parse the file's content
 
 ### Requirement: Discover → triage → walk → ripple flag → report lifecycle
 
-The system SHALL execute five lifecycle stages: (1) discover markers (or load from file), (2) triage with user (numbered list, optional scoping) — the triage OPENS with a compact preview of every finding headed for the OBVIOUS-FIX lane (its one-line resolution named) BEFORE any fix lands, so the user can pull any item into the decision lane with a word (the over-classification guard: presentation-ordering, not a prompt); the preview derives from a PROVISIONAL classification (per-finding pushback has not yet run) — walk-time pushback may reclassify a finding, and a reclassified item is announced before its fix lands, (3) walk each marker per-finding (walk-mode default; `--batch` opts INTO legacy batch-mode), (4) ripple cascade (auto-apply ripples to in-scope files by default; `--no-cascade` opts out), (5) report a resolution log.
+The system SHALL execute five lifecycle stages: (1) discover markers (or load from file), (2) triage with user (numbered list, optional scoping) — the triage OPENS with a compact preview of every finding headed for the OBVIOUS-FIX lane (its one-line resolution named) BEFORE any fix lands, so the user can pull any item into the decision lane with a word (the over-classification guard: presentation-ordering, not a prompt); the preview derives from a PROVISIONAL classification (per-finding pushback has not yet run) — walk-time pushback may reclassify a finding, and a reclassified item is announced before its fix lands, (3) walk each marker per-finding (the only walk mode, per `Every walk runs finding by finding`), (4) ripple cascade (auto-apply ripples to in-scope files by default; `--no-cascade` opts out), (5) report a resolution log.
 
 A `resolved` entry closes its cycle by recording its sweep evidence after the ripple cascade and before marker removal, per `A resolved walk entry records its sweep evidence`; triage reads earlier walks for ripple misses, per `A ripple miss is attributed by the walk that finds it`.
 
-**Walk-mode is the default**: each finding receives its own pushback → classify → resolve → ripple-cascade → remove-marker cycle, where "resolve" follows the finding's lane — obvious-fix findings apply directly; decision-lane findings follow the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`: a full-prose briefing in chat, genuine back-and-forth, ratification by user chat directive or by the optional closure prompt). Batch-mode (all findings resolved together before any ripple) is opt-in via the `--batch` flag or by verbal batch-intent in the user's invocation message (per `Walk-mode by default with --batch opt-in`).
+**Every walk runs finding by finding**: each finding receives its own pushback → classify → resolve → ripple-cascade → remove-marker cycle, where "resolve" follows the finding's lane — obvious-fix findings apply directly; decision-lane findings follow the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`: a full-prose briefing in chat, genuine back-and-forth, ratification by user chat directive or by the optional closure prompt).
 
 **Cascade is the default**: when a finding resolves, ripple-flagged files are automatically updated unless they fall into one of four lifecycle-invariant OUT categories (audit trail, baseline specs, cross-change directories, safe-exclusions) — see `Ripple cascade by default`. `--no-cascade` reverts to v1 list-only behavior; the resolution log records ripple-flagged files in `flagged_not_applied` regardless of mode.
 
@@ -218,13 +223,8 @@ A `resolved` entry closes its cycle by recording its sweep evidence after the ri
 
 #### Scenario: Walk-mode lifecycle order per finding
 
-- **WHEN** the lifecycle runs in walk-mode (default) with multiple findings in scope
+- **WHEN** the lifecycle runs with multiple findings in scope
 - **THEN** each finding completes its full inner cycle (pushback → classify → resolve per lane → ripple-cascade → remove-marker) before the next finding's pushback begins; the user can interrupt between findings, and the resolution log captures partial completion if interrupted
-
-#### Scenario: Batch-mode lifecycle order
-
-- **WHEN** the lifecycle runs in batch-mode (`--batch` flag or verbal trigger)
-- **THEN** all findings complete pushback + classify + resolve in one pass before any ripple-cascade fires; ripples are applied once at the end as a single aggregated step; decision-lane findings STILL get their per-finding briefing and ratification (batch never merges decisions into one prompt). The resolution log records `walk_mode: "batch"`.
 
 ### Requirement: Pushback discipline applied per marker
 
@@ -411,55 +411,9 @@ The system SHALL NOT create new `@review:` markers as part of its own operation.
 - **WHEN** address-reviews runs
 - **THEN** the only marker creation possible is by `/orbit:review --as proposal --mark` (a different command); address-reviews never writes new markers
 
-### Requirement: Walk-mode by default with --batch opt-in
-
-The system SHALL execute Step 3's lifecycle in walk-mode by default — each finding completes its full inner cycle (pushback → classify → resolve per lane → ripple-cascade → remove-marker) before the next finding begins. Batch-mode (all findings resolved together before any ripple-cascade fires) is opt-in.
-
-**Opt-in triggers** (mutually-exclusive):
-
-1. **`--batch` flag** in the invocation: `/orbit:address-reviews <scope> --batch`. Canonical signal.
-2. **Verbal `--batch` in the invocation message only**: if the user's invocation message (the message that triggered the command) contains a clearly batch-intent phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or similar phrases conveying batch-resolution intent), the AI SHALL treat this as a verbal `--batch` and proceed in batch-mode. The verbal phrase MUST be in the invocation message; phrases inside subsequent walk-step responses do NOT shift mode unless they are clearly command-shaped (e.g., a bare "go batch" or "switch to batch" message).
-3. **Command-shaped mid-walk interruption**: during a walk, if the user sends a bare message that is unambiguously a mode-switch command ("go batch", "switch to batch", "batch the rest"), the AI SHALL treat this as a verbal `--batch` for the remainder of the walk. Ambiguous mid-walk phrases ("just fix them all" said in passing, "let's keep going") do NOT shift mode.
-
-**Walk-mode UX**: at each per-finding boundary, the AI resolves per the finding's LANE — an obvious-fix finding (previewed at triage) applies its resolution with no prompt and no discussion; a decision-lane finding follows the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`). No mandatory per-finding `AskUserQuestion` exists; the user can interrupt between findings.
-
-**Batch-mode UX**: the AI completes pushback + classify + resolve for all findings, then applies all ripple-cascades together as a final step. Decision-lane findings STILL receive their per-finding briefing and ratification (chat directive or closure prompt) — batch-mode does NOT suppress user decisions; it only suppresses per-finding-completion pacing for obvious-fix and stale findings, and one prompt NEVER spans multiple findings.
-
-**Resolution log capture**: the top-level `walk_mode` field in `address-reviews-<TS>.json` SHALL be set to `"per_finding"` in walk-mode and `"batch"` in batch-mode.
-
-#### Scenario: Default invocation runs in walk-mode
-
-- **WHEN** the user invokes `/orbit:address-reviews <change-name>` (no `--batch` flag, no batch-intent verbal phrase in the invocation message) and three findings are discovered
-- **THEN** the lifecycle walks each finding individually: pushback finding 1 → classify → resolve per lane → cascade → remove-marker → pushback finding 2 → … The resolution log records `walk_mode: "per_finding"`.
-
-#### Scenario: --batch flag triggers batch-mode
-
-- **WHEN** the user invokes `/orbit:address-reviews <change-name> --batch`
-- **THEN** the lifecycle completes all findings' pushback + classify + resolve without per-finding pacing checkpoints, then applies all ripple-cascades together. The resolution log records `walk_mode: "batch"`.
-
-#### Scenario: Verbal batch-intent in invocation message triggers batch-mode
-
-- **WHEN** the user's invocation message reads `/orbit:address-reviews <change-name> — fix them all` or `/orbit:address-reviews <change-name>` accompanied by a paragraph saying "batch them; I just want everything resolved"
-- **THEN** the AI recognizes the verbal batch-intent and proceeds in batch-mode. The resolution log records `walk_mode: "batch"` AND includes a top-level `walk_mode_source` field with value `"verbal"` (vs. `"flag"` when `--batch` was passed; `"command-shape-interruption"` when triggered mid-walk).
-
-#### Scenario: Mid-walk command-shaped interruption shifts to batch
-
-- **WHEN** during a walk, after finding 1 is resolved, the user sends the bare message "go batch" or "switch to batch"
-- **THEN** the AI shifts to batch-mode for findings 2, 3, …, N. The resolution log records `walk_mode: "batch"` with `walk_mode_source: "command-shape-interruption"` and an additional field `walk_mode_shifted_at_finding: 2` (the finding number at which the mode-shift occurred).
-
-#### Scenario: Ambiguous mid-walk phrases do NOT shift mode
-
-- **WHEN** during a walk, between finding 2 and finding 3, the user sends a response like "yeah let's just keep going" or "fine, fix them all" in the context of a back-and-forth conversation
-- **THEN** the AI does NOT shift to batch-mode; the walk continues. The threshold for command-shape recognition is a bare, unambiguous mode-switch message; conversational continuations are not triggers.
-
-#### Scenario: Batch-mode preserves per-finding decisions
-
-- **WHEN** batch-mode is active AND one of the findings is classified as "decision required"
-- **THEN** that finding STILL receives its full-prose briefing and per-finding ratification (chat directive, or a closure prompt covering exactly that one finding) even in batch-mode; only obvious-fix and stale findings short-circuit user interaction in batch-mode
-
 ### Requirement: Disjunctive recommendation fields surface as decision forks
 
-When a finding enters the DECISION lane, the system SHALL resolve it through the present → discuss → ratify protocol: (1) PRESENT — a full-prose briefing in chat carrying what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs; the briefing's option set comes from the detection machinery below; the briefing is the presentation — option content is never confined to prompt labels; (2) DISCUSS — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases); (3) RATIFY — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the `AskUserQuestion` is an OPTIONAL CLOSURE DEVICE, fired only AFTER the finding's discussion CONCLUDES without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (batch prompts prohibited; batch DELEGATION — an explicit user directive compressing the decision lane, e.g. "handle the rest, brief me only on real decisions" — remains the user's prerogative and is recorded in the resolution log).
+When a finding enters the DECISION lane, the system SHALL resolve it through the present → discuss → ratify protocol: (1) PRESENT — a full-prose briefing in chat carrying what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs; the briefing's option set comes from the detection machinery below; the briefing is the presentation — option content is never confined to prompt labels; (2) DISCUSS — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases); (3) RATIFY — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the `AskUserQuestion` is an OPTIONAL CLOSURE DEVICE, fired only AFTER the finding's discussion CONCLUDES without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (a prompt spanning several findings is prohibited; a mid-walk DELEGATION — an explicit user directive compressing the decision lane, e.g. "handle the rest, brief me only on real decisions" — remains the user's prerogative and is recorded in the resolution log).
 
 **Detection** (hybrid — structured path preferred, heuristic fallback) supplies the briefing's option set:
 
@@ -526,9 +480,9 @@ When a finding enters the DECISION lane, the system SHALL resolve it through the
 - **WHEN** a finding's pushback + classify yields "unresolvable" (needs information not currently available; will be filed as task / converted to TODO / escalated)
 - **THEN** the lifecycle proceeds to the unresolvable-path UX; no briefing-protocol prompt; the resolution log omits `recommendation_fork`
 
-#### Scenario: Batch delegation compresses the lane; batch prompts never fire
+#### Scenario: A delegation compresses the lane; multi-finding prompts never fire
 
-- **WHEN** the user issues an explicit mid-walk delegation ("handle the rest, only brief me on real decisions") OR batch-mode is active with decision-lane findings in scope
+- **WHEN** the user issues an explicit mid-walk delegation ("handle the rest, only brief me on real decisions") with decision-lane findings left in scope
 - **THEN** the AI resolves per the delegation's scope, briefing only what the directive reserves; every prompt that does fire covers exactly ONE finding — a single `AskUserQuestion` spanning multiple findings never fires; the resolution log records the delegation directive
 
 #### Scenario: Malformed `recommendation_options` array falls back to heuristic detection
@@ -544,12 +498,11 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 
 - **`sweep`** and **`ripple_miss_of`** (per-resolution): shapes owned by `A resolved walk entry records its sweep evidence` and `A ripple miss is attributed by the walk that finds it`; checked at the write gate per `orbit-emit-composition`.
 
-- **`remedy`**, **`routed_to`** and **`disagreement`** (per-resolution): shapes owned by `A walk entry records its remedy, and a REDESIGN leaves the walk` and `A disagreement between the halves of a pair is settled by one test`; recorded, never checked at the write gate.
+- **`remedy`** and **`routed_to`** (per-resolution): shapes owned by `A walk entry records its remedy, and a REDESIGN leaves the walk`; recorded, never checked at the write gate. A log written before the blind-pair disagreement test was removed (`reduce-orbit-phase2`'s R-rop2-12) may carry a per-resolution `disagreement` object; readers ignore it, and the walk writes none.
 
-- **`walk_mode`** (top-level, required): `"per_finding"` (walk-mode, the default) or `"batch"`.
-- **`walk_mode_source`** (top-level, required when `walk_mode == "batch"`): `"flag"` (via `--batch`), `"verbal"` (via verbal trigger in invocation message), or `"command-shape-interruption"` (via mid-walk command-shaped message). Omitted when `walk_mode == "per_finding"`.
-- **`walk_mode_shifted_at_finding`** (top-level, present only when `walk_mode_source == "command-shape-interruption"`): the 1-indexed finding number at which the mode shifted.
-- **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's batch-delegation rule).
+- **`walk_mode`** (top-level, required): `"per_finding"`, the only walk mode (`Every walk runs finding by finding`); a log written while batch mode existed may carry `"batch"`.
+- **`walk_mode_source`** and **`walk_mode_shifted_at_finding`** (top-level): RETIRED with batch mode (R-rop2-12). They appear only in logs written before its removal, and the emit surface refuses them on a new payload.
+- **`delegation_directive`** (top-level, optional): the user's verbatim mid-walk delegation ("handle the rest, only brief me on real decisions"), present when one was issued (per the decision-lane protocol's delegation rule).
 - **`reproduction_rerun`** (per-resolution, REQUIRED on every CRITICAL entry, absent below CRITICAL — rc02b): the Step 3a step-(0) result, one of the CLOSED values `reproduced` / `not-reproduced` / `cannot-run` (the marker carried a reproduction and it was re-run) or `unreproduced` (the marker carried none); the output or derivation rides `evidence`. Named in `references/run-summary-schema.md` and derived by the schema-table parity test; a reader that does not know the field ignores it (the `recommendation_options` precedent).
 - **`ratified_via`** (per-resolution, required for EVERY decision-lane resolution — forked or not): `"chat"` (a user-typed directive ratified the resolution) or `"prompt"` (the optional closure `AskUserQuestion` did). Absent on non-decision-lane resolutions (stale, trivial fix, unresolvable).
 - **`resolution`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (the briefing's options were AI-derived prose) OR when the ratified direction is off-menu; optional when `recommendation_fork.chosen` names a presented option (the label suffices).
@@ -572,11 +525,6 @@ The system SHALL extend the `address-reviews-<TS>.json` resolution-log shape wit
 
 - **WHEN** address-reviews completes a walk-mode run with 3 findings (all "decision required", no disjunctive recommendations) and 2 ripple-flagged files (both in the IN set; can be any extension)
 - **THEN** the emitted JSON contains `walk_mode: "per_finding"` (top-level), 3 entries in `resolutions[]` each WITHOUT a `recommendation_fork` field, and each entry's `ripple_cascade` shows the applicable cascaded paths in `applied` and any policy-skipped paths in `flagged_not_applied`
-
-#### Scenario: Batch-mode resolution log structure
-
-- **WHEN** address-reviews completes a batch-mode run (triggered by `--batch`)
-- **THEN** the emitted JSON contains `walk_mode: "batch"` and `walk_mode_source: "flag"`; per-resolution `ripple_cascade` fields are populated only at the end of the batch (each resolution's `applied`/`flagged_not_applied` reflects the final aggregated cascade pass)
 
 #### Scenario: Forked decision records its ratification channel at the entry level
 
@@ -634,7 +582,7 @@ The system SHALL record, on every resolution entry whose `outcome` is `resolved`
 | `scope` | non-empty string, a path | files or directories the walker examined beyond the entry's `file` and `ripple_cascade.applied` | each path must resolve; its contents are part of the retired check |
 | `kept` | `{path, why}`, both non-empty strings | a file that must keep this entry's `retired` strings: history that quotes the old wording, or a check that asserts its absence | the path is excluded from this entry's retired check |
 
-An entry whose `outcome` is `stale`, `deferred` or `escalated` carries no `sweep`: nothing was edited, so there is nothing to sweep. The walk body composes the record after the ripple cascade, as the entry's last step before marker removal; in batch mode, every entry's record is composed after the one aggregated cascade. `retired` names the wording the fix made FALSE; `searched` names how the walker looked for it, which may be broader. The checks themselves are owned by `orbit-emit-composition`'s `The walk write gate checks sweep evidence`; this requirement owns the shape. A walk log written before this requirement carries no `sweep` and is exempt by absence: no reader re-grades it.
+An entry whose `outcome` is `stale`, `deferred` or `escalated` carries no `sweep`: nothing was edited, so there is nothing to sweep. The walk composes the record after the ripple cascade, as the entry's last step before marker removal. `retired` names the wording the fix made FALSE; `searched` names how the walker looked for it, which may be broader. The checks themselves are owned by `orbit-emit-composition`'s `The walk write gate checks sweep evidence`; this requirement owns the shape. A walk log written before this requirement carries no `sweep` and is exempt by absence: no reader re-grades it.
 
 #### Scenario: A resolved entry carries all five keys
 
@@ -680,11 +628,11 @@ The walker attributes at TRIAGE, when it reads the finding against the trail's e
 
 ### Requirement: One invocation writes one log per discovered source
 
-A walk that discovers more than one source SHALL write ONE resolution log PER SOURCE — one per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found — each carrying its own `source_path` (the markers' log carries the scope, `source: "scope"`). `source_path` stays a single path, so the gate's per-pass record match and the trail reader read the logs unchanged. After ONE shared triage the walk proceeds SOURCE BY SOURCE in that order — pass sources in the engine's token order, oldest first, then the markers — and, in walk mode, writes each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order. An interrupted batch writes no log for any source whose log was not yet written. A mid-walk switch to batch (`Walk-mode by default with --batch opt-in`'s command-shaped interruption) applies to the sources whose logs are not yet written; the logs already written stand.
+A walk that discovers more than one source SHALL write ONE resolution log PER SOURCE — one per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found — each carrying its own `source_path` (the markers' log carries the scope, `source: "scope"`). `source_path` stays a single path, so the gate's per-pass record match and the trail reader read the logs unchanged. After ONE shared triage the walk proceeds SOURCE BY SOURCE in that order — pass sources in the engine's token order, oldest first, then the markers — and writes each source's log when that source's findings are walked, before the next source begins.
 
 A pass is REDISCOVERED when discovery lists it although a log already names it — its latest log left an entry `deferred` or `escalated`, names only some of its substantive findings, or is unreadable with a `resolution_summary` that leaves a deferral or escalation or carries no readable counts: each a reason the gate's resolution clause rejects a walked pass (an unreadable log whose counts are clean resolves its pass, per `orbit-engine-gates`' `Reviewed-gate pass condition — the computed convergence criterion`). It is presented at triage with that log's dispositions, where it has any, and a substantive finding that log does not name is walked. Its new log must name every substantive finding of the pass (the gate's per-pass match reads only the latest log), so each finding the earlier log closed is re-checked by pushback against current state: still fixed, it is recorded `stale`, with evidence naming the earlier log's token; reproduced — the fix regressed — it is walked again like any finding, with a fresh `sweep`. The open findings are walked again, except one the earlier log escalated with `remedy: "redesign"` and a `routed_to`: it is re-recorded `escalated` with the same `routed_to` and is not walked, since nothing it waits on has changed until the routed exploration's repair lands. Nothing is copied forward: a copied `resolved` entry would owe a fresh `sweep` the write gate checks against today's files.
 
-Triage runs ONCE across every discovered source and SHALL mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. A converged finding is walked in the log of the EARLIER pass; in each later pass's log it takes the earlier entry's disposition — `stale` with evidence naming the earlier log's token when the earlier entry is `resolved` or `stale`, and the same `deferred` or `escalated` disposition (and `routed_to`, when present) when the earlier entry stays open, so a later pass is never closed by a finding that is still open. The cross-pass split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record.
+Triage runs ONCE across every discovered source and SHALL mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. A converged finding is walked in the log of the EARLIER pass; in each later pass's log it takes the earlier entry's disposition — `stale` with evidence naming the earlier log's token when the earlier entry is `resolved` or `stale`, and the same `deferred` or `escalated` disposition (and `routed_to`, when present) when the earlier entry stays open, so a later pass is never closed by a finding that is still open. The cross-pass split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record. Two passes' contradictory findings are each walked like any finding, by pushback against current state.
 
 An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again.
 
@@ -717,11 +665,6 @@ An interrupted walk leaves the logs it completed on the trail; the sources whose
 
 - **WHEN** two passes report the same missing mechanism and the earlier log escalates it as an essential redesign
 - **THEN** the later log records it `escalated` with the same `routed_to`, and the later pass stays outstanding
-
-#### Scenario: A batch walk over two sources writes both logs after its cascade
-
-- **WHEN** a `--batch` walk discovers two passes
-- **THEN** every finding of both is resolved, the one aggregated cascade runs, and then both logs are written in token order
 
 #### Scenario: An interrupted walk resumes by rediscovery
 
@@ -768,24 +711,38 @@ The write gate does not check `remedy` or `routed_to`: the remedy is a judgement
 - **WHEN** pushback finds a finding already fixed at HEAD
 - **THEN** its entry is `stale` and carries no `remedy`
 
-### Requirement: A disagreement between the halves of a pair is settled by one test
+### Requirement: Every walk runs finding by finding
 
-When two discovered passes of one blind pair make CONTRADICTORY claims about one site — or about two sites whose premises contradict — the walk SHALL settle the contradiction by ONE cheap empirical test (a command run, or a constructed case derived against the current artifact), run AT TRIAGE before either pass's log is written, and SHALL record it on the entry in the LATER pass's log as `disagreement: {with: {pass, title, file}, test, observed}`: `with` names the other pass's token and its finding's title and file, `test` is the test as run, `observed` its output or derivation. Each claim's entry takes its disposition from what was observed, in its OWN pass's log: a claim the test refutes is `stale` with the test's output as its evidence; a claim the test upholds is walked like any finding. When the test cannot be run, `observed` says so and the finding enters the decision lane, so the user decides. A claim pushback finds stale at HEAD is not a disagreement; it is resolved by pushback. A difference in the two passes' forward `direction` is not a disagreement either; it is the readiness record's (`orbit-run-summary-emit`).
+The system SHALL execute Step 3's lifecycle finding by finding — each finding completes its full inner cycle (pushback → classify → resolve per lane → ripple-cascade → remove-marker) before the next finding begins. It is the only walk mode: batch mode — all findings resolved together before one aggregated ripple cascade, entered by a `--batch` flag, a batch-intent phrase in the invocation message or a command-shaped mid-walk switch — is removed (`reduce-orbit-phase2`'s R-rop2-12: none of the 476 walk logs on this repository's trails used it).
 
-The write gate does not check `disagreement`; it is a record.
+**Walk UX**: at each per-finding boundary, the AI resolves per the finding's LANE — an obvious-fix finding (previewed at triage) applies its resolution with no prompt and no discussion; a decision-lane finding follows the present → discuss → ratify protocol (per `Disjunctive recommendation fields surface as decision forks`). No mandatory per-finding `AskUserQuestion` exists; the user can interrupt between findings. A mid-walk DELEGATION ("handle the rest, only brief me on real decisions") compresses the decision lane as that requirement says; it is not a mode, and every prompt that fires still covers exactly one finding.
 
-#### Scenario: A contradiction is settled by one test
+**A retired trigger walks finding by finding.** `--batch` is a flag, dropped before discovery resolves the positional, so it is never read as part of a scope: `/orbit:address-reviews foo --batch` discovers `foo` exactly as `/orbit:address-reviews foo` does. An invocation carrying `--batch`, or one of the retired verbal forms in its message ("fix them all", "batch them", "go ahead with all", "address all at once", or a phrase of the same intent), is walked finding by finding like any other, and the walk says in one line that batch mode was removed. A bare mid-walk message that was the retired command-shaped switch ("go batch", "switch to batch", "batch the rest") is read as a mid-walk delegation (`Disjunctive recommendation fields surface as decision forks`): the rest of the findings are resolved as it delegates, a decision-lane finding is still briefed and ratified on its own, and the message is recorded verbatim as `delegation_directive`.
 
-- **WHEN** the fresh half claims a parser accepts an input and the external half claims it refuses it
-- **THEN** the walk runs the parser on that input once, and the later log's entry carries `disagreement` naming the earlier pass's finding, the command and its output
+**Resolution log capture**: the top-level `walk_mode` field in `address-reviews-<TS>.json` SHALL be `"per_finding"`. A log written while batch mode existed may carry `"batch"`, `walk_mode_source` and `walk_mode_shifted_at_finding`: it stays on the trail and is read as before, since no reader reads those fields, and the emit surface refuses the two retired fields on a new payload as unknown keys. These rules govern what the walk writes: the write gate checks neither `walk_mode`'s value nor a per-resolution `disagreement` object, so a payload composed outside the skill could carry `"batch"` or `disagreement` and be accepted — a named limit, since no reader reads either.
 
-#### Scenario: The earlier pass's claim is refuted
+#### Scenario: Default invocation walks finding by finding
 
-- **WHEN** the test upholds the later pass's claim and refutes the earlier pass's
-- **THEN** the earlier log records the earlier finding `stale` with the test's output as evidence, and the later log's entry carries `disagreement` and is walked
+- **WHEN** the user invokes `/orbit:address-reviews <change-name>` and three findings are discovered
+- **THEN** the lifecycle walks each finding individually: pushback finding 1 → classify → resolve per lane → cascade → remove-marker → pushback finding 2 → … The resolution log records `walk_mode: "per_finding"`.
 
-#### Scenario: An untestable contradiction goes to the user
+#### Scenario: A retired batch trigger walks finding by finding
 
-- **WHEN** the two halves contradict each other and no test can be run
-- **THEN** `observed` states that, and the finding is briefed and ratified in the decision lane
+- **WHEN** the user invokes `/orbit:address-reviews <change-name> --batch`, or `/orbit:address-reviews <change-name> — fix them all`
+- **THEN** the walk runs finding by finding, says in one line that batch mode was removed, and the resolution log records `walk_mode: "per_finding"` and carries no `walk_mode_source`
+
+#### Scenario: A retired mid-walk switch is a delegation
+
+- **WHEN** during a walk, after finding 1 is resolved, the user sends the bare message "batch the rest"
+- **THEN** findings 2 to N are resolved as a delegation of the rest, each decision-lane finding is still briefed and ratified on its own, and the log records `delegation_directive: "batch the rest"` and `walk_mode: "per_finding"`
+
+#### Scenario: A retired field is refused on a new payload
+
+- **WHEN** a walk's payload carries `walk_mode_source` or `walk_mode_shifted_at_finding`
+- **THEN** `orbit emit address-reviews` refuses the payload, naming the field as one its table does not carry, and writes nothing
+
+#### Scenario: A log written in batch mode still reads
+
+- **WHEN** a change's trail holds a log written with `walk_mode: "batch"` and `walk_mode_source: "flag"`
+- **THEN** the reviewed gate reads that log's resolutions exactly as it reads any walk log's
 

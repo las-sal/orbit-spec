@@ -1,0 +1,22 @@
+[
+  {
+    "severity": "WARNING",
+    "title": "The comment says 'the world' where the script prints 'world'",
+    "marker_source": "internal-review",
+    "file": "greet.js",
+    "line": 2,
+    "classification": "trivial_fix",
+    "remedy": "repair",
+    "outcome": "resolved",
+    "evidence": "greet.js line 2 said 'the world'; the script prints 'world'.",
+    "action": "The comment now ends: or 'world' when no name is given.",
+    "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+    "sweep": {
+      "retired": [],
+      "introduced": [{ "path": "greet.js", "text": "when no name is given" }],
+      "searched": ["the world"],
+      "scope": [],
+      "kept": []
+    }
+  }
+]

@@ -377,8 +377,8 @@ unchanged:
 
 Each resolved finding writes its own replacement, of the LATEST record in the chain: when a walk resolves several
 findings on one record, the first replaces the record, the next replaces that replacement, and so on, so each link of the
-chain carries one walk entry's fix and the walk's one-finding-at-a-time cycle (`orbit-address-reviews`' `Walk-mode by
-default with --batch opt-in`) holds unchanged. A finding a walk does not resolve (stale, deferred or escalated) writes none. A finding
+chain carries one walk entry's fix and the walk's one-finding-at-a-time cycle (`orbit-address-reviews`' `Every walk
+runs finding by finding`) holds unchanged. A finding a walk does not resolve (stale, deferred or escalated) writes none. A finding
 that is a gap in the brief rather than in the record is a finding against `The reading step's brief is rendered by
 orbit`, which only orbit's own code can fix: the walk records it `deferred`, naming that requirement, and writes no
 replacement. A finding that a record cites the wrong thing is outside what a replacement can fix, since its links are
@@ -847,9 +847,9 @@ any other.
 `write` is true exactly when a row marked written in `Decision records are written when a setting reads them` holds,
 and `readers` names each term that is on, in the order `chain`, `signoff`, `tripwires`. It takes no change name and no
 doc: the settings are the project's, and every session whose body carries the decision-writing basic content runs the same call,
-whether it works on one change, on several (bulk-archive), on a named exploration, in an architect session, project-wide
+whether it works on one change, on a named exploration, in an architect session, project-wide
 (audit-drift, a project-wide walk, a bare explore) or as a dispatched worker, so the basic content can be one text in
-the fourteen bodies that carry it (`orbit-conventions`' `Decision-writing discipline`). It prints one line, `Decision
+the thirteen bodies that carry it (`orbit-conventions`' `Decision-writing discipline`). It prints one line, `Decision
 records: not written (no setting reads them)` or `Decision records: written (read by <readers, comma-separated>)`;
 `--json` prints `{"write": <boolean>, "readers": [<term>, …]}`. It reads `orbit/config.yaml` (or `orbit/config.yml`) in the working tree through
 each setting's own resolver, so an absent or unparseable file, or a value a resolver does not recognize, reads as that

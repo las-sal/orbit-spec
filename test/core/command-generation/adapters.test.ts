@@ -48,7 +48,7 @@ describe('command-generation/adapters', () => {
 
     it('should generate correct file path for different command IDs', () => {
       expect(claudeAdapter.getFilePath('new')).toBe(path.join('.claude', 'commands', 'orbit', 'new.md'));
-      expect(claudeAdapter.getFilePath('bulk-archive')).toBe(path.join('.claude', 'commands', 'orbit', 'bulk-archive.md'));
+      expect(claudeAdapter.getFilePath('audit-drift')).toBe(path.join('.claude', 'commands', 'orbit', 'audit-drift.md'));
     });
 
     it('should format file with correct YAML frontmatter', () => {
@@ -82,7 +82,7 @@ describe('command-generation/adapters', () => {
 
     it('should generate correct file paths for different commands', () => {
       expect(cursorAdapter.getFilePath('new')).toBe(path.join('.cursor', 'commands', 'orbit-new.md'));
-      expect(cursorAdapter.getFilePath('bulk-archive')).toBe(path.join('.cursor', 'commands', 'orbit-bulk-archive.md'));
+      expect(cursorAdapter.getFilePath('audit-drift')).toBe(path.join('.cursor', 'commands', 'orbit-audit-drift.md'));
     });
 
     it('should format file with Cursor-specific frontmatter', () => {
@@ -197,7 +197,7 @@ describe('command-generation/adapters', () => {
 
     it('should generate correct file paths for different commands', () => {
       expect(bobAdapter.getFilePath('new')).toBe(path.join('.bob', 'commands', 'orbit-new.md'));
-      expect(bobAdapter.getFilePath('bulk-archive')).toBe(path.join('.bob', 'commands', 'orbit-bulk-archive.md'));
+      expect(bobAdapter.getFilePath('audit-drift')).toBe(path.join('.bob', 'commands', 'orbit-audit-drift.md'));
     });
 
     it('should format file with description and argument-hint frontmatter', () => {
@@ -602,7 +602,7 @@ describe('command-generation/adapters', () => {
 
     it('should generate correct file paths for different commands', () => {
       expect(piAdapter.getFilePath('new')).toBe(path.join('.pi', 'prompts', 'orbit-new.md'));
-      expect(piAdapter.getFilePath('bulk-archive')).toBe(path.join('.pi', 'prompts', 'orbit-bulk-archive.md'));
+      expect(piAdapter.getFilePath('audit-drift')).toBe(path.join('.pi', 'prompts', 'orbit-audit-drift.md'));
     });
 
     it('should format file with description frontmatter', () => {

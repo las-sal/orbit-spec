@@ -1,0 +1,42 @@
+schema: spec-driven
+created: 2026-11-25
+schema_version: 5
+architecture:
+  doc: reduce-orbit-phase2
+  stage: cut-propose-archive
+base_fingerprints:
+  orbit-architect:
+    Architect workflow available: sha256:c8b03d39a9334134702d4b75506089051d5fc9fd2181b142c4e827196230754b
+    Start surfaces name the architect workflow first: sha256:b9aeeafa4fd5613cd7d34cc0a8574f5fe3639935166d05163894660e477ba031
+  orbit-archive-modifications:
+    Fingerprint-divergence inflection prompt: sha256:8d88cba991399344e26a3e74c26a00eda66e38b4e088a3e96d7d286f084c54ec
+    Consent prompt on AI-mediated archive entry: sha256:941464a90e6c37bf0e612160487f24d78f4bb5f7f7b2bd3953c391e2ef201ab9
+    PR-attached archive tail: sha256:5a6992f8444cf1ab844b670a609e95676dad4013c4dfb5124fa27da123d901ac
+    User-validation closure at the archive seam: sha256:dc3345f87c0e4dab8ec77f4a58bd8808765124358c8f74119d9e262a68e14294
+    The archive saves the change's brief before the sync: sha256:c2b8726aeb65657b568517404b6ec2e65f734d16791b1d92113f2d3aa0dd2377
+    The archive holds for a per-change sign-off: sha256:64dbff00778136751aa67bb6e5e085f589b3729d7517cad639c62097fef14434
+  orbit-base-fingerprints:
+    Archive-time divergence guard in the spec-apply engine: sha256:a2b229b1b29ca82c4a0d7c9e6ef7ad867211008c0b2ec9242aca962184fecd0a
+  orbit-conventions:
+    Generated-file disposition: sha256:0873ee23c2376f45ecb6a039282d0650a7065f8cff86a1a4503191e817bbb27f
+    The commit step closes each carrying body: sha256:ccb0598c2b4e231064a14a844758355066891e265e39702d89c71c517f712018
+    Tightened bodies carry no provenance: sha256:f3a4936c4d76fd3ac72a9ab186a431baa4cae83b7b3b76d02153a02415503bc0
+    An edit ledger holds every tightened body to its recorded text: sha256:512ad3f2e17f2ede32b8f674e81f23fe091a13928a9dc8bb97352d0f4041b770
+    A cut ledger names every body edit a cut stage makes: sha256:b0605fca2e7b2ab3ec1a02410160a44d9d9dfc93442d837ac21ec92c33caea41
+  orbit-decision-records:
+    orbit decisions status says whether decision records are written: sha256:b95d7647620299d363ada4a43f215798a7a4ee25c165f6126f72dabfd9c18746
+  orbit-engine-gates:
+    Inflection-prompt override contract: sha256:66f6ac8c5be873489e112e30c2093d6c8472292f908811cf558def9ab6461da7
+    The chain setting grants each command on its own key: sha256:1c80db3406a405f39fc53655c857c3a7a4c06097e482087c95607372558ede34
+  orbit-lifecycle-consent:
+    Consent prompts at consent-marked seams: sha256:e397a3c1b2c44b3ba603d749fe77d4b830877971c97fa5514c8af8107966367f
+    Consent recorded in consent-scoped lifecycle emits: sha256:b5607762bddb314085ab254a81f44a13f342e42637404a02a5275da7df9ce5f1
+    Consent-era metadata marker: sha256:cbf35134a90c702639cf6000040231ee6d5088cb69ac9c9113af85310205125f
+  orbit-propose-modifications:
+    Validate explore.md structure before consuming: sha256:5b5959e0c8bc96ffa9b87fe16083a600671b13d6acca73aab6c648cb58ac7184
+    Mechanism section consumption: sha256:7439038fe8d6de4f5ad7f2cc1f2a044178113af1d219ea3704204511fa15d564
+  orbit-run-summary-emit:
+    Emit scope: sha256:1593f977a457bc72d52b527c2d056865b58029f15b32d7c9a5dd4ad9fffab7f8
+    A body reads its run-summary detail before the session's first run-summary emit: sha256:7c97f38e44f0f22ea8349248fb6ff96659225882bcdea886f922fb6365d532b4
+  orbit-skill-generation:
+    Retired surface artifacts converge on update: sha256:67b25555ffe8fbe178bac2b088c41a567240788d89898fb6e367597f5fe761b6

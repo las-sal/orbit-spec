@@ -1,0 +1,47 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-24T04:10:33Z",
+  "change": null,
+  "doc": "reduce-orbit-phase2",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Inventory concluded (D-inv-18) and renders ended-from-explore, so no ratification was offered. Its four decisions for this doc are written as rulings: R-rop2-10 (D-inv-1, replay only a cut postulated major; G3's text amended, and R-rop2-2's before-and-after), R-rop2-11 (D-inv-14, remove bulk-archive), R-rop2-12 (D-inv-15, remove address-reviews' batch mode and the blind-pair disagreement test), R-rop2-13 (D-inv-16, remove explore's illustrative upstream text). The three cut stages' charters name their cut lists and removals, and their G3 exit criteria read the replay mark. CLAUDE.md's phase-2 line no longer says inventory is next. Doc validates; the program brief save reports not finished; the hold reads off.",
+  "stages_touched": [
+    "inventory",
+    "cut-review-walk",
+    "cut-propose-archive",
+    "cut-explore-onboard"
+  ],
+  "rulings_captured": [
+    "R-rop2-10",
+    "R-rop2-11",
+    "R-rop2-12",
+    "R-rop2-13"
+  ],
+  "completions_ratified": [],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase2.md",
+        "why": "G0 to G3 (G3 as amended), R-rop2-10 to R-rop2-13, and stage cut-review-walk's charter and exit criteria"
+      },
+      {
+        "path": "orbit/explore/inventory/sketches/review.md",
+        "why": "review's cut list: each move, its reference file, the moment it is read, net tokens, replay mark"
+      },
+      {
+        "path": "orbit/explore/inventory/sketches/address-reviews.md",
+        "why": "address-reviews' cut list, now with batch mode and the disagreement test removed rather than moved"
+      },
+      {
+        "path": "orbit/explore/inventory/explore.md",
+        "why": "D-inv-2 (the shared closing steps decided once) and D-inv-15's removal scope"
+      }
+    ],
+    "next_command": "/orbit:propose cut-review-walk",
+    "model_hint": null,
+    "seam": "inventory is ended-from-explore and its rulings are written; the three cut stages are independent, cut-review-walk recommended first and cut-explore-onboard last (onboard cut once, after both removals), on the branch reduce-orbit-phase2 (R-rop2-7)."
+  },
+  "next_recommended": "/orbit:propose cut-review-walk"
+}

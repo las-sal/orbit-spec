@@ -1,0 +1,16 @@
+# The walk of an in-context system pass whose findings are obvious fixes only.
+max_turns: 50
+max_budget_usd: 3
+start:
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=review-system].reason
+    matches: unresolved substantive findings
+break:
+  # The whole body and every reference: the 2026-11-23 re-run showed a session rebuilding the emit
+  # step without the body's emit section (from the seeded trail's records of the same kind, `orbit
+  # emit --help` and the write gate's refusals), so this break asks whether the case depends on
+  # its skill's text at all.
+  file: .claude/skills/orbit-address-reviews/SKILL.md
+  whole_body: true
+  remove: [references]
+  grader: walk-emit-printed

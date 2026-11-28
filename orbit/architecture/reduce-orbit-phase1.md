@@ -94,7 +94,8 @@ Ratified by Sal, 2026-11-17, from the opening session's answers to the brief's q
   five chaining bodies, which explain the three prompt tags (`target`, `routine`, `decision`); `(chain: not a prompt)`
   names itself; and archive, which a chain can arrive at but which carries no chain end step, explains none of its tags,
   a named limit as before this program. Recorded as `stop-2026-11-17T14-14-43Z.json` and its resolution in
-  `orbit/changes/conditional-steps/.orbit-runs/decisions/`.
+  `orbit/changes/conditional-steps/.orbit-runs/decisions/`. Amended again by Sal, 2026-11-24, as `reduce-orbit-phase2`'s
+  R-rop2-14: the paragraph moves to `references/chain-end-step.md`, each chaining body keeping a one-line pointer to it.
 - **R-rop-7** (Sal, 2026-11-17) — The decision-writing bullet is restructured in stage C into labelled sub-bullets
   (before asking, acting without asking, after a call, not a stop, where records go) with its content unchanged; the
   one-line form with its detail in `decision-records.md` is weighed at the evaluation, with stage D (R-rop-2). Whether

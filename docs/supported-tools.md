@@ -7,10 +7,10 @@ one's files go.
 
 ## What init installs for a tool
 
-For each tool you name, `orbit init` writes every workflow, 15 of them: a skill directory per workflow, holding a
-`SKILL.md` and, for fourteen workflows (every one but onboard), a `references/` directory the skill reads; and, where
+For each tool you name, `orbit init` writes every workflow, 14 of them: a skill directory per workflow, holding a
+`SKILL.md` and, for thirteen workflows (every one but onboard), a `references/` directory the skill reads; and, where
 the tool has a command adapter, a command file per workflow that launches the skill. No profile narrows the set: every
-install carries all 15 workflows, whatever profile is stored. The global delivery setting (`orbit config profile`) is
+install carries all 14 workflows, whatever profile is stored. The global delivery setting (`orbit config profile`) is
 honored: it can install skills only, commands only, or both, the default.
 
 `orbit update` rewrites the same files from the installed CLI. The skill and command files are generated, so edit
@@ -31,7 +31,7 @@ skill bodies, byte for byte.
 
 ### Claude Code
 
-orbit writes into the project: 15 skill directories under `.claude/skills/` and 15 commands under
+orbit writes into the project: 14 skill directories under `.claude/skills/` and 14 commands under
 `.claude/commands/orbit/`. In Claude Code, run a workflow as `/orbit:<id>`, for example `/orbit:propose add-dark-mode`.
 Each command is a short launcher that loads the matching skill, which carries the workflow. The
 [README](../README.md) lists every command, command file and skill directory.

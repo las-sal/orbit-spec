@@ -13,12 +13,17 @@ import { getSkillTemplates, generateSkillContent } from '../../../src/core/share
 const review = getSkillTemplates().find(t => t.dirName === 'orbit-review')!;
 const skill = generateSkillContent(review.template, 'test');
 
-/** Step 5's VERIFICATION bullet and its sub-steps, up to the next Step heading. */
+/**
+ * Step 5's VERIFICATION bullets, then `references/verification.md`, which they read (cut-review-walk, V1: the procedure,
+ * its Verdicts fence and its Sweep scope and paths fence moved there, byte-equal).
+ */
 function branch(): string {
   const start = skill.indexOf('- **VERIFICATION pass genre**');
   expect(start, 'Step 5 carries the VERIFICATION branch').toBeGreaterThan(-1);
   const end = skill.indexOf('\n### ', start);
-  return skill.slice(start, end);
+  const bullets = skill.slice(start, end);
+  expect(bullets).toContain('read `references/verification.md` and follow it');
+  return bullets + '\n\n' + review.template.references!.find(r => r.name === 'verification.md')!.content;
 }
 
 describe('review body: the VERIFICATION branch (1.5)', () => {
@@ -97,9 +102,15 @@ describe('review body: the VERIFICATION branch (1.5)', () => {
     expect(branch()).toMatch(/drop `verification` and every `walk_entry`, run this pass as a REVIEW-genre pass over the whole artifact, and emit again/);
   });
 
-  it('lives in the SKILL body only — no reference a REVIEW pass reads carries it', () => {
+  // @scenario text orbit-review :: Verification-genre passes grade the walk record :: A refusal reconciles the probe with the engine
+  it('the body routes a refusal saying the pass owes verification, with owed keys or none, to the reference, from the refusal in hand', () => {
+    const step5 = skill.split('### 5. Inspect prior runs')[1].split('\n### ')[0];
+    expect(step5).toContain('- **A refusal saying the pass owes `verification`**, with owed keys or none, means the engine computed VERIFICATION: read `references/verification.md` and follow it from the refusal you already have.');
+  });
+
+  it('lives in Step 5 and references/verification.md only — no reference a REVIEW pass reads carries it', () => {
     for (const ref of review.template.references ?? []) {
-      if (!/^passes-|^mode-sections\.md$|^flags-detail\.md$/.test(ref.name)) continue;
+      if (!/^passes-|^mode-sections\.md$|^flags-detail\.md$|^architecture-mode\.md$/.test(ref.name)) continue;
       expect(ref.content, ref.name).not.toContain('Verification-genre passes grade the walk record');
       expect(ref.content, ref.name).not.toContain('ripple_cascade.applied');
     }

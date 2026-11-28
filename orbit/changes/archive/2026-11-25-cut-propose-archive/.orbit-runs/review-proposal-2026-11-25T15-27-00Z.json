@@ -1,0 +1,171 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-25T15:27:00Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {},
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    }
+  },
+  "findings": [
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 102,
+      "title": "The consent read keys on a classification whose AI-mediated and Granted definitions leave the body",
+      "recommendation": "D2's A1 now reads \"On an arrival classified above as AI-mediated or granted, read references/consent-at-entry.md\".\nBut the same bullet moves the AI-mediated and Granted bullets whole, and those bullets are where the two classes are\ndefined: AI-mediated is \"everything else — delegation phrases (\"finish the cadence\"), inference (\"continue\"), a handoff\ndocument, a chain, or an eligibility readout pointing here\" (archive-change.ts:459, apply's Step 0 alike), and Granted is\nthe chain object reporting this command with may_run: true (archive-change.ts:460). After the move, the body defines\nonly User-invoked and the uncertainty rule. A clear \"continue\" arrival is not uncertain, so nothing left in the body\nclassifies it as AI-mediated, and \"classified above\" points at text that is in the reference the sentence is deciding\nwhether to read.\nThe lifecycle-consent delta's new bullet (specs/orbit-lifecycle-consent/spec.md:39-41) already says the body keeps \"the\nprovenance classification\". D2 disagrees with it.\nMake D2 match the delta: the body keeps each class's classifying clause (AI-mediated: everything not user-invoked, with\nits examples; Granted: the chain object's next is this command with may_run: true, read at entry). Only the procedures\nmove: the prompt, the preview and outward line, what each path records, and the tag handling. Name the kept clauses in\nD2's A1 and in task 4.1, re-measure A1's span for both bodies (archive's margin after R2 is about 340), and have task\n4.1's test assert that both class definitions stay in each body.",
+      "walk_entry": {
+        "title": "The consent-reference trigger uses two definitions of user invocation",
+        "file": "orbit/changes/cut-propose-archive/design.md"
+      }
+    },
+    {
+      "pass": "7",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 32,
+      "title": "Task 4.1 reads \"then move archive's AI-mediated and Granted bullets go to its\"",
+      "recommendation": "The walk added the reword clause before the existing sentence, which left two verbs: \"then move archive's AI-mediated\nand Granted bullets go to its references/consent-at-entry.md\". Write \"then move archive's AI-mediated and Granted bullets\nto its references/consent-at-entry.md\".",
+      "walk_entry": {
+        "title": "Positional pointers in the moved text go wrong beyond the one D1 rewords",
+        "file": "orbit/changes/cut-propose-archive/design.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "This pass verified the two walk logs of the blind pair. I re-read each resolution's sweep scope against current\nsources: the propose, archive and apply templates, pr-choreography.ts' archive-tail reference, the cut-ledger,\nchain-prompt-tags, pr-references and size-declaration-parity tests, the scenario ledger and skill_body_convention.md.\nEvery quoted line and string was found where the walks said. Archive's re-measured table adds up: the A4 pieces sum to\n557, and the moves come to about 5,170, about 170 over. The residual diff since the base pass touches only files in the\nwalks' edit records.\nOne gap matters. Moving the AI-mediated and Granted bullets whole also moves the definitions that the new read\nsentence relies on. The lifecycle-consent delta already says the classification stays in the body, so the repair is\nin design and tasks, and the spec is unchanged. The other finding is a garbled task sentence the walk left behind.\nThe three converged stale calls in the external log are correct: each names the fresh walk log, and the fix it points\nto is present.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "Positional pointers in the moved text go wrong beyond the one D1 rewords",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "pr-archive-tail.md already carries part of A4, and its load condition stops being true",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "After A4, the HEAD-mismatch notice can no longer reach the consent preview",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "skill_body_convention.md still names bulk-archive as a body not yet under the convention",
+      "file": "skill_body_convention.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Two of the Graceful degradation cases P2 moves belong to mode detection, not to consume mode",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The task lists leave out three tests that read moved text, and one orphan that is a ledger entry",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The cut ledger's data shape cannot hold a second recording of a body",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Apply's Step 0 sits in the upstream portion, and no delta names the A1 edit to it",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "An unreadable tasks file can bypass the pre-move check",
+      "file": "orbit/changes/cut-propose-archive/specs/orbit-archive-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "Step 4.9 assumes a prior reference read on a path that can skip it",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The consent-reference trigger uses two definitions of user invocation",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Include sync-specs in the proposal’s ledger inventory",
+      "file": "orbit/changes/cut-propose-archive/proposal.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-25T04-15-10Z",
+    "2026-11-25T04-15-18Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "916e218b9339689ffb832ca0276a04ced71be09e",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

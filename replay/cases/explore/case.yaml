@@ -1,0 +1,16 @@
+# A named explore from the bare project (design Decision 5).
+max_turns: 15
+max_budget_usd: 1.5
+timeout_minutes: 10
+start:
+  # No change and no exploration yet: bare status has no sprint.
+  - args: [status, --json]
+    path: sprint
+    exists: false
+break:
+  # The emit step cut from the body AND its reference (cut-explore-onboard, E2: explore's emit detail moved to
+  # references/run-summary-emit.md, so cutting the body section alone would leave the step readable there).
+  file: .claude/skills/orbit-explore/SKILL.md
+  section: "## Run-summary emit (named-mode only)"
+  remove: [references/run-summary-emit.md]
+  grader: explore-emit-printed

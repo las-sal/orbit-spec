@@ -1,0 +1,232 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-20T17:32:34Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/replay-set/.orbit-runs/review-proposal-2026-11-20T17-25-51Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-20T17-25-51Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 3
+  },
+  "pushback_verification": "All four verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Task 2.1 pairs explore.md with a fact about a different file",
+      "marker_source": "internal-review",
+      "file": "tasks.md",
+      "line": 69,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "The explore skill has the session scaffold explore.md (no CLI write: grep of src/commands finds none); task 2.1 paired it with the explore emit path.",
+      "action": "Task 2.1 grades explore.md by orbit's reading of it (the exploration listed as exploring in bare orbit status --json, its about naming explore.md) and pairs the explore emit with the path orbit printed. A paired grader now names the file it vouches for in about; the spec's grader requirement and its scenario, design D6 and tasks 1.4 and 3.2 check that about is the file grader's own path.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+          "orbit/changes/replay-set/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "paired with the explore emit's path in orbit's output"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/tasks.md",
+            "text": "the emit path\n  orbit printed when it wrote it"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "whose `about` is the file grader's own path"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "never with a fact about another file"
+          }
+        ],
+        "searched": [
+          "pairs_with",
+          "explore.md",
+          "same file"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The named limit paragraph swallowed the known-bad SHALL",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 163,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "Moved the grader requirement's named limit after 'These checks run in npm test and bill nothing.', so 'Before a grader joins the set, it SHALL be shown failing on known-bad input:' opens its own paragraph.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "prints the path it writes. Before a grader joins"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "Before a grader joins the set, it SHALL be shown failing on known-bad input:"
+          }
+        ],
+        "searched": [
+          "Named limit"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The new session end states reach neither the record's list nor case.yaml",
+      "marker_source": "internal-review",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 203,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "The record requirement's end states add 'with no result record (a crash, a kill, its timeout, no numeric cost)'; design D4's case.yaml fields add timeout_minutes (default 30).",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-20T17-18-05Z",
+        "title": "The ceiling can be overshot by a session, and a session that ends without a result record is unhandled",
+        "file": "design.md",
+        "kind": "query"
+      },
+      "sweep": {
+        "retired": [
+          "at a limit or at the run's ceiling",
+          "  - `max_turns` and `max_budget_usd`;"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "or with no result record (a crash, a kill, its timeout, no numeric"
+          },
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "`timeout_minutes` (default 30)"
+          }
+        ],
+        "searched": [
+          "stopped at",
+          "case.yaml",
+          "max_turns"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "A --cli run's record has no commit for its name",
+      "marker_source": "internal-review",
+      "file": "design.md",
+      "line": 92,
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "action": "A --cli run carries 'local' in place of the commit hash in its filename and names its CLI directory in place of the commit: design D2 and D7 and the spec's record requirement.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/replay-set/specs/orbit-replay-set/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-20T17-18-05Z",
+        "title": "The runner's free checks need seams the design does not name",
+        "file": "tasks.md",
+        "kind": "query"
+      },
+      "sweep": {
+        "retired": [
+          "in place of a commit and is never a baseline"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/replay-set/design.md",
+            "text": "`local` in place of `<sha7>`"
+          },
+          {
+            "path": "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+            "text": "its filename carries `local` in its place"
+          }
+        ],
+        "searched": [
+          "--cli",
+          "sha7",
+          "the commit the build came from"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "All four findings of the in-context verification pass resolved as repairs: the explore case's file pairing now names the same file through a new about field, the named limit moved after the known-bad checks, the record's end states and case.yaml carry the first walk's new session states, and a --cli run's record has a defined name. Two carry ripple misses of the first walk.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply replay-set — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "8b9bf07415c6d3b2bb9ad012e895ccae3b2dd66c",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 2
+}

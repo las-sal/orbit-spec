@@ -4,6 +4,7 @@ import path from 'path';
 import os from 'os';
 import { randomUUID } from 'crypto';
 import { validateChangeName, createChange } from '../../src/utils/change-utils.js';
+import { parse as parseYaml } from 'yaml';
 
 describe('validateChangeName', () => {
   describe('valid names', () => {
@@ -136,6 +137,20 @@ describe('createChange', () => {
       const content = await fs.readFile(metaPath, 'utf-8');
       expect(content).toContain('schema: spec-driven');
       expect(content).toMatch(/created: \d{4}-\d{2}-\d{2}/);
+    });
+
+    // @scenario behaviour orbit-lifecycle-consent :: Consent-era metadata marker :: New change records the schema version
+    it("records the shipped spec-driven schema's current version as schema_version, beside schema and created", async () => {
+      await createChange(testDir, 'add-auth');
+      const metaPath = path.join(testDir, 'orbit', 'changes', 'add-auth', '.openspec.yaml');
+      const meta = parseYaml(await fs.readFile(metaPath, 'utf-8')) as Record<string, unknown>;
+      // The version is read from the shipped schema file, never restated here.
+      const schemaFile = path.join(__dirname, '..', '..', 'schemas', 'spec-driven', 'schema.yaml');
+      const shipped = (parseYaml(await fs.readFile(schemaFile, 'utf-8')) as { version: number }).version;
+      expect(typeof shipped).toBe('number');
+      expect(meta.schema_version).toBe(shipped);
+      expect(meta.schema).toBe('spec-driven');
+      expect(meta.created).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
     it('should create .openspec.yaml with custom schema', async () => {

@@ -217,8 +217,6 @@ const COMMANDS: Record<string, CommandSpec> = {
       'tie_break_rationale',
       'external_reviewer',
       'walk_mode',
-      'walk_mode_source',
-      'walk_mode_shifted_at_finding',
       'input_findings_summary',
       'pushback_verification',
       'resolution_summary',

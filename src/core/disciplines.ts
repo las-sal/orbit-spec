@@ -68,7 +68,7 @@ export const DECISION_WRITING_DISCIPLINE = [
  * (`records-by-setting`, R-rop-3 and R-rop-17): the moment `orbit decisions status` runs, the usual result and the
  * link to the rule. The same text under every configuration (R-rop-5); the command's result picks the branch (R-rop-4).
  */
-export const DECISION_WRITING_BASIC = `- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (\`orbit/config.yaml\` or \`.yml\`), run \`orbit decisions status --json\`. On \`write: true\`, read \`references/${DECISION_RECORDS_REFERENCE_NAME}\` and follow its rule for the rest of the command. On \`write: false\`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.`;
+export const DECISION_WRITING_BASIC = `- **Decision-writing (call-time)**: run \`orbit decisions status --json\` at each command's first step and after this session edits \`orbit/config.yaml\` (or \`.yml\`). On \`write: true\`, follow \`references/${DECISION_RECORDS_REFERENCE_NAME}\` for the rest of the command. On \`write: false\`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).`;
 
 // ---------------------------------------------------------------------------
 // The chain end step (seam-chaining, `orbit-conventions`' `No-chaining contract`)
@@ -92,8 +92,8 @@ export const CHAIN_END_STEP_SKILLS = [
 const KEY_ROWS = CHAIN_KEYS.map(k => `  - \`${k}\` — ${CHAIN_KEY_TABLE[k].map(code).join(', ')}`).join('\n');
 
 /**
- * conditional-steps: what the prompt tags mean and what a chained command records (R-rop-6) — one text that both
- * `CHAIN_END_STEP` (indented, as before) and its basic content `CHAIN_END_STEP_BASIC` carry, so the halves cannot diverge.
+ * conditional-steps: what the prompt tags mean and what a chained command records (R-rop-6). `CHAIN_END_STEP` carries it
+ * (indented, as before); since cut-review-walk (R-rop2-14) the basic content `CHAIN_END_STEP_BASIC` points at it instead.
  */
 export const CHAIN_TAG_MEANING =
   "The chained command runs as on a typed arrival except for its prompts, each tagged at its site: a `(chain: target)` prompt does not fire (the next command names the change and the mode); a `(chain: routine, default: <option>)` prompt takes that default, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`; a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command's own closing step states in one line that the chain stopped at a decision and runs nothing. The chained command records `Chained: granted by chain.<key>.` as one sentence in the record its session writes: a walk in its run summary's `final_assessment`; an external review or a blind pair in its launch record's `final_assessment`; an in-context review in its pass's `commentary` (the review emit owns a pass's `final_assessment`); a chained apply or archive records it as its `consent: \"setting\"` value and writes no sentence. A chained fresh review records nothing — its worker writes the pass, and its brief carries nothing from this session (a named limit).";
@@ -176,7 +176,8 @@ export const COMMIT_STEP_BASIC = [
 /**
  * The chain end step's basic content, carried byte-equal by the five bodies of `CHAIN_END_STEP_SKILLS`: the `chain`
  * read with the flags a chained command adds to it (the read comes before the reference is opened), the
- * `configured: false` result, and `CHAIN_TAG_MEANING` (R-rop-6).
+ * `configured: false` result, and a pointer to where `CHAIN_TAG_MEANING` is (`reduce-orbit-phase2`'s R-rop2-14,
+ * amending R-rop-6: the paragraph itself is in `CHAIN_END_STEP`, the reference).
  */
 export const CHAIN_END_STEP_BASIC = [
   // The full step's heading cites its owning requirement, `orbit-conventions`' `No-chaining contract`.
@@ -184,7 +185,7 @@ export const CHAIN_END_STEP_BASIC = [
   '',
   `The LAST act of the invoking session, after the position readout and the eligibility line; never in a dispatched worker, and nothing with no change target. Read the \`chain\` object from \`orbit status --change "<name>" --json\` (the call that supplied the eligibility line, or one right after it); a command a chain ran adds \`--chain-ran "<next>" --chain-head "<head>"\` to that read, the \`next\` and \`head\` the previous read reported, a null \`head\` written as \`null\`. On \`configured: false\`, print nothing more. On any other result, or a non-zero exit, read \`references/${CHAIN_END_STEP_REFERENCE_NAME}\` and follow it from the result you already have.`,
   '',
-  CHAIN_TAG_MEANING,
+  `A command a chain ran reads what its prompts' \`(chain: …)\` tags mean, and what it records, in \`references/${CHAIN_END_STEP_REFERENCE_NAME}\`, before its first tagged prompt when this session has not read it.`,
 ].join('\n');
 
 // ---------------------------------------------------------------------------
@@ -493,7 +494,7 @@ export const ACCOUNT_WALK_STEP_BASIC = [
 // and the chat behaviour beside them, and reads its section, whole, from the skill's `references/run-summary-emit.md`.
 // ---------------------------------------------------------------------------
 
-/** The skills whose emit step reads its detail from the reference: every emit step in scope, eleven bodies. */
+/** The skills whose emit step reads its detail from the reference: every emit step in scope, twelve bodies (explore since cut-explore-onboard). */
 export const RUN_SUMMARY_EMIT_SKILLS = [
   'orbit-apply-change',
   'orbit-archive-change',
@@ -506,12 +507,13 @@ export const RUN_SUMMARY_EMIT_SKILLS = [
   'orbit-continue-change',
   'orbit-new-change',
   'orbit-audit-drift',
+  'orbit-explore',
 ] as const;
 
 /** The reference file each of `RUN_SUMMARY_EMIT_SKILLS` ships, holding its emit section whole. */
 export const RUN_SUMMARY_EMIT_REFERENCE_NAME = 'run-summary-emit.md';
 
-/** The READ CUE, carried byte-equal by each of the eleven bodies, immediately before its command block. */
+/** The READ CUE, carried byte-equal by each of the twelve bodies, immediately before its command block. */
 export const RUN_SUMMARY_READ_CUE = `Before the session's first run-summary emit, read \`references/${RUN_SUMMARY_EMIT_REFERENCE_NAME}\` and follow it to compose the payload: it holds this step whole, with where its fields are documented. Write the payload to a temp file and invoke:`;
 
 /** `references/run-summary-emit.md`: a one-line title, then the emit section whole. */

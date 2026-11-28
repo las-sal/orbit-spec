@@ -1,0 +1,17 @@
+{
+  "model": null,
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 0, "suggestion": 0 }
+  },
+  "findings": [],
+  "stale_suppressed": [],
+  "commentary": "Known-bad: a system review a chained session would write.",
+  "passes_run": ["0", "1", "2", "3", "4", "5", "6"],
+  "passes_skipped": []
+}

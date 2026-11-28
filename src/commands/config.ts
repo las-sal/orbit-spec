@@ -76,10 +76,6 @@ const WORKFLOW_PROMPT_META: Record<string, WorkflowPromptMeta> = {
     name: 'Archive change',
     description: 'Finalize and archive a completed change',
   },
-  'bulk-archive': {
-    name: 'Bulk archive',
-    description: 'Archive multiple completed changes together',
-  },
   verify: {
     name: 'Verify change',
     description: 'Run verification checks against a change',

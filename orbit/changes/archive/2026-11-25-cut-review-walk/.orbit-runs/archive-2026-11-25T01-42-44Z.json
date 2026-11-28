@@ -1,0 +1,106 @@
+{
+  "command": "archive",
+  "timestamp": "2026-11-25T01:42:44Z",
+  "change": "cut-review-walk",
+  "kind": "lifecycle",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Archived cut-review-walk to orbit/changes/archive/2026-11-25-cut-review-walk/. Review and address-reviews each fit 5,000 estimated tokens (4,988 and 4,990 by npm run size:report at archive), their ceilings capped at 20,000 characters; batch mode and the blind-pair disagreement test are removed (R-rop2-12); the chain tag paragraph moved to references/chain-end-step.md (R-rop2-14); every body edit is named in the cut ledger. Six capabilities synced; address-reviews' Purpose edited in place; the stage's Shipped as and CLAUDE.md written at archive.",
+  "archive_path": "orbit/changes/archive/2026-11-25-cut-review-walk/",
+  "audit": {
+    "ran": true,
+    "failure_reason": null,
+    "findings_summary": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 5
+    },
+    "summary_path": null
+  },
+  "sync_specs": {
+    "ran": true,
+    "skipped_reason": null,
+    "capabilities_updated": [
+      "orbit-address-reviews",
+      "orbit-conventions",
+      "orbit-decision-records",
+      "orbit-emit-composition",
+      "orbit-review",
+      "orbit-run-summary-emit"
+    ],
+    "added": 1,
+    "modified": 15,
+    "removed": 1,
+    "renamed": 1
+  },
+  "unresolved_markers": [],
+  "user_decision": "proceeded_with_no_critical",
+  "consent": "user-invoked",
+  "warnings": [
+    "CI on reduce-orbit-phase2 (run 45516461936): Linux and lint pass; the macOS leg fails only completion-offers.test.ts (the generated zsh script's -n parse), red on main since e2eabb02 and outside this program.",
+    "At-archive edits: orbit-address-reviews' Purpose edited in place (\"Walk-mode is the default (--batch opts in)\" to \"Every walk runs finding by finding\"); the stage's Shipped as paragraph in orbit/architecture/reduce-orbit-phase2.md; CLAUDE.md's phase 2 paragraph names the shipped stage.",
+    "Audit-drift pre-archive: five Category 5 suggestions, touchpoints divergence only — four unpredicted paths (orbit/architecture/reduce-orbit-phase2.md, test/core/batch-mode-removed.test.ts, test/core/rc03b-untouched-modules.test.ts, test/core/templates/cut-ledger-pairs.ts) and one predicted entry unused (emit-schema-parity + reference-roundtrip)."
+  ],
+  "judgements": [
+    {
+      "kind": "readiness",
+      "formed_against": [
+        "2026-11-24T20-09-38Z",
+        "2026-11-24T20-10-02Z",
+        "2026-11-24T23-59-16Z",
+        "2026-11-24T23-59-49Z"
+      ],
+      "disposition": "ready",
+      "reasoning": "Both review cycles ran as blind pairs and every finding of the four independent passes was walked; each in-context verification graded its walks and its own two findings were walked in turn, so review-system passed with nothing outstanding. The stage exit criteria hold as measured at archive: both bodies under 5,000 estimated tokens, ceilings lowered or capped, no cut marked for replay, and every removal named with its ruling. The full suite passes at the walk commit (217 files, 4,513 tests).",
+      "ratified_by": "ai",
+      "accepted": [
+        {
+          "claim": "Both bodies sit within about ten estimated tokens of G1 (review 4,988, address-reviews 4,990).",
+          "why": "The fresh system pass found the thin margin; its walk capped both ceilings at 20,000 characters, so any regrowth past 5,000 tokens now fails the suite instead of passing unseen. A later stage that adds to either body must pay for it with a named cut."
+        },
+        {
+          "claim": "The moves keep behaviour by read-order reasoning and two review cycles, with no replay run.",
+          "why": "R-rop2-10 replays only a cut postulated to change what a session does, and none was so marked. The system pair's external half found five reads that landed after the decision they govern; all were moved back, and the in-context verification read each relocated read for meaning as well as position."
+        },
+        {
+          "claim": "The walk write gate checks neither walk_mode nor any disagreement record.",
+          "why": "Named as a limit at the proposal pair: batch mode's payload fields are refused outright and walk_mode has one value, so nothing is left for the gate to grade."
+        }
+      ]
+    }
+  ],
+  "pr_url": "https://github.com/las-sal/orbit-spec/pull/47",
+  "pr_state": "draft",
+  "next_recommended": "/orbit:architect reduce-orbit-phase2 — change archived; review stage cut-review-walk and take up the program's next stage, or run /orbit:audit-drift for a project-wide drift check.",
+  "decision_records_unread": 0,
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ecf27d147b6caaa394b29c1642012726caad89be",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

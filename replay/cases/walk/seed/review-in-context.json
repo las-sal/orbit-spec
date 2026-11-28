@@ -1,0 +1,30 @@
+{
+  "model": null,
+  "mode": "system",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": { "parallel": false, "focus": null, "strict": false, "fresh": false, "mark": false, "skip_verify": false },
+  "scorecard": {
+    "completeness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "correctness": { "critical": 0, "warning": 0, "suggestion": 0 },
+    "coherence": { "critical": 0, "warning": 1, "suggestion": 0 }
+  },
+  "findings": [
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "coherence",
+      "file": "greet.js",
+      "line": 2,
+      "title": "The comment says 'the world' where the script prints 'world'",
+      "recommendation": "Reword greet.js's comment to end: or 'world' when no name is given."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Seeded in-context system pass: the walk's README repair landed; one wording mismatch in a comment.",
+  "passes_run": ["0", "1", "2", "3", "4", "5", "6"],
+  "passes_skipped": [],
+  "verification": [
+    { "title": "The README does not say what the script prints with no name", "file": "README.md", "verdict": "landed" }
+  ]
+}

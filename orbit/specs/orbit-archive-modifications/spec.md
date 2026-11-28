@@ -335,9 +335,7 @@ before the pre-archive audit sweep, and prompt on anything not `verified`:
 - **All requirements `verified`** (or the change touches no existing requirements) → no prompt.
 
 This prompt is DISTINCT from the `review-system` gate prompt and the audit-drift prompt; all three
-MAY fire in one archive invocation (gate first, then fingerprints, then audit). The bulk-archive
-workflow SHALL run the same check and prompt per change before that change's sync and move steps
-(its agent-driven path never runs the engine guard, so the check step is its only guard layer).
+MAY fire in one archive invocation (gate first, then fingerprints, then audit).
 
 #### Scenario: Divergence prompt fires with the diff
 
@@ -381,10 +379,7 @@ program PR, the APPENDED stage entry. This is required precisely because the tai
 same entry consent and fires no second prompt of its own: a preview enumerating only in-repo
 writes would obtain consent for a spec sync and a directory move, then push to a remote and
 flip a pull request public. The outward line is OMITTED for unattached changes, so the
-pre-capability prompt is unchanged wherever no PR exists — and it is likewise OMITTED under
-`/orbit:bulk-archive`, which performs no tail (see this capability's tail requirement), so its
-per-change prompts have no outward writes to preview and keep the pre-capability content
-whatever each change's attachment state. The preview REPORTS what the tail
+pre-capability prompt is unchanged wherever no PR exists. The preview REPORTS what the tail
 will attempt; a tail that later degrades (no remote, `gh` failure, HEAD mismatch) still
 skips with its own note — the preview is not a promise that every step succeeds. A
 user-typed `/orbit:archive` runs with no consent prompt. Proceeding records
@@ -396,9 +391,7 @@ the tail runs exactly as it would after a Proceed. Named limit: a granted archiv
 attachment's branch is told so only by the one line the entry observation prints before Step 1, and nobody is
 asked; the sync, the move and the emit land in the working tree as on a typed archive, the tail's HEAD
 precondition skips the commit and the push, and its note names the recovery. Nothing is pushed to the wrong
-branch, but the archive's writes stay uncommitted until the user carries them to the attachment's branch. The bulk-archive
-workflow applies the same rule per change (a user-typed `/orbit:bulk-archive` whose flow confirms
-the batch is user-invoked for the confirmed set).
+branch, but the archive's writes stay uncommitted until the user carries them to the attachment's branch.
 
 #### Scenario: AI-mediated entry prompts first
 
@@ -670,16 +663,7 @@ and never flipped by the tail: arc-done is later than any archive, and its flip 
 human's act, surfaced by ANY architect invocation that observes arc-done — never tied to the
 completion-ratification interaction (per `orbit-pr-lifecycle`). ORDERING INVARIANT: the
 flip fires only AFTER the archive commit is pushed — the PR must contain its own archive
-commit before READY is honest. BULK-ARCHIVE IS OUT OF THIS TAIL'S SCOPE. `/orbit:bulk-archive` archives SEVERAL changes in
-one invocation, and the tail is inherently single-branch: HEAD can be on only one branch, so
-under `per-proposal` — where every attached change has its own — the HEAD precondition would
-skip all but at most one change, and which one would depend on the incidental fact of where
-the user was standing. Rather than let outward behavior fall out of that accident, bulk-archive
-performs NO tail: each change is synced, moved, and emitted exactly as pre-capability, and its
-PR is left DRAFT for the user to flip when they choose. The bulk-archive completion readout
-SHALL NAME the attached changes it left unflipped, with their PR URLs — reporting, never
-acting, per `orbit-conventions`' residual outward-actions rule — so a batch never silently
-strands a PR. Single-change `/orbit:archive` is the seam that flips.
+commit before READY is honest.
 
 SCOPE: THE ATTACHMENT DECIDES, NOT THE LIVE CONFIG. The tail runs whenever a
 `pr_attachment` resolves for this change, whatever `pr:` reads at archive time; UNATTACHED
@@ -732,11 +716,6 @@ inside the tail.
 - **WHEN** a user-typed archive of a PR-attached uncited change completes its emit
 - **THEN** the flow continues commit → push → achievement rewrite → `gh pr ready` with no
   further prompts, and the completion readout names the READY PR
-
-#### Scenario: Bulk-archive runs no tail and names what it left draft
-
-- **WHEN** `/orbit:bulk-archive` archives a batch that includes PR-attached changes
-- **THEN** each change is synced, moved, and emitted exactly as pre-capability with NO commit, push, description rewrite, or flip; the completion readout NAMES the attached changes left unflipped with their PR URLs; and the per-change consent preview omits the outward-writes line because none will occur
 
 #### Scenario: Config flipped to never after propose does not abandon the PR
 
@@ -882,16 +861,17 @@ Step 3.2 SHALL check each case of that production against the composed deferrals
 so a predictable refusal surfaces while the change is still active: a marked task with no id, in no
 group or with a duplicated id, or an unreadable tasks file, is reported to the user, who repairs
 `tasks.md` before the archive proceeds, or aborts.
-No engine surface runs the write gate before the move, so the archive body carries the production
-as a CHECKED MIRROR, held byte-equal to this fence by a parity test (R-crc-14's mirror corollary). When the emit
+No engine surface runs the write gate before the move, so the archive skill carries the production
+as a CHECKED MIRROR in its `references/user-validation.md`, held byte-equal to this fence by a parity test (R-crc-14's
+mirror corollary). The archive body carries the step's BASIC CONTENT (`reduce-orbit-phase1`'s R-rop-3): when it runs,
+what it does in one sentence, the scan's three outcomes, and the recovery after the move. A scan that reads `tasks.md`
+and finds no unchecked task carrying the marker says nothing; one that finds one or more tells the agent to read
+`references/user-validation.md` and follow it; a `tasks.md` that exists and cannot be read is reported to the user,
+who repairs it before the archive proceeds, or aborts, before the sync and the move, and is never taken as an empty
+marked set. That reference carries the two dispositions, the check of the production
+before the move, the report-to-the-user cases and the brief. When the emit
 still refuses after the move, the archive SHALL repair the payload and re-run `orbit emit archive`
 against the archived directory, never repeating the sync or the move.
-
-The bulk-archive workflow SHALL run Step 3.2 per change, before that change's sync and move, brief
-that change's dispositions there and again in its batch summary, and write each change's archive
-emit after its move, carrying its deferrals; each emit is checked by the same write gate. Its own task count SHALL exclude the marked tasks Step 3.2 owns, as upstream Step
-3's does, so a change whose only unchecked tasks carry the marker is never classed incomplete or
-offered for skipping.
 
 A task whose assertion is about state that exists only after this step — the baseline after sync,
 the archived directory, or the archive emit — is DEFERRED at this step: the step precedes the sync
@@ -952,13 +932,13 @@ are its only surfaces.
 - **THEN** upstream Step 3's incomplete-tasks prompt does not fire, and Step 3.2 briefs each task
   instead
 
-#### Scenario: Bulk archive disposes per change
+#### Scenario: The archive body reads the user-validation reference only when a marked task is unchecked
 
-- **WHEN** `/orbit:bulk-archive` archives a batch in which one change carries an unchecked
-  `(User-validation` task
-- **THEN** the change is not classed incomplete for that task, its Step 3.2 runs before its sync
-  and move, its dispositions appear in the batch summary, and its archive emit carries its
-  deferrals
+- **WHEN** the archive skill is generated
+- **THEN** its Step 3.2 basic content says nothing when no marked task is unchecked, names
+  `references/user-validation.md` for the case where one is, reports an unreadable `tasks.md` for repair or abort
+  before the move without reading the reference, and a parity test finds the DEFERRAL REFUSALS
+  production in that reference byte-equal to this requirement's fence, and not in the body
 
 ### Requirement: The archive saves the change's brief before the sync
 
@@ -980,10 +960,12 @@ The rows are the save's two outcomes (written, or refused whole) and the one way
 completing (it stops before the sync and the move).
 
 With every setting at its default, nothing the user sees or is asked changes: the save is a record (`automate-dev-flow`'s
-R-adf-9), the tail does not name it (`PR-attached archive tail`), and a failure is recorded, never shown. The bulk-archive
-workflow SHALL run the same step per change, after that change's base-fingerprint check and before its sync (its Step
-8a), with the same table. Each body carries the
-command and the table, so an installed skill needs no spec to run the step; a test holds each body carrying them.
+R-adf-9), the tail does not name it (`PR-attached archive tail`), and a failure is recorded, never shown. The archive
+body carries the step's BASIC CONTENT (`reduce-orbit-phase1`'s R-rop-3) — the command and the table's first row, a
+save that succeeds being said nothing about — and tells the agent, when the save exits non-zero, to read
+`references/brief-save.md` and follow it from the result it already has; that reference carries the table and the
+sentence on its rows. An installed skill needs no spec to run the step; a test holds the body's basic content and the
+reference carrying the table.
 
 #### Scenario: A default archive saves the brief before the sync
 
@@ -1004,10 +986,11 @@ command and the table, so an installed skill needs no spec to run the step; a te
 - **THEN** the first copy stays in `foo`'s history, the second archive saves a second copy, and the latest is `foo`'s
   brief
 
-#### Scenario: Bulk archive saves each change's brief
+#### Scenario: The archive body's basic content handles a save that succeeds
 
-- **WHEN** `/orbit:bulk-archive` archives `foo` and `bar`
-- **THEN** each change's brief is saved before that change's sync, and each archived history holds its own copy
+- **WHEN** the archive skill is generated
+- **THEN** its Step 3.6 basic content carries `orbit brief --change "<name>" --save` and says nothing about a save that
+  succeeds, names `references/brief-save.md` only for a save that exits non-zero, and that reference carries the table
 
 #### Scenario: A failed save under `change` stops at the hold
 
@@ -1040,17 +1023,12 @@ The question is a DECISION prompt (`orbit-conventions`' `A chain treats each pro
 `chain` object allowed asks it exactly as an archive the user typed, and the chain does not continue after it. The
 consent prompt is unchanged: a granted arrival still records `consent: "setting"`, which a sign-off does not replace.
 
-The bulk-archive workflow SHALL run the same step for each change, after that change's brief save and before its sync,
-with the same table: a change whose hold stops is not archived and stays active, and the others go on; the bulk
-summary reports it among the changes not archived, with the reason.
-
 With every setting at its default, nothing the user sees or is asked changes: the hold reports `why: "off"` with no
 warning and the archive goes on silently (`automate-dev-flow`'s R-adf-12). The archive body carries the step's BASIC
 CONTENT (`reduce-orbit-phase1`'s R-rop-3) — the hold command and its `why: "off"` row — and tells the agent to read
 `references/signoff-hold.md` and follow it, from the save's outcome and the result it already has, on any other result or a non-zero exit; that reference carries the command,
-the table and the `orbit emit signoff` invocation with its fields, byte-equal to the step's text. The bulk-archive body
-carries the whole step, as before. Either way an installed skill needs no spec to run the step; a test holds the
-archive body's basic content, its reference file and the bulk-archive body's whole step.
+the table and the `orbit emit signoff` invocation with its fields, byte-equal to the step's text. An installed skill
+needs no spec to run the step; a test holds the archive body's basic content and its reference file.
 
 #### Scenario: A default archive reads the hold and asks nothing
 
@@ -1103,13 +1081,6 @@ archive body's basic content, its reference file and the bulk-archive body's who
 - **WHEN** `/orbit:archive foo` runs under `signoff: program`
 - **THEN** the hold reports `why: "off"` with no warning, no sign-off is asked for, nothing about the hold is shown, and
   the archive completes
-
-#### Scenario: Bulk archive asks per change
-
-- **WHEN** `/orbit:bulk-archive` archives `foo` and `bar` under `signoff: change`, and the user signs `foo` and declines
-  `bar`
-- **THEN** `foo` is archived, `bar` stays active, and the bulk summary reports `bar` among the changes not archived with
-  the user's reason
 
 #### Scenario: The archive body's basic content handles the default hold
 

@@ -13,23 +13,30 @@ import { ownerText, fencedProduction } from '../helpers/owner-text.js';
  */
 const FIRST = 'CHECK SCOPE — the union of:';
 
-describe('sweep scope and path rule ↔ walk and review bodies parity (rc08a)', () => {
-  const bodies: Array<[string, string]> = [
-    ['orbit-review', getReviewSkillTemplate().instructions],
-    ['orbit-address-reviews', getAddressReviewsSkillTemplate().instructions],
+describe('sweep scope and path rule ↔ walk and review skills parity (rc08a)', () => {
+  // cut-review-walk (M6, V1): each skill's copy moved, byte-equal, to a reference its body reads at the step that uses it.
+  const refOf = (t: ReturnType<typeof getReviewSkillTemplate>, name: string): string =>
+    (t.references ?? []).find((r) => r.name === name)?.content ?? '';
+  const review = getReviewSkillTemplate();
+  const walk = getAddressReviewsSkillTemplate();
+  const copies: Array<[string, string, string, string]> = [
+    ['orbit-review', 'verification.md', refOf(review, 'verification.md'), review.instructions],
+    ['orbit-address-reviews', 'sweep-record.md', refOf(walk, 'sweep-record.md'), walk.instructions],
   ];
 
-  it.each(bodies)("%s carries the owner's fence byte-equal, once, with no mirror note before it", async (_name, body) => {
+  it.each(copies)("%s's references/%s carries the owner's fence byte-equal, once, with no mirror note before it", async (_name, refName, ref, body) => {
     const owner = await ownerText('orbit-emit-composition', '```\n' + FIRST);
-    expect(fencedProduction(body, FIRST)).toBe(fencedProduction(owner, FIRST));
-    expect(body.split(FIRST).length - 1).toBe(1);
-    const before = body.slice(0, body.indexOf('```\n' + FIRST)).split('\n').filter(l => l.trim() !== '').pop()!;
+    expect(fencedProduction(ref, FIRST)).toBe(fencedProduction(owner, FIRST));
+    expect(ref.split(FIRST).length - 1).toBe(1);
+    const before = ref.slice(0, ref.indexOf('```\n' + FIRST)).split('\n').filter(l => l.trim() !== '').pop()!;
     expect(before).not.toMatch(/CHECKED MIRROR/);
     expect(before).not.toContain('The walk write gate checks sweep evidence');
+    expect(body).not.toContain(FIRST);
+    expect(body).toContain(`references/${refName}`);
   });
 
   it('review step (c) points at the mirror, not at a spec an installed skill cannot open', () => {
-    const grade = getReviewSkillTemplate().instructions.split('**(c) Grade.**')[1].split('**(d)')[0];
+    const grade = refOf(review, 'verification.md').split('**(c) Grade.**')[1].split('**(d)')[0];
     expect(grade).toContain('every path resolves by the rule under **Sweep scope and paths** below');
     expect(grade).not.toContain("a path resolves by the rule `orbit-emit-composition`'s");
   });

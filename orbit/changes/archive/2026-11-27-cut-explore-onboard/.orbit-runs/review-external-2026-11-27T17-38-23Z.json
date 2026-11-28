@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-27T17:38:23Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/cut-explore-onboard/.orbit-runs/external-prompt-system-2026-11-27T17-37-59Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for cut-explore-onboard (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/cut-explore-onboard/.orbit-runs/external-prompt-system-2026-11-27T17-37-59Z.md into the target AI, and save the response as orbit/changes/cut-explore-onboard/.orbit-runs/external-system-<TS>.md"
+}

@@ -39,7 +39,7 @@ orbit init --tools claude
 ```
 
 `orbit init` creates the `orbit/` directory (`orbit/specs/`, `orbit/changes/`, `orbit/changes/archive/`) and
-installs orbit's 15 workflows for the tools you name, as skills and commands. The README's
+installs orbit's 14 workflows for the tools you name, as skills and commands. The README's
 [What you should see after install](../README.md#what-you-should-see-after-install) lists them.
 
 For Codex, name it instead, or name both:

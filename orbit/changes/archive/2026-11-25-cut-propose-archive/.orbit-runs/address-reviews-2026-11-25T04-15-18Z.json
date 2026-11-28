@@ -1,0 +1,258 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T04:15:18Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-propose-archive/.orbit-runs/external-proposal-2026-11-25T03-31-25Z.md",
+  "source_command": null,
+  "source_token": "2026-11-25T03-31-25Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 5,
+    "suggestion": 2
+  },
+  "pushback_verification": "All 7 findings verified against current state; three converge with the fresh pass's and take its walk log's disposition (address-reviews-2026-11-25T04-15-10Z, walked first).",
+  "resolution_summary": {
+    "resolved": 4,
+    "stale_suppressed": 3,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/design.md",
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "An unreadable tasks file can bypass the pre-move check",
+      "file": "orbit/changes/cut-propose-archive/specs/orbit-archive-modifications/spec.md",
+      "line": 507,
+      "action": "The spec delta's Step 3.2 basic content now names the scan's three outcomes, an unreadable tasks.md reported for repair or abort before the sync and move and never taken as empty, and its scenario says so; D2's A2 and task 4.2 follow.",
+      "evidence": "The propose-time delta named only the \"says nothing\" case and the read on a marked task; the repair-or-abort for an unreadable file lived only in the reference.",
+      "sweep": {
+        "retired": [
+          "the \"says nothing\" case when no marked task is unchecked, and the recovery",
+          "the \"says nothing\" case, the read and the recovery"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/specs/orbit-archive-modifications/spec.md",
+            "text": "what it does in one sentence, the scan's three outcomes, and the recovery after the move"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/tasks.md",
+            "text": "an unreadable `tasks.md` reported for repair or abort before the move"
+          }
+        ],
+        "searched": [
+          "says nothing",
+          "cannot be read",
+          "unreadable"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "severity": "WARNING",
+      "title": "The PR branch mismatch check has no defined place before the consent prompt",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 106,
+      "action": "Converged with the fresh pass; resolved there (option A).",
+      "evidence": "Converged with the fresh pass's \"After A4, the HEAD-mismatch notice can no longer reach the consent preview\", resolved in the fresh pass's walk log address-reviews-2026-11-25T04-15-10Z: design.md D2's A4 now runs the observation inside Step 0's read-only discovery, before a consent prompt is composed."
+    },
+    {
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "Step 4.9 assumes a prior reference read on a path that can skip it",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 110,
+      "action": "D2's A4 now keeps in Step 4.9's body its command, its off row, its non-zero-exit row and a read cue on any other result that reads the reference if Step 0.7 did not; only its carry-forward sentences and HEAD note leave as reworded pairs. Archive's size table and the margin sentence and Risks entry re-measured (about 5,170 after moves, about 4,660 after R2); task 4.3 follows.",
+      "evidence": "After the fresh walk's A4 rewrite, design.md no longer said what Step 4.9 keeps; an unattached change skips Step 0.7's read, and Step 4.9's non-zero exit is reported verbatim today.",
+      "sweep": {
+        "retired": [
+          "they leave the body as a `reworded` pair",
+          "Archive fits on its moves with about 50 tokens to spare",
+          "margin is about 50 tokens before R2"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "now, if Step 0.7 did not, and carry its record forward"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "Archive is about 170 over after its moves and fits only with R2, about 340 to spare."
+          }
+        ],
+        "searched": [
+          "Step 4.9",
+          "about 50",
+          "4,950",
+          "4,450"
+        ],
+        "scope": [
+          ".claude/skills/orbit-archive-change/SKILL.md"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md",
+          "orbit/changes/cut-propose-archive/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "The consent-reference trigger uses two definitions of user invocation",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 92,
+      "action": "D2's A1 read sentence keys on Step 0's classification ('an arrival classified above as AI-mediated or granted'), stating that an explicit same-turn prose request is user-invoked and never reads the reference; the lifecycle-consent delta's new bullet uses the same words; task 4.1 tests it.",
+      "evidence": "The propose-time sentence read 'On any arrival that is not user-typed', while the User-invoked bullet counts 'an unambiguous same-turn prose request naming the act' as user-invoked.",
+      "sweep": {
+        "retired": [
+          "On any arrival that is not user-typed, read"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "On an arrival classified"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md",
+            "text": "as AI-mediated or granted, to read the skill's `references/consent-at-entry.md`"
+          }
+        ],
+        "searched": [
+          "user-typed",
+          "AI-mediated or granted"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "severity": "WARNING",
+      "title": "Step 0d’s byte-equal move leaves its size-brief pointer in the wrong file",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 26,
+      "action": "Converged with the fresh pass; resolved there.",
+      "evidence": "Converged with the fresh pass's \"Positional pointers in the moved text go wrong beyond the one D1 rewords\", resolved in the fresh pass's walk log address-reviews-2026-11-25T04-15-10Z: D1 and task 3.1 name Step 0d's \"the size brief below has run\" as a reworded pair."
+    },
+    {
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "severity": "SUGGESTION",
+      "title": "Include the root convention in the retirement sweep",
+      "file": "skill_body_convention.md",
+      "line": 76,
+      "action": "Converged with the fresh pass; resolved there.",
+      "evidence": "Converged with the fresh pass's \"skill_body_convention.md still names bulk-archive as a body not yet under the convention\", resolved in the fresh pass's walk log address-reviews-2026-11-25T04-15-10Z: D3 and task 5.1 drop the Exceptions paragraph's bulk-archive clause."
+    },
+    {
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "Include sync-specs in the proposal’s ledger inventory",
+      "file": "orbit/changes/cut-propose-archive/proposal.md",
+      "line": 37,
+      "action": "The proposal's ledger bullet names apply, onboard and sync-specs among the bodies this stage also edits.",
+      "evidence": "proposal.md:37-38 read '(propose and archive; apply and onboard, which this stage also edits)'; design D4 and task 1.1 list five bodies.",
+      "sweep": {
+        "retired": [
+          "apply and onboard, which"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/proposal.md",
+            "text": "sync-specs, which this stage also edits"
+          }
+        ],
+        "searched": [
+          "sync-specs",
+          "this stage also edits"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the external half of the proposal blind pair after the fresh half's log. Three findings converged with the fresh pass (the mismatch before consent, Step 0d's pointer, the convention file) and are stale with that log's evidence. The other four were real and repaired: Step 3.2's scan gains its third outcome (an unreadable tasks.md reported before the move), Step 4.9 keeps its rows and a read cue that does not assume Step 0.7 read the reference (archive's size projection re-measured: fits only with R2), the consent cue keys on Step 0's classification, and the proposal names sync-specs among the ledger's bodies.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "22161681bbcf0369a4e003c3157f2f1796cc54b5",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

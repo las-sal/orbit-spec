@@ -1,0 +1,316 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T19:35:56Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-propose-archive/.orbit-runs/review-system-2026-11-25T17-56-28Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-25T17-56-28Z",
+  "latest_apply_token": "2026-11-25T17-21-43Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 2,
+    "suggestion": 3
+  },
+  "pushback_verification": "All five verified against current state; none stale. The replay claim was checked against replay/README.md and the propose case's staging-moved grader; the missing tests by grep over test/.",
+  "resolution_summary": {
+    "resolved": 5,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "The design's consume-mode risk says no replay case covers consume mode, but the propose case is a consume-mode run graded on Step 0d's move",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 270,
+      "classification": "decision_required",
+      "action": "Applied direction B: the Risks entry now names the propose case as a consume-mode run whose staging-moved grader asserts Step 0d's move, says it is not run for this stage under R-rop2-10 since no cut is postulated to change what a session does, and that D-inv-4's premise does not hold; the At archive list has the Shipped as note it. No replay was run.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Correct design.md:270 to name the propose case as covering consume mode, and offer Sal one billed propose-case run (npm run replay, then npm run replay:compare against the 2026-11-23 baseline record) before archive. It is the one cut here whose read moment changed and that a case can grade."
+          },
+          {
+            "label": "B",
+            "body": "Correct design.md:270 only. Keep R-rop2-10's no-replay ruling, since no cut is postulated to change what a session does, and record that the propose case, with its staging-moved grader, would catch a consume session that never read the reference if a later stage replays it."
+          }
+        ],
+        "chosen": "B"
+      },
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Under R-rop2-10 no case covers consume mode"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "its `staging-moved` grader asserts Step 0d's move"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "It also notes that D-inv-4's premise does not"
+          }
+        ],
+        "searched": [
+          "no case covers",
+          "read by no case",
+          "D-inv-4"
+        ],
+        "scope": [
+          "replay/README.md",
+          "replay/cases/propose/graders/staging-moved.md",
+          "orbit/architecture/reduce-orbit-phase2.md"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "WARNING",
+      "title": "Task 4.3's two constructed-case tests for the entry observation are not in the suite",
+      "marker_source": "internal-review",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 34,
+      "classification": "trivial_fix",
+      "action": "Wrote the two tests task 4.3 names in pr-references.test.ts: the AI-mediated arrival on an attached change with HEAD elsewhere (Step 0.7 inside Step 0's discovery before the prompt is composed, the reference's comparison and SAY SO NOW in the preview, the AI-mediated preview's attached line) and the no-prompt arrival (the one line before Step 1, the granted named limit, no preview on a granted arrival). Each was shown able to fail by a mutation of the text it reads, then restored. The task stays checked: its work now exists.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/pr-references.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "test/core/templates/pr-references.test.ts",
+            "text": "the entry observation names a HEAD mismatch before any write (cut-propose-archive task 4.3)"
+          }
+        ],
+        "searched": [
+          "SAY SO NOW",
+          "Entry observation, before any write",
+          "one line before Step 1",
+          "before a consent prompt is composed"
+        ],
+        "scope": [
+          "src/core/templates/workflows/pr-choreography.ts",
+          "src/core/templates/workflows/archive-change.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The consent read cue says 'before any write', a later moment than the ordering invariant's 'before any write or anomaly prompt'",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/archive-change.ts",
+      "line": 518,
+      "classification": "trivial_fix",
+      "action": "Both bodies' read cue now says 'follow it before any write or anomaly prompt', and both consent references' opening line says the same; the two reworded ledger pairs, the content-fidelity assertions, the delta requirement and design D2's quotation follow.",
+      "ripple_cascade": {
+        "applied": [
+          "src/core/templates/workflows/apply-change.ts",
+          "test/core/templates/cut-ledger-pairs.ts",
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md",
+          "orbit/changes/cut-propose-archive/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "and follow it before any write.",
+          "and follow it before any write;",
+          "granted, before any write."
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/archive-change.ts",
+            "text": "and follow it before any write or anomaly prompt."
+          },
+          {
+            "path": "src/core/templates/workflows/apply-change.ts",
+            "text": "and follow it before any write or anomaly prompt."
+          }
+        ],
+        "searched": [
+          "follow it before any write",
+          "classifies the arrival as AI-mediated or granted, before"
+        ],
+        "scope": [
+          "src/",
+          "test/"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The moved entry observation now points '(in the reference)' from inside that reference",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/pr-choreography.ts",
+      "line": 186,
+      "classification": "trivial_fix",
+      "action": "Renamed the pointer to its section, '(Tail, after the move and the emit, below)'. The span is a moved pair whose digest the ledger checks, so the rename is recorded as a reworded walk pair (WALK-F4-tail-pointer) undone after the move, as task 4.4 asks of a pointer that would leave its file, and the moved pair's digest is re-pinned. The older 'before upstream Step 1' wording is left: it predates this change and stays true on the usual named-change path.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "HEAD precondition (in the reference)"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "text": "HEAD precondition (Tail, after the move and the emit, below)"
+          }
+        ],
+        "searched": [
+          "in the reference)",
+          "(the reference)",
+          "in this reference"
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts",
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/apply-change.ts"
+        ],
+        "kept": [
+          {
+            "path": "test/core/templates/cut-ledger-pairs.ts",
+            "why": "the WALK-F4-tail-pointer pair's before quotes the old pointer, which the ledger undo restores"
+          }
+        ]
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-25T04-15-10Z",
+        "title": "Positional pointers in the moved text go wrong beyond the one D1 rewords",
+        "file": "orbit/changes/cut-propose-archive/design.md",
+        "kind": "query"
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Propose's Steps 0a to 0d left the body with their headings, which the convention's 'The step keeps its heading' rule does not provide for",
+      "marker_source": "internal-review",
+      "file": "skill_body_convention.md",
+      "line": 27,
+      "classification": "decision_required",
+      "action": "Applied direction A: the heading rule gains one sentence, a mode read whole at one moment keeps the mode's heading and its read in the body and its steps' headings move with its reference; design names the edit beside the convention's Exceptions edit.",
+      "ratified_via": "chat",
+      "recommendation_fork": {
+        "detected": true,
+        "source": "structured",
+        "options_presented": [
+          {
+            "label": "A",
+            "body": "Add one sentence to skill_body_convention.md's 'The step keeps its heading' rule: a mode read whole at one moment keeps the mode's heading and its read in the body, and its steps' headings move with its reference, where citations of them resolve."
+          },
+          {
+            "label": "B",
+            "body": "Leave the convention as it is and record in design D1 (and the Shipped as) that consume mode's step headings moved as a deliberate departure, the Consume-mode flow heading standing in for them."
+          }
+        ],
+        "chosen": "A"
+      },
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/design.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "skill_body_convention.md",
+            "text": "mode read whole at one moment (propose's consume mode, `cut-propose-archive`) keeps the mode's heading and its read in"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "Its \"The step keeps its heading\" rule gains one sentence naming D1's shape"
+          }
+        ],
+        "searched": [
+          "keeps its heading",
+          "BEFORE Step 0a",
+          "Step 0d's move"
+        ],
+        "scope": [
+          "src/core/templates/workflows/propose.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Five of five resolved: the replay-coverage line corrected under direction B, the two task 4.3 tests written and shown able to fail, the consent read cue moved to before any write or anomaly prompt in both bodies, the self-pointer renamed to its section as a walk pair before the move, and the convention given the mode-read shape under direction A.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews cut-propose-archive",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "af79e5cc2c7f7d5efce5559eab2d555daa8c5671",
+      "frozen": true,
+      "evidence": {
+        "files": [
+          {
+            "path": "src/core/templates/workflows/pr-choreography.ts",
+            "lines": 32
+          }
+        ],
+        "share": 3.6,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

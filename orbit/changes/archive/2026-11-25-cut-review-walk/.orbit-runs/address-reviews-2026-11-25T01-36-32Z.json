@@ -1,0 +1,163 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T01:36:32Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-review-walk/.orbit-runs/review-system-2026-11-25T01-25-45Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-25T01-25-45Z",
+  "latest_apply_token": "2026-11-24T23-48-08Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both verified against current state at 35e519fb; neither stale. design.md:135-136 and the test title at review-verification-branch.test.ts:106 still carried the narrower trigger, and address-reviews.ts:487 and :521 still hand-wrote their next line.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "severity": "SUGGESTION",
+      "title": "D4 still states the refusal route's old, narrower trigger",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 136,
+      "action": "Reworded D4 to the body's trigger, 'a refusal saying the pass owes verification, with owed keys or none', dated to the system walk, and its refusal sentence to 'naming the owed keys when it has any'; task 4.1's description of D4's route and the test title at review-verification-branch.test.ts:106 say the same.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/tasks.md",
+          "test/core/templates/review-verification-branch.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "on a refusal that names owed",
+          "a refusal naming owed verification keys",
+          "refuses the payload naming the owed keys"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "with owed keys or none (the system walk, 2026-11-24"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "D4's route for a refusal saying the pass owes"
+          },
+          {
+            "path": "test/core/templates/review-verification-branch.test.ts",
+            "text": "the body routes a refusal saying the pass owes verification, with owed keys or none,"
+          }
+        ],
+        "searched": [
+          "naming owed",
+          "names owed",
+          "owed verification keys"
+        ],
+        "scope": [
+          "src",
+          "test",
+          "docs",
+          "orbit/specs"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-25T00-13-29Z",
+        "title": "A zero-entry verification refusal can miss the new read cue",
+        "file": "src/core/templates/workflows/review.ts",
+        "kind": "judgement"
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "severity": "SUGGESTION",
+      "title": "resolution-detail.md's worked examples still hand-write their Suggested next line",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 487,
+      "action": "Replaced both worked walkthroughs' 'Suggested next:' lines in resolution-detail.md (address-reviews.ts:487, :521) with the engine placeholder report.md uses. The run-summary schema's next_recommended example (:591) is left: it documents a field the engine composes, which no walk writes.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Suggested next: re-run /orbit:review --as proposal to confirm convergence.",
+          "Suggested next: continue with current change's archive flow"
+        ],
+        "introduced": [
+          {
+            "path": "src/core/templates/workflows/address-reviews.ts",
+            "text": "Suggested next: <the engine's next_command, from orbit status --change <name> --json>"
+          }
+        ],
+        "searched": [
+          "Suggested next",
+          "confirm convergence"
+        ],
+        "scope": [
+          "test"
+        ],
+        "kept": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-25T00-13-29Z",
+        "title": "The walk report template models a competing next command",
+        "file": "src/core/templates/workflows/address-reviews.ts",
+        "kind": "judgement"
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Two of two resolved in the obvious-fix lane after walk all, both wording the previous walk's sweep searched for and matched without changing: design D4 now states the refusal trigger the body carries, and the worked examples take the engine's next command as the report template does. No body changed size: the edits are in the design, a task description, a test title and a reference.",
+  "iteration": 6,
+  "next_recommended": "/orbit:archive cut-review-walk — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "ecf27d147b6caaa394b29c1642012726caad89be",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 2
+}

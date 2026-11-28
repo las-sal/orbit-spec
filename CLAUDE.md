@@ -27,7 +27,7 @@ surgical cherry-picks only — there is no auto-ingest. A version bump is its ow
   update's smart detection may skip) so your local surface doesn't lag the source.
 - **Releases** are cut by `npm run release:tree` (the `orbit-release` capability), the only release path; pushing the
   tag is the maintainer's act.
-- `orbit/specs/` holds <!-- src:capabilities -->34<!-- /src:capabilities --> baseline capabilities. Every marked
+- `orbit/specs/` holds <!-- src:capabilities -->35<!-- /src:capabilities --> baseline capabilities. Every marked
   figure in this file is checked against `orbit/sources.yaml` by `orbit validate --sources`; an UNMARKED figure is
   invisible to that check.
 
@@ -39,7 +39,7 @@ Three decisions were ratified during C1 remediation:
   (upstream body — edited only by named deltas, in place, per `orbit-conventions`' `Generated-file disposition` — + `# Orbit additions`); each command `content` literal is a ~3-line launcher
   invoking the skill. Do NOT regrow workflow bodies in command literals.
 - **D15 — full surface always**: `getProfileWorkflows` (src/core/profiles.ts) always returns ALL
-  workflows (15 as of D5); profile gating is deliberately inert (`delivery` still honored). Do NOT
+  workflows (14 since bulk-archive left, R-rop2-11); profile gating is deliberately inert (`delivery` still honored). Do NOT
   reintroduce profile-filtered installs.
 - **D11 refinement — Claude primacy**: never trade Claude efficacy for cross-tool neutrality; upstream's
   named-tool idiom (`AskUserQuestion`, `Task tool`) stays in bodies by design.
@@ -54,7 +54,18 @@ and reads its reference there; `skill-body-budget.test.ts` holds each body's siz
 **`orbit/architecture/reduce-orbit-phase2.md`** (from 2026-11-20) is live: the second reduction phase, opened the day
 phase 1 merged, at Sal's direction ahead of `automate-dev-flow` (R-rop2-1). It takes up what phase 1 left (its R-rop-15,
 R-rop-18, R-rop-19): every body fitting the 5,000 tokens kept after a compaction, the cuts graded by a replay set, the
-rewording held back, and explore's and onboard's own text. Its Goals and stages wait on its opening session.
+rewording held back, and explore's and onboard's own text. Its first stage, `replay-set`, shipped on 2026-11-23: the
+replay set under `replay/` (`npm run replay`, every run Sal-started and billed; `npm run replay:compare` against the
+baseline record in `replay/results/`), and `npm run validate:skills` in CI. Its `inventory`, a named exploration
+(`orbit/explore/inventory/`), concluded the same day with a cut list per over-budget body; Sal's rulings from it replay
+only a cut postulated to change what a session does (R-rop2-10) and remove bulk-archive, address-reviews' batch mode and
+disagreement test, and explore's illustrative upstream text (R-rop2-11 to R-rop2-13). The first cut stage,
+`cut-review-walk`, shipped on 2026-11-25: review and address-reviews each under 5,000 estimated tokens, batch mode and
+the disagreement test removed, and every body edit named in a cut ledger (`test/core/templates/cut-ledger.test.ts`).
+The second, `cut-propose-archive`, shipped the same day: propose and archive each under 5,000 estimated tokens, propose's
+consume mode in a reference read when an exploration is consumed, and bulk-archive removed. The third and last,
+`cut-explore-onboard`, shipped on 2026-11-27: explore and onboard each under 5,000 estimated tokens, so no body is over,
+explore's illustrative upstream text removed (R-rop2-13) and six of its procedures in references. `close` is next.
 
 **`orbit/architecture/reduce-orbit-phase1.md`** (2026-11-17 to 2026-11-20, merged as PR #46) is complete. It restructured the skill bodies to be
 slimmer and in line with Anthropic's guidance for building skills, without changing what any workflow does. Text a

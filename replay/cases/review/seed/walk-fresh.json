@@ -1,0 +1,22 @@
+[
+  {
+    "severity": "WARNING",
+    "title": "The README does not say what the script prints with no name",
+    "marker_source": "internal-review",
+    "file": "README.md",
+    "line": 5,
+    "classification": "trivial_fix",
+    "remedy": "repair",
+    "outcome": "resolved",
+    "evidence": "README.md showed only a named run.",
+    "action": "README.md now says what a run with no name prints.",
+    "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
+    "sweep": {
+      "retired": [],
+      "introduced": [{ "path": "README.md", "text": "alone prints" }],
+      "searched": ["Hello, world"],
+      "scope": [],
+      "kept": []
+    }
+  }
+]

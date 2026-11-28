@@ -141,6 +141,8 @@ describe('architect-first — the onboard Canonical-flow walkthrough and Try-it 
   it('the draft PR is taught at propose and the tail at archive, unconditionally, naming never as the default', () => {
     const propose = region('**Phase 2 — propose', '**Phase 3 — review');
     expect(propose).toContain('**draft PR** opens');
+    // cut-explore-onboard's system walk: the user chooses each open question's outcome.
+    expect(propose).toContain('Propose prompts for each Open question: resolve now (a Decision), defer (an `@review:` marker) or abandon (to Considered & out).');
     expect(propose).toContain('`never` (the default');
     const archive = region('**Phase 9 — archive', null);
     expect(archive).toMatch(/\*\*tail\*\*: commit the archive's own writes, push, then[\s\S]*achievement landmark[\s\S]*\*\*READY\*\*/);

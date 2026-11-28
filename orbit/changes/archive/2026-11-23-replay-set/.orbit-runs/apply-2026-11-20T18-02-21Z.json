@@ -1,0 +1,57 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-20T18:02:21Z",
+  "change": "replay-set",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "user_validation_tasks": [
+    "5.2",
+    "5.3",
+    "5.4"
+  ],
+  "consent": "user-invoked",
+  "tasks_completed": 16,
+  "tasks_remaining": 3,
+  "user_validation_remaining": 3,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": true,
+  "tasks_completed_this_session": 1,
+  "files_touched": [
+    "orbit/changes/replay-set/tasks.md"
+  ],
+  "diff_base": "fe50458d85d132240b56f5f890fa0e829f1bd181",
+  "final_assessment": "16 of 19 tasks done. full npm test 214 files / 4465 tests green (baseline 211 / 4431), tsc and lint clean, validate --strict passes; task 5.2's plumbing ceiling corrected from $3 to $8 (the runner reserves each case budget); 5.2-5.4 are Sal's billed runs",
+  "next_recommended": "/orbit:review --as system --reviewer blind-pair replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

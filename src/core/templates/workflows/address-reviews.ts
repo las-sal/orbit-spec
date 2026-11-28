@@ -162,7 +162,7 @@ const ADDRESS_REVIEWS_INTERNAL_FINDINGS_FORMAT_REFERENCE = `# Reference: interna
 - Tolerated variations
 - Quick worked example of valid input
 
-This parser contract is consumed by BOTH explicit \`--from-file <path>\` invocations AND discovery from \`.orbit-runs/\` when \`/orbit:address-reviews <change-name>\` walks a change's outstanding passes and unwalked audit-drift emits (the DISCOVERY fence in SKILL.md Step 1). The parsing logic and virtual-marker construction are IDENTICAL regardless of how the JSON entered the lifecycle — only the resolution log's \`source\` field differs (\`"from-file"\` vs \`"auto-discovered"\`).
+This parser contract is consumed by BOTH explicit \`--from-file <path>\` invocations AND discovery from \`.orbit-runs/\` when \`/orbit:address-reviews <change-name>\` walks a change's outstanding passes and unwalked audit-drift emits (the DISCOVERY fence in \`references/discovery.md\`, read at SKILL.md Step 1). The parsing logic and virtual-marker construction are IDENTICAL regardless of how the JSON entered the lifecycle — only the resolution log's \`source\` field differs (\`"from-file"\` vs \`"auto-discovered"\`).
 
 The \`--from-file <path>\` flag accepts TWO format families: (a) external-review markdown (see \`external-findings-format.md\`), (b) internal findings JSON (this file). The parser auto-detects format via content sniff: leading \`{\` routes to JSON; leading \`# External Review:\` routes to markdown; anything else triggers a format-mismatch error.
 
@@ -353,12 +353,12 @@ This example has 0 CRITICAL, 0 WARNING, 1 SUGGESTION. Ingesting it via \`--from-
 The lifecycle walks this marker: pushback verifies the gap still applies → classify as \`decision required\` (out-of-scope/defer or include-in-current-change) → user makes the call → log entry written. Marker removal is no-op (no source file to delete from).
 `;
 
-const ADDRESS_REVIEWS_RESOLUTION_DETAIL_REFERENCE = `# Reference: resolution detail — discovery, batch triggers, fork detection, worked examples, degradation
+const ADDRESS_REVIEWS_RESOLUTION_DETAIL_REFERENCE = `# Reference: resolution detail — discovery, fork detection, worked examples, degradation
 
 ## Contents
 
 - Scope resolution and discovery (Step 1 detail)
-- Batch-mode trigger table (Step 3)
+- The decision lane's detection and recording (Step 3b.5)
 - Fork detection machinery, recording shape, and trace (Step 3b.5)
 - Worked example (\`--from-file\` markdown ingest, iter 5 of add-review-workflows)
 - Worked example (\`--from-file\` JSON ingest, single SUGGESTION from a system-mode review)
@@ -370,23 +370,21 @@ Moved from the body verbatim (D5 body-economy pass). The body carries the compac
 
 **Positional \`<scope>\` argument** — resolve in this order:
 
-1. **Active change**: \`orbit/changes/<scope>/\` exists → treat \`<scope>\` as a change name; the marker grep is restricted to that directory, and trail discovery applies (the body's DISCOVERY rows 4 and 5).
+1. **Active change**: \`orbit/changes/<scope>/\` exists → treat \`<scope>\` as a change name; the marker grep is restricted to that directory, and trail discovery applies (\`references/discovery.md\`'s DISCOVERY rows 4 and 5).
 2. **Archived change**: no active match, but \`orbit/changes/archive/\` contains one or more entries matching the regex \`^\\d{4}-\\d{2}-\\d{2}-<scope>$\` → treat as a change name resolving to the archive directory. If multiple archive entries match the same \`<scope>\` suffix (rare; same change name archived on different dates), the lexicographically-latest date wins (most-recent archive). Its markers and its unwalked audit-drift emits are discovered (row 6); \`orbit status\` cannot address an archived change, so its review passes are reached by \`--from-file\`, and the triage header says so.
 3. **Path/pattern fallback**: no active or archive match → treat as a path/pattern scope; grep restricted to that path; no trail is read (row 7).
 
-**Discovery is the DISCOVERY fence in the body's Step 1**, a checked mirror of \`orbit-address-reviews\`' \`Address-reviews command available\`; this file does not restate it. The outstanding passes come from the engine's \`unresolvedPasses\` and \`unwalkedPasses\` on each reviewed gate's status row, so the walk and the gate read one list. The single-newest-by-\`<TS>\` rule that this section used to carry is retired: it walked one pass when the gate held two, and it never reached an external return.
+**Discovery is the DISCOVERY fence in \`references/discovery.md\`**, read at the body's Step 1, a checked mirror of \`orbit-address-reviews\`' \`Address-reviews command available\`; this file does not restate it. The outstanding passes come from the engine's \`unresolvedPasses\` and \`unwalkedPasses\` on each reviewed gate's status row, so the walk and the gate read one list. The single-newest-by-\`<TS>\` rule that this section used to carry is retired: it walked one pass when the gate held two, and it never reached an external return.
 
 **Each discovered source is fed to the \`--from-file\` ingest path** (content-sniff routes JSON to the parser per \`references/internal-findings-format.md\` and \`# External Review:\` markdown per \`references/external-findings-format.md\`; identical lifecycle and virtual-marker construction to an explicit \`--from-file\` invocation). The only difference is the log's provenance fields (\`source: "auto-discovered"\` — see the schema reference).
 
 **\`--mark\` is optional, not prerequisite**: historically, \`/orbit:review --as proposal --mark\` was the way to produce markers that address-reviews would later walk. Discovery makes \`--mark\` purely a stylistic choice (do you want findings annotated in source for diff-readability?). A marker that restates a discovered finding is walked AS that finding, in its pass's log, so nothing is walked twice. A pass whose findings are all SUGGESTION-grade holds nothing on the gate, but it is still discovered while no walk record references it, through the gate's \`unwalkedPasses\`: severity ranks a finding and does not decide whether one is read.
 
-## Batch-mode trigger table (Step 3)
+## The decision lane's detection and recording (Step 3b.5)
 
-| Trigger | Detection | \`walk_mode_source\` |
-|---|---|---|
-| **\`--batch\` flag** | Present in the invocation argv. Canonical signal. | \`"flag"\` |
-| **Verbal \`--batch\` in invocation message** | The user's invocation message (the message that triggered the command) contains one of these batch-intent phrases: \`"fix them all"\`, \`"batch them"\`, \`"go ahead with all"\`, \`"address all at once"\`, or another clearly equivalent phrase conveying batch-resolution intent. The phrase MUST be in the invocation message — phrases inside subsequent walk-step responses do NOT shift mode (see next row). | \`"verbal"\` |
-| **Mid-walk command-shape interruption** | During an active walk, the user sends a bare, unambiguous mode-switch message: \`"go batch"\`, \`"switch to batch"\`, \`"batch the rest"\`. The message must be command-shaped (typically 2-4 words, no conversational filler) — ambiguous phrases like \`"yeah let's just keep going"\` or \`"fine, fix them all"\` mid-walk do NOT shift mode. Record the 1-indexed finding number at which the shift occurred in the resolution log's \`walk_mode_shifted_at_finding\` field. | \`"command-shape-interruption"\` |
+**Hybrid detection** supplies the briefing's option set — structured first: a well-formed \`recommendation_options: [{label, body}]\` array with ≥ 2 complete entries is used DIRECTLY (\`recommendation_fork.source: "structured"\`); otherwise a STRICT-disjunctive heuristic over the prose recommendation (numbered alternatives / clause-level "Either … or …" / an "Options:" prefix — never loose "or"; \`source: "heuristic"\`). Malformed structured input warns on stderr and falls back to heuristic with \`structured_path_skipped_reason\` recorded; it never aborts the walk. No detection at all: the finding STILL gets its full-prose briefing with 2–4 AI-derived options, and NO \`recommendation_fork\` object is recorded (absence IS the no-fork representation).
+
+**Ratification recording** — every decision-lane resolution records \`ratified_via: "chat" | "prompt"\` at the ENTRY level, plus a verbatim \`resolution\` string when no fork was detected or the ratified direction is off-menu; the \`recommendation_fork\` object (when detection fired) carries the detection data. Exact trigger rules, malformed-input handling, the recording shape, and a mini decision-lane trace: the next section. (The \`[discuss]\` escape hatch is RETIRED — discussion is the medium; pre-D4 logs carry it, readers tolerate both generations.)
 
 ## Fork detection machinery, recording shape, and trace (Step 3b.5)
 
@@ -423,8 +421,6 @@ Moved from the body verbatim (D5 body-economy pass). The body carries the compac
 
 (The \`[discuss]\` escape-hatch option is RETIRED — discussion is the medium, not an escape; \`discuss_invoked\` is no longer emitted. Pre-D4 logs carry it; readers tolerate both generations.)
 
-**Decision-lane behavior in batch-mode**: decision-lane findings STILL receive their per-finding briefing and ratification in batch-mode — batch never merges decisions into one prompt; it only suppresses per-finding pacing for obvious-fix and stale findings.
-
 **Mini decision-lane trace**:
 
 \`\`\`
@@ -459,7 +455,7 @@ Source: --from-file orbit/changes/add-review-workflows/.orbit-runs/external-prop
 External reviewer: Claude Opus 4.7 (fresh-context in-session subagent — iter 5)
 Input findings: 0 CRITICAL / 4 WARNING / 5 SUGGESTION
 Markers walked: 9 (all)
-Walk mode: per_finding (default)
+Walk mode: per_finding
 Pushback verification: all 9 verified against current state; 0 stale suppressions.
 Cascade summary: 14 IN files cascaded across 9 resolutions; 3 OUT files flagged_not_applied (2 baseline specs, 1 cross-change archive ref).
 
@@ -488,7 +484,7 @@ Cascade summary: 14 IN files cascaded across 9 resolutions; 3 OUT files flagged_
 ### Final assessment
 
 0 unresolved external findings.
-Suggested next: re-run /orbit:review --as proposal to confirm convergence.
+Suggested next: <the engine's next_command, from orbit status --change <name> --json>
 
 Run summary: orbit/changes/add-review-workflows/.orbit-runs/address-reviews-2026-05-18T14-43-41Z.json
 \`\`\`
@@ -522,7 +518,7 @@ Pushback verification: 1 verified against current state; 0 stale suppressions.
 ### Final assessment
 
 0 unresolved findings.
-Suggested next: continue with current change's archive flow; the schema-doc gap is filed as a follow-up task and will be addressed in a future change.
+Suggested next: <the engine's next_command, from orbit status --change <name> --json>
 
 Run summary: orbit/changes/harden-export-validation/.orbit-runs/address-reviews-2026-05-26T20-XX-XXZ.json
 \`\`\`
@@ -564,10 +560,9 @@ const ADDRESS_REVIEWS_RUN_SUMMARY_SCHEMA_REFERENCE = `# Reference: address-revie
 - v1 → v2 format migration (reader guidance)
 - Field notes
 - Worked-example JSON snippets
-  - (a) Walk-mode clean run (per_finding default, all IN, no fork)
-  - (b) Batch-mode with verbal source
-  - (c) Decision-fork ratified by chat directive
-  - (d) \`--no-cascade\` — all ripples flagged-not-applied
+  - (a) Clean run (per_finding, all IN, no fork)
+  - (b) Decision-fork ratified by chat directive
+  - (c) \`--no-cascade\` — all ripples flagged-not-applied
 
 Each \`/orbit:address-reviews\` invocation persists a JSON summary. Path varies:
 
@@ -582,7 +577,7 @@ Every location is written by the emit surface — no scope hand-writes its log.
 
 The spine every emit carries is owned by \`orbit-conventions\`' \`Internal-run JSON summary format\` requirement, and is not restated here; the write gate refuses every field the engine composes (\`next_recommended\` and the \`iteration\` ordinal among them). For address-reviews, \`final_assessment\` is the payload's own narrative of the resolution outcome, and \`change\` is \`null\` for whole-repo / cross-change and architecture scope, where an architecture-scoped log carries a \`doc\` field instead.
 
-The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`source_command\`, \`source_token\`, \`latest_apply_token\`, \`external_reviewer\`, \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\`, \`ripple_cascade\`, \`sweep\` and \`ripple_miss_of\` sub-objects and the per-entry \`remedy\`, \`routed_to\` and \`disagreement\`, \`remaining_markers_in_scope\`, \`persisted_escalations\`) and the engine-computed \`ripple_misses\`. Per-command extensions are address-reviews-specific state.
+The schema below documents per-command extensions ADDED to that spine (\`source\`, \`source_path\`, \`source_command\`, \`source_token\`, \`latest_apply_token\`, \`external_reviewer\`, \`walk_mode\`, \`input_findings_summary\`, \`pushback_verification\`, \`resolution_summary\`, \`delegation_directive\`, \`resolutions\` with entry-level \`ratified_via\`/\`resolution\` plus \`recommendation_fork\`, \`ripple_cascade\`, \`sweep\` and \`ripple_miss_of\` sub-objects and the per-entry \`remedy\` and \`routed_to\`, \`remaining_markers_in_scope\`, \`persisted_escalations\`) and the engine-computed \`ripple_misses\`. Per-command extensions are address-reviews-specific state.
 
 ## Schema (v2)
 
@@ -601,9 +596,7 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
   "source_token": "<for auto-discovered source: the discovered file's filename <TS> token; null otherwise>",
   "latest_apply_token": "<for auto-discovered source: most-recent apply-*.json filename token in the same .orbit-runs/, or null if no apply JSON exists; null for other sources>",
   "external_reviewer": "<from --from-file's Reviewer field, if applicable, else null>",
-  "walk_mode": "per_finding" | "batch",
-  "walk_mode_source": "flag" | "verbal" | "command-shape-interruption",
-  "walk_mode_shifted_at_finding": "<1-indexed finding number when mode shifted mid-walk; present only when walk_mode_source == 'command-shape-interruption'>",
+  "walk_mode": "per_finding",
   "input_findings_summary": {
     "critical": 0,
     "warning": 0,
@@ -649,7 +642,6 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
       "ripple_miss_of": { "walk": "<earlier walk's filename token>", "title": "<that entry's title>", "file": "<that entry's file>", "kind": "scope" | "query" | "judgement" },
       "remedy": "repair" | "descope" | "redesign",
       "routed_to": "<a REDESIGN's route: orbit/explore/<new-name>/, or orbit/changes/<name>/explore.md on an active change>",
-      "disagreement": { "with": { "pass": "<the other pass's filename token>", "title": "<its finding's title>", "file": "<its finding's file>" }, "test": "<the test as run>", "observed": "<its output or derivation>" },
       "outcome": "resolved" | "stale" | "deferred" | "escalated"
     }
   ],
@@ -664,7 +656,7 @@ The schema below documents per-command extensions ADDED to that spine (\`source\
 
 ## Example payloads
 
-Five payload files the walk writes, ONE PER PROVENANCE, because the fields that record where the findings came from cannot appear together: a discovered internal review pass on an active change, walked in a mode that switched to batch mid-walk; a discovered external return on an active change (a converged finding, a disagreement, an essential redesign — an active change only, because that route returns the change to exploration); a discovered audit-drift emit (an active change, or an archived one through the archived fallback); a bare whole-repo marker walk; and a \`--from-file\` walk of an architecture review. The five are independent: each illustrates its own provenance, and no two are written as halves of one walk. Each is real JSON carrying no engine-owned key, and each is tagged with the scopes its own values describe — a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits each block, unchanged, through the write gate in every scope its tag names, and checks that together they carry every key the schema documents (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
+Five payload files the walk writes, ONE PER PROVENANCE, because the fields that record where the findings came from cannot appear together: a discovered internal review pass on an active change, walked with a mid-walk delegation; a discovered external return on an active change (a converged finding, a repaired one, an essential redesign — an active change only, because that route returns the change to exploration); a discovered audit-drift emit (an active change, or an archived one through the archived fallback); a bare whole-repo marker walk; and a \`--from-file\` walk of an architecture review. The five are independent: each illustrates its own provenance, and no two are written as halves of one walk. Each is real JSON carrying no engine-owned key, and each is tagged with the scopes its own values describe — a bare whole-repo walk must carry \`remaining_markers_in_scope\`, which drives its recommendation. A test submits each block, unchanged, through the write gate in every scope its tag names, and checks that together they carry every key the schema documents (\`orbit-emit-composition\`'s \`Payload schema references are proven by execution\`). The worked-example snippets further down are ILLUSTRATIONS of single fields, not payloads: they omit \`command\` so the test never reads them as schema blocks.
 
 \`\`\`json example change
 {
@@ -675,9 +667,7 @@ Five payload files the walk writes, ONE PER PROVENANCE, because the fields that 
   "source_token": "2026-10-02T09-00-00Z",
   "latest_apply_token": null,
   "external_reviewer": null,
-  "walk_mode": "batch",
-  "walk_mode_source": "command-shape-interruption",
-  "walk_mode_shifted_at_finding": 2,
+  "walk_mode": "per_finding",
   "input_findings_summary": { "critical": 1, "warning": 1, "suggestion": 0 },
   "pushback_verification": "Both findings verified against current state; none stale.",
   "resolution_summary": { "resolved": 2, "stale_suppressed": 0, "deferred": 0, "escalated": 0 },
@@ -718,7 +708,7 @@ Five payload files the walk writes, ONE PER PROVENANCE, because the fields that 
       "outcome": "resolved"
     }
   ],
-  "delegation_directive": "batch the rest",
+  "delegation_directive": "handle the rest, only brief me on real decisions",
   "remaining_markers_in_scope": 0,
   "persisted_escalations": [],
   "model": "claude-opus-5-5"
@@ -727,7 +717,7 @@ Five payload files the walk writes, ONE PER PROVENANCE, because the fields that 
 
 \`\`\`json example change
 {
-  "final_assessment": "One stale as converged with the fresh half's log, one repaired after a disagreement test, one escalated as an essential redesign; this pass stays outstanding.",
+  "final_assessment": "One stale as converged with the fresh half's log, one repaired, one escalated as an essential redesign; this pass stays outstanding.",
   "source": "auto-discovered",
   "source_path": "orbit/changes/add-detail-flag/.orbit-runs/external-system-2026-10-02T10-00-00Z.md",
   "source_command": null,
@@ -736,7 +726,7 @@ Five payload files the walk writes, ONE PER PROVENANCE, because the fields that 
   "external_reviewer": "GPT-6 Codex",
   "walk_mode": "per_finding",
   "input_findings_summary": { "critical": 1, "warning": 2, "suggestion": 0 },
-  "pushback_verification": "All three verified; one converged with the fresh half, one settled by a test.",
+  "pushback_verification": "All three verified against current state; one converged with the fresh half.",
   "resolution_summary": { "resolved": 1, "stale_suppressed": 1, "deferred": 0, "escalated": 1 },
   "resolutions": [
     {
@@ -758,11 +748,6 @@ Five payload files the walk writes, ONE PER PROVENANCE, because the fields that 
       "line": 30,
       "classification": "trivial_fix",
       "action": "refused the empty value",
-      "disagreement": {
-        "with": { "pass": "2026-10-02T09-30-00Z", "title": "The parser refuses an empty detail value", "file": "src/cli/detail.ts" },
-        "test": "node bin/cli.js --detail ''",
-        "observed": "exit 0 with an empty detail, so the external claim holds and the fresh claim is stale"
-      },
       "ripple_cascade": { "applied": [], "flagged_not_applied": [] },
       "sweep": { "retired": [], "introduced": [], "searched": ["--detail", "empty value"], "scope": [], "kept": [] },
       "remedy": "repair",
@@ -932,7 +917,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 
 **Why NOT a rename**: v1 aggregated ripple-flagged paths in a single top-level array across ALL resolutions, with no per-resolution attribution. v2 splits per-resolution into \`ripple_cascade.applied[]\` + \`ripple_cascade.flagged_not_applied[]\`. The shapes are NOT bijective — v1 archived JSONs cannot be losslessly upconverted to v2 (per-resolution attribution is lost in v1). Treat v1's aggregate as the union of all per-resolution ripple sets across the run; attribution to specific findings is unavailable.
 
-**v2 fields not present in v1**: \`walk_mode\`, \`walk_mode_source\`, \`walk_mode_shifted_at_finding\`, per-resolution \`recommendation_fork\`, per-resolution \`ripple_cascade\`. Downstream consumers (e.g., a downstream status reader's tier-1 best-effort parse) handle absence as v1 and proceed gracefully.
+**v2 fields not present in v1**: \`walk_mode\`, per-resolution \`recommendation_fork\`, per-resolution \`ripple_cascade\`. Downstream consumers (e.g., a downstream status reader's tier-1 best-effort parse) handle absence as v1 and proceed gracefully.
 
 ## Field notes
 
@@ -947,9 +932,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 - **\`outcome\`** is the final disposition; aligns with the ✓ Resolved / ⚠ Stale / ⏸ Deferred / ✗ Escalated counts in the resolution log.
 - **\`persisted_escalations\`** captures \`@review(escalated):\` markers deliberately left in place; mirrors the resolution log's escalated section so downstream queries don't re-parse the log.
 - **\`next_recommended\`** is the closing suggestion shown in the final-assessment line.
-- **\`walk_mode\`** records the lifecycle mode the run used (per #11): \`per_finding\` (default — each marker walked sequentially with its own pushback → classify → fix → cascade → remove cycle) or \`batch\` (all markers complete pushback + classify + fix in one pass, then cascade as a single aggregated step).
-- **\`walk_mode_source\`** distinguishes how batch-mode was entered: \`flag\` (\`--batch\` argv), \`verbal\` (recognized batch-intent phrase in the invocation message — "fix them all", "batch them", "go ahead with all", or equivalent), \`command-shape-interruption\` (bare unambiguous mid-walk mode-switch message — "go batch", "switch to batch", "batch the rest"). Omitted when \`walk_mode == "per_finding"\`.
-- **\`walk_mode_shifted_at_finding\`** is the 1-indexed finding number at which the mode shifted; present ONLY when \`walk_mode_source == "command-shape-interruption"\`; omitted otherwise.
+- **\`walk_mode\`** records the lifecycle mode the run used: \`per_finding\`, the only walk mode — each marker walked in turn with its own pushback → classify → fix → cascade → remove cycle. A log written before batch mode was removed may carry \`batch\`.
 - **\`reproduction_rerun\`** (per-resolution, REQUIRED on every CRITICAL entry, absent below CRITICAL — rc02b): the Step 3a step-(0) result, one of the CLOSED values \`reproduced\` / \`not-reproduced\` / \`cannot-run\` (the marker carried a reproduction and it was re-run) or \`unreproduced\` (the marker carried none); the output or derivation rides \`evidence\`. A reader that does not know the field ignores it (the \`recommendation_options\` precedent). Owned by \`orbit-address-reviews\`' resolution-log shape requirement.
 - **\`ratified_via\`** (per-resolution, REQUIRED for every decision-lane resolution — forked or not): \`"chat"\` (a user-typed directive ratified the resolution) or \`"prompt"\` (the optional closure \`AskUserQuestion\` did) (chain: not a prompt). Absent on non-decision-lane resolutions.
 - **\`resolution\`** (per-resolution, conditionally required): the ratified direction verbatim — required when no fork was detected (AI-derived prose options) OR when the direction is off-menu; optional when \`recommendation_fork.chosen\` names a presented option.
@@ -961,12 +944,11 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 - **\`sweep\`** (per-resolution, on \`resolved\` entries — rc08a): the five arrays \`retired\` / \`introduced\` / \`searched\` / \`scope\` / \`kept\` composed at Step 3d.5. Shape owned by \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`; checks owned by \`orbit-emit-composition\`'s \`The walk write gate checks sweep evidence\`. A log written before rc08a carries none.
 - **\`ripple_miss_of\`** (per-resolution, optional — rc08a): \`{walk, title, file, kind}\` naming the earlier walk entry that missed this finding, written at triage (Step 2). Shape owned by \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`; the pointer check by \`orbit-emit-composition\`'s \`A ripple-miss pointer resolves and is counted\`.
 - **\`remedy\`**, **\`routed_to\`** (per-resolution — rc08b): R-crc-6's lane — what the resolution DID, beside the process \`lane\` — and a REDESIGN's route. Values, dispositions and routes owned by \`orbit-address-reviews\`' \`A walk entry records its remedy, and a REDESIGN leaves the walk\`; recorded, never checked at the write gate. A log written before rc08b carries neither.
-- **\`disagreement\`** (per-resolution, optional — rc08b): \`{with: {pass, title, file}, test, observed}\` on the entry in the LATER pass's log, when the halves of a pair contradicted each other and one test settled it. Shape and rule owned by \`orbit-address-reviews\`' \`A disagreement between the halves of a pair is settled by one test\`; recorded, never checked.
 - **\`ripple_misses\`** (top-level, engine-computed — rc08a): the count of this walk's resolutions carrying \`ripple_miss_of\`; never supplied, per \`orbit-emit-composition\`'s \`A ripple-miss pointer resolves and is counted\`.
 
 ## Worked-example JSON snippets
 
-### (a) Walk-mode clean run (per_finding default, all IN, no fork)
+### (a) Clean run (per_finding, all IN, no fork)
 
 \`\`\`json
 {
@@ -987,17 +969,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 }
 \`\`\`
 
-### (b) Batch-mode with verbal source
-
-\`\`\`json
-{
-  "walk_mode": "batch",
-  "walk_mode_source": "verbal",
-  "resolutions": [/* ... */]
-}
-\`\`\`
-
-### (c) Decision-fork ratified by chat directive
+### (b) Decision-fork ratified by chat directive
 
 \`\`\`json
 {
@@ -1024,7 +996,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 }
 \`\`\`
 
-### (d) \`--no-cascade\` — all ripples flagged-not-applied
+### (c) \`--no-cascade\` — all ripples flagged-not-applied
 
 \`\`\`json
 {
@@ -1048,7 +1020,7 @@ The v2 shape is a **structural change** from v1, not a rename. Readers handling 
 // once-per-session-detail (reduce-orbit-phase1, D-opsd-4, D-opsd-9): the emit section, whole, is
 // `references/run-summary-emit.md`; the body carries its heading, the paragraphs that stay, the read cue and the command.
 const ADDRESS_REVIEWS_EMIT_HEADING = `### 6. Persist the run summary`;
-const ADDRESS_REVIEWS_EMIT_PER_SOURCE = `**ONE resolution log PER SOURCE.** A walk that discovered more than one source writes one log per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found. Each carries its own single \`source_path\` (the markers' log carries the scope, \`source: "scope"\`), so the gate's per-pass match reads every log unchanged. The logs go in token order, oldest first, then the markers. In walk mode, write each source's log when that source's findings are walked, before the next source begins. In batch mode the invocation resolves every source's findings, runs its ONE aggregated cascade, then writes every source's log, in the same order; an interrupted batch writes no log for a source whose log was not yet written, and a mid-walk switch to batch applies only to the sources whose logs are not yet written. An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again. A discovered source's log carries \`source: "auto-discovered"\`, \`source_path\` (that one file), \`source_command\` (its top-level \`command\`, or \`null\` for an external return), \`source_token\` and \`latest_apply_token\`; no \`tie_break_rationale\` is written, because nothing is selected by recency.`;
+const ADDRESS_REVIEWS_EMIT_PER_SOURCE = `**ONE resolution log PER SOURCE.** A walk that discovered more than one source writes one log per discovered pass, one per discovered audit-drift emit, and one for the markers when any were found. Each carries its own single \`source_path\` (the markers' log carries the scope, \`source: "scope"\`), so the gate's per-pass match reads every log unchanged. The logs go in token order, oldest first, then the markers. Write each source's log when that source's findings are walked, before the next source begins. An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again. A discovered source's log carries \`source: "auto-discovered"\`, \`source_path\` (that one file), \`source_command\` (its top-level \`command\`, or \`null\` for an external return), \`source_token\` and \`latest_apply_token\`; no \`tie_break_rationale\` is written, because nothing is selected by recency.`;
 const ADDRESS_REVIEWS_EMIT_COMMAND = `\`\`\`bash
 orbit emit address-reviews --change <name> --payload <payload-file>
 \`\`\``;
@@ -1061,48 +1033,21 @@ export const ADDRESS_REVIEWS_RUN_SUMMARY_EMIT = [
   ADDRESS_REVIEWS_EMIT_COMMAND,
   ADDRESS_REVIEWS_EMIT_SCOPE_FORMS,
 ].join('\n\n');
-/** The body's emit section: when the emit fires, the read cue, the command and the chat behaviour beside them. */
+/**
+ * The body's emit section: when the emit fires, the read cue and the command. cut-review-walk (M10) moved the per-source
+ * paragraph and the scope forms out of it: `references/run-summary-emit.md` already held both whole, and the paragraph's
+ * walk-order sentences are also in `references/triage-sources.md`, read before the walk.
+ */
+export const ADDRESS_REVIEWS_EMIT_PER_SOURCE_BASIC = `**ONE resolution log PER SOURCE**: a walk that discovered several sources writes one log for each, as \`references/run-summary-emit.md\` says.`;
 export const ADDRESS_REVIEWS_RUN_SUMMARY_EMIT_BASIC = [
   ADDRESS_REVIEWS_EMIT_HEADING,
-  ADDRESS_REVIEWS_EMIT_PER_SOURCE,
+  ADDRESS_REVIEWS_EMIT_PER_SOURCE_BASIC,
   `Each payload's fields are listed in \`references/run-summary-schema.md\`. ${RUN_SUMMARY_READ_CUE}`,
   ADDRESS_REVIEWS_EMIT_COMMAND,
-  ADDRESS_REVIEWS_EMIT_SCOPE_FORMS,
 ].join('\n\n');
 
-/**
- * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
- *
- * Checked mirrors (an installed skill has no specs to point at; never edit them here):
- * - the DISCOVERY fence: `orbit-address-reviews`' `Address-reviews command available`, held by `test/core/discovery-parity.test.ts`;
- * - the CHECK SCOPE fence: `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, held by
- *   `test/core/sweep-path-parity.test.ts`.
- */
-export function getAddressReviewsSkillTemplate(): SkillTemplate {
-  return {
-    name: 'orbit-address-reviews',
-    description: "Walk review findings — every outstanding pass a change's gates report — and `@review:` markers to resolution, one by one: pushback against current state, classify, fix the obvious ones, brief each decision for the user to ratify, cascade ripple edits, and record the walk. Use after `/orbit:review` or `/orbit:audit-drift` writes findings, after an external review returns, or when `@review:` markers have built up.",
-    instructions: `Resolve \`@review:\` markers across the repo (or external-review findings from a file) with pushback discipline. The lifecycle: **discover → triage → walk → report**, where each walked finding completes its inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) in walk-mode by default. Cascade-by-default auto-applies parallel edits to ripple-flagged IN-set files. Markers are removed from their source files on resolution (the marker-removal invariant) so they don't leak into canonical artifacts.
-
-**Generates resolutions; does not generate findings.** This is the counterpart to \`/orbit:review\`. Primary use case: close the cross-AI review cycle by ingesting external-AI findings via \`--from-file\`. Secondary use case: walk repo-scanned inline \`@review:\` markers with structured pushback.
-
-**Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions.
-
-## Execution disciplines (epitome)
-
-The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
-
-- **Pushback (review-time) — primary here**: verify every claim against current state before acting (procedure in Step 3a); stale findings are suppressed with evidence, never re-fixed.
-- **Read-before-reference (authoring-time)**: read a file's actual current content before editing or citing it; re-read after edits to confirm they landed.
-- **Change completeness (modification-time)**: apply resolutions across ALL affected artifacts — the Step 3d ripple cascade is this discipline mechanized; sweep just-touched files for residue after mechanical edits.
-- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — gate \`passed\` means *eligible*, not *commanded*.
-${DECISION_WRITING_BASIC}
-
-## Steps
-
-### 1. Discover (or ingest)
-
-**Discovery** decides which sources this invocation walks.
+// cut-review-walk (reduce-orbit-phase2): references the body reads at the moment it names.
+const ADDRESS_REVIEWS_DISCOVERY_REFERENCE = `# Reference: discovery and the \`--from-file\` ingest (Step 1)
 
 \`\`\`
 DISCOVERY — rows tested in order, first match wins:
@@ -1115,8 +1060,6 @@ DISCOVERY — rows tested in order, first match wins:
 7 a positional resolving to no change (a path or pattern): markers in that scope only.
 AFTER the matched row: when it discovered nothing, print "No @review: markers and no outstanding passes in scope. Nothing to walk.", then list each audit-drift-*.json in scope that a log already names as "walked before; reach by --from-file <path>", and exit clean.
 \`\`\`
-
-**Row 4's offer — stop, or walk now — is (chain: decision)**: on any arrival it is asked, and after it the chain does not continue.
 
 **The outstanding set is the gate's, never a second rule here.** On an active change, read \`orbit status --change <name> --json\`. From each \`gates[]\` row with \`kind: "reviewed"\` whose \`state\` is not \`blocked\` and that does not carry \`superseded: true\`, take its \`unresolvedPasses\` and its \`unwalkedPasses\` (each entry \`{token, file, mode, source}\`, \`file\` repo-relative, oldest first) and its \`openPair\` (\`{missing}\`, present only when a pair is half-landed). Row 4 reads \`openPair\`, and row 5 reads the union of the two lists. \`unresolvedPasses\` holds the passes the gate holds on; \`unwalkedPasses\` holds every other pass carrying a finding of any severity that no walk record references, so a suggestion-only pass is discovered and walked like any other — the walk holds nothing on the gate, though, like any walk, it raises the following cadence slot's ordering bar. audit-drift is not a gate pass, so row 5 finds it by the basename rule.
 
@@ -1131,105 +1074,26 @@ AFTER the matched row: when it discovered nothing, print "No @review: markers an
 **\`--from-file\` ingest** auto-detects format by content sniff (content only — never extension): leading \`{\` → internal JSON, accepting \`command: "review"\` or \`"audit-drift"\` only (\`"address-reviews"\` rejected on purpose — cycle prevention; contract at \`references/internal-findings-format.md\`); leading \`# External Review:\` → external markdown (\`references/external-findings-format.md\`); neither → clean format-mismatch error naming both. Each finding becomes a virtual marker (\`severity\` / \`title\` / \`file:line\` / \`description\` / \`reproduction\` when present / \`source\` tagged \`external\` / \`internal-review\` / \`audit-drift\`) walking the same lifecycle as inline markers, except Step 3e marker-removal is a no-op — the source file is an audit artifact that travels with the change into archive.
 
 **Fresh pushback applies to every virtual marker**: the source's own \`stale_suppressed[]\` filtered at source-run time, but state may have changed since; Step 3a runs regardless of provenance.
+`;
 
-### 2. Triage
-
-Present discovered markers (or parsed virtual markers) as a numbered list:
-
-\`\`\`
-Found 12 markers in scope:
-
-  1. orbit/changes/foo/proposal.md:41 — "@review: should this be five or four?"
-  2. orbit/changes/foo/design.md:159  — "@review: 9 vs 8 after merge"
-  3. src/api/auth.ts:88                   — "// @review: token TTL configurable per env?"
-  ...
- 12. (external) proposal.md:33            — [CRITICAL] orbit-conventions bullet omits three disciplines
-\`\`\`
-
-Mark external-sourced entries explicitly (\`(external)\` prefix). **Blocks come first**: when the source carries lifecycle blocks (markdown \`## Blocks\` items; the review JSON's \`blocks[]\`), list them at the TOP of the triage table under a \`Blocks (not walked)\` heading — one line each, verbatim — before any numbered finding; they are never virtual markers, never walked, and never counted (per \`orbit-conventions\`' Severity ladder; the stop is the human's). A CRITICAL marker that carries no reproduction is tagged \`unreproduced\` in its triage line. The triage OPENS with the **obvious-fix lane preview**: every finding provisionally headed for the obvious-fix lane is listed compactly — finding + its one-line resolution — BEFORE any fix lands, so the user can pull any item into the decision lane with a word ("discuss the import one"). The preview derives from a PROVISIONAL classification (per-finding pushback has not yet run); walk-time pushback may reclassify, and a reclassified item is announced before its fix lands. Scoping (walk all — the default — / a subset / only-critical / cancel) is settled by the user's response to the preview; an \`AskUserQuestion\` is optional closure when the response doesn't settle it (chain: routine, default: walk all). On an arrival the change status's \`chain\` object allowed, no scoping prompt fires: every finding is walked, and the run summary's \`final_assessment\` carries \`The chain took the default: triage scoping — walk all.\` On any arrival the user typed, scoping is asked as above.
-
-**Ripple-miss attribution** (a change-scoped walk): read the change's EARLIER walk logs (\`address-reviews-*.json\` on its trail) against each finding. Where a finding sits at a site an earlier \`resolved\` entry's fix should have reached, that finding's resolution — once it resolves — carries \`ripple_miss_of: {walk, title, file, kind}\`, naming the earlier entry with \`title\` and \`file\` copied from that log, never retyped, and \`kind\` one of: \`scope\` (the site lay outside that entry's check scope), \`query\` (inside it, but matched by none of its \`retired\` or \`searched\` strings), or \`judgement\` (matched, and judged unaffected). An entry written before sweep records existed has no \`retired\`/\`searched\`; read its scope as the change directory (on a change-scoped walk), its \`file\` and its \`ripple_cascade.applied\`. Attribution is your judgement and optional: a finding no earlier entry touched carries none. Shape and rule: \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`.
+const ADDRESS_REVIEWS_TRIAGE_SOURCES_REFERENCE = `# Reference: several sources and a rediscovered pass (Step 2, before the walk)
 
 **Several sources, one triage.** When discovery yields more than one source, triage runs ONCE across all of them, grouped by source: passes in the engine's token order, oldest first, then the markers. Mark each finding that converges with a finding of another discovered pass (same site, same claim) as found by both. The split (found by both / one pass only / contradictory) is a triage rendering and is never stored as a merged record. A converged finding is walked in the log of the EARLIER pass. In each later pass's log it takes the earlier entry's disposition: \`stale\` with evidence naming the earlier log's token when the earlier entry is \`resolved\` or \`stale\`, and the same \`deferred\` or \`escalated\` disposition (and \`routed_to\`, when present) when the earlier entry stays open. A later pass is never closed by a finding that has not closed. Shape and rule: \`orbit-address-reviews\`' \`One invocation writes one log per discovered source\`.
 
 **A rediscovered pass** — discovery lists it although a log already names it: its latest log left an entry \`deferred\` or \`escalated\`, names only some of its substantive findings, or is unreadable with summary counts that leave an entry open or carry none — is presented with that log's dispositions, where it has any; a substantive finding that log does not name is walked. Its new log must name every substantive finding of the pass, because the gate reads only the latest log. So each finding the earlier log closed is re-checked by pushback against current state: still fixed, it is recorded \`stale\`, with evidence naming the earlier log's token; reproduced — the fix regressed — it is walked again like any finding, with a fresh \`sweep\`. The open findings are walked again, except one the earlier log escalated with \`remedy: "redesign"\` and a \`routed_to\`: re-record it \`escalated\` with the same \`routed_to\`, do not walk it, and name its route again in the report. Nothing is copied forward: a copied \`resolved\` entry would owe a fresh \`sweep\` the write gate checks against today's files.
 
-**A disagreement** — two discovered passes of one blind pair making CONTRADICTORY claims about one site, or about two sites whose premises contradict — is settled by ONE cheap empirical test (a command run, or a constructed case derived against the current artifact), run AT TRIAGE before either pass's log is written. Record it on the entry in the LATER pass's log as \`disagreement: {with, test, observed}\`: \`with\` is \`{pass, title, file}\` naming the other pass's token and its finding, \`test\` the test as run, \`observed\` its output or derivation. A claim the test refutes is \`stale\` with the test's output as its evidence, in its OWN pass's log; a claim it upholds is walked like any finding. When the test cannot be run, \`observed\` says so and the finding enters the decision lane, so the user decides. A claim pushback finds stale at HEAD is not a disagreement, and neither is a difference in the two passes' forward \`direction\` (that is the readiness record's). Rule: \`orbit-address-reviews\`' \`A disagreement between the halves of a pair is settled by one test\`.
+Two passes' contradictory findings are each walked like any finding, by pushback against current state.
 
-### 3. Walk each marker
+**The order of the walk.** The logs go in token order, oldest first, then the markers. Write each source's log when that source's findings are walked, before the next source begins. An interrupted walk leaves the logs it completed on the trail; the sources whose logs were not written stay outstanding, and the next invocation discovers them again.
+`;
 
-**Walk-mode is the default**: each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins. Obvious-fix findings (previewed at triage) apply with no prompt and no discussion; decision-lane findings follow the present → discuss → ratify protocol (3b.5). There is NO mandatory per-finding \`AskUserQuestion\` (chain: not a prompt). The user can interrupt between markers; the resolution log captures partial completion if interrupted.
+const ADDRESS_REVIEWS_SWEEP_RECORD_REFERENCE = `# Reference: ripple-miss attribution and the sweep record
 
-**Batch-mode is opt-in** via one of three mutually-exclusive triggers (first match wins; recorded in \`walk_mode_source\`): the \`--batch\` flag (\`"flag"\`), a batch-intent phrase in the INVOCATION message itself — never in a later walk response (\`"fix them all"\`, \`"batch them"\`, … → \`"verbal"\`), or a bare command-shaped mid-walk switch (\`"go batch"\` → \`"command-shape-interruption"\`, recording the 1-indexed \`walk_mode_shifted_at_finding\`). Ambiguous mid-walk phrases (\`"fine, fix them all"\`) never shift mode; the full trigger table lives in \`references/resolution-detail.md\`. In batch-mode, all markers complete pushback + classify + resolve before ripples apply once as a single aggregated step — and decision-lane findings STILL get their per-finding briefing and ratification; batch never merges decisions into one prompt, it only suppresses per-finding pacing for obvious-fix and stale findings.
+## Ripple-miss attribution (Step 2, at triage)
 
-For every marker in the chosen scope, execute the lifecycle below sequentially.
+**Ripple-miss attribution** (a change-scoped walk): read the change's EARLIER walk logs (\`address-reviews-*.json\` on its trail) against each finding. Where a finding sits at a site an earlier \`resolved\` entry's fix should have reached, that finding's resolution — once it resolves — carries \`ripple_miss_of: {walk, title, file, kind}\`, naming the earlier entry with \`title\` and \`file\` copied from that log, never retyped, and \`kind\` one of: \`scope\` (the site lay outside that entry's check scope), \`query\` (inside it, but matched by none of its \`retired\` or \`searched\` strings), or \`judgement\` (matched, and judged unaffected). An entry written before sweep records existed has no \`retired\`/\`searched\`; read its scope as the change directory (on a change-scoped walk), its \`file\` and its \`ripple_cascade.applied\`. Attribution is your judgement and optional: a finding no earlier entry touched carries none. Shape and rule: \`orbit-address-reviews\`' \`A ripple miss is attributed by the walk that finds it\`.
 
-#### 3a. Apply pushback (primary discipline)
-
-Run the verification procedure:
-
-0. For a CRITICAL marker that carries a \`reproduction\`, RE-RUN it FIRST — execute the command, or re-derive the constructed case against the current artifact — and record the result as the entry's first evidence: \`reproduction_rerun\` is \`reproduced\` / \`not-reproduced\` / \`cannot-run\`, with the output or derivation in \`evidence\`. A CRITICAL carrying none is noted \`unreproduced\` and pushback proceeds on the claim alone — never re-grading it (per \`orbit-conventions\`' Severity ladder, severity is the author's). When the re-run's observed result now matches the expected one, the marker is **stale-with-evidence** (the re-run's output IS the evidence) and no further edit is made. Below CRITICAL the field is absent.
-1. Identify the marker's referenced symbol, name, or concept.
-2. \`grep -rn\` for current presence in expected locations (the marker's file, related files, baseline specs).
-3. If the symbol is absent where the marker expects it, \`git log -S "<symbol>" --since=<window>\` (default: since the marker file's last modification) to confirm intentional removal.
-4. Read the relevant file's current content and compare to the marker's claim.
-5. Decide: **still applies** / **already fixed** / **partially applies**.
-6. On already-fixed, record the commit hash or current-content evidence as part of suppression — the marker is removed without further edit; never re-edit already-fixed state.
-
-#### 3b. Classify
-
-Apply heuristics in order:
-
-1. **stale** — pushback determined the issue is already resolved at HEAD. Skip directly to Step 3e (marker removal no-op for virtual markers; log as ⚠ Stale). Step 3b.5 (decision-fork detection) and Step 3d (ripple cascade) do NOT fire for stale findings — no fix was applied so no ripples to derive.
-2. **trivial fix** — single-line edit or a few-line localized edit with one obvious correct answer (no design implication, no scope question, no ambiguity in intent). Proceed to 3c without \`AskUserQuestion\` (chain: not a prompt). Step 3b.5 does NOT fire (no decision needed); Step 3d ripple cascade DOES fire after the fix lands.
-3. **decision required** — resolution requires ambiguity resolution, a design choice between defensible alternatives, a scope decision, or has implications beyond the immediate location. Hand off to Step 3b.5 (the decision lane): construct 2–4 concrete options FOR THE PROSE BRIEFING (detection supplies them when the recommendation is disjunctive; otherwise derive them from context) — no prompt fires here; the \`AskUserQuestion\` exists only as post-discussion closure per 3b.5 (chain: decision). Step 3d cascade fires after the ratified fix.
-4. **unresolvable** — resolution needs information not currently available (deferred decision, future capability, blocked on external input). Default: file as a task in \`tasks.md\` in Step 3c (action "filed as task"); Step 3d cascade does NOT fire (no fix was applied; no ripples); Step 3e marker-removal proceeds normally. Alternatives via **AskUserQuestion** (chain: decision): convert to \`@todo: <content>\` or escalate to \`@review(escalated): <content with explanation>\` — in both alternative cases, the marker is **transformed** in place (Step 3e) rather than removed; cascade still does not fire.
-
-**Then the remedy** — three lanes, recorded per entry as \`remedy\`, a field separate from the process \`lane\` above (which says how a finding was CONDUCTED; \`remedy\` says what its resolution DID). Decide it by one test — does closing the finding require mechanism nobody has reviewed? — never by the finding's size. \`repair\`: the right thing is local, fixed here. \`descope\`: the change was doing something it should not, so it is removed (the removal's sweep rides \`sweep\`). \`redesign\`: closing it needs unreviewed mechanism. The values, dispositions and routes are \`orbit-address-reviews\`' \`A walk entry records its remedy, and a REDESIGN leaves the walk\` (a four-row table). Every \`resolved\` entry carries \`remedy\`, and so does every \`escalated\` entry routed out; a \`stale\` entry, and an unrouted \`deferred\` or \`escalated\` one, carries no \`remedy\`.
-
-**A REDESIGN is never closed in place.** If the unreviewed mechanism can leave the change (separable), remove it from the change, record the entry \`resolved\` with \`routed_to: "orbit/explore/<new-name>/"\`, and sweep the removal. If it cannot (essential), the entry is \`escalated\`. It holds the gate only where the gate reads it: on a CRITICAL or WARNING of a reviewed-gate pass, that pass stays unresolved; an escalated SUGGESTION, or an entry from an audit-drift emit or from markers, records the route and holds nothing. While the hold stands, the eligibility line stays on the walk; that walk carries the routed entry forward unwalked (Step 2) — a named limit until the explored repair lands. \`routed_to\` is \`orbit/changes/<name>/explore.md\` on an ACTIVE change, and on any other scope (an archived change, a project-wide or architecture walk) a new exploration, \`orbit/explore/<new-name>/\`. The report names the route — \`/orbit:explore <new-name>\`, or \`/orbit:explore <name>\` on an active change — and the walk invokes nothing (no-chaining). Where that command lands is the explore re-entry table's to decide; promise no resume.
-
-#### 3b.5. The decision lane: present → discuss → ratify (classify == "decision required")
-
-**Fires only when classify == "decision required"**. Skip this sub-step entirely for \`stale\` / \`trivial fix\` / \`unresolvable\` classifications — they short-circuit straight to 3c.
-
-The lane's protocol: (1) **PRESENT** — a FULL-PROSE briefing in chat: what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs. The briefing is the presentation — option content is never confined to prompt labels. (2) **DISCUSS** — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases). (3) **RATIFY** — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the \`AskUserQuestion\` is an OPTIONAL CLOSURE DEVICE (chain: decision), fired only AFTER the finding's discussion concludes without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (batch prompts are prohibited). **Batch DELEGATION** — an explicit user directive compressing the lane ("handle the rest, only brief me on real decisions") — remains the user's prerogative and is recorded verbatim in the resolution log's top-level \`delegation_directive\`.
-
-**Hybrid detection** supplies the briefing's option set — structured first: a well-formed \`recommendation_options: [{label, body}]\` array with ≥ 2 complete entries is used DIRECTLY (\`recommendation_fork.source: "structured"\`); otherwise a STRICT-disjunctive heuristic over the prose recommendation (numbered alternatives / clause-level "Either … or …" / an "Options:" prefix — never loose "or"; \`source: "heuristic"\`). Malformed structured input warns on stderr and falls back to heuristic with \`structured_path_skipped_reason\` recorded; it never aborts the walk. No detection at all: the finding STILL gets its full-prose briefing with 2–4 AI-derived options, and NO \`recommendation_fork\` object is recorded (absence IS the no-fork representation).
-
-**Ratification recording** — every decision-lane resolution records \`ratified_via: "chat" | "prompt"\` at the ENTRY level, plus a verbatim \`resolution\` string when no fork was detected or the ratified direction is off-menu; the \`recommendation_fork\` object (when detection fired) carries the detection data. Exact trigger rules, malformed-input handling, the recording shape, and a mini decision-lane trace: \`references/resolution-detail.md\`. (The \`[discuss]\` escape hatch is RETIRED — discussion is the medium; pre-D4 logs carry it, readers tolerate both generations.)
-
-#### 3c. Apply the fix
-
-- **trivial fix**: apply the edit. Re-read the file after to confirm.
-- **decision required**: apply the RATIFIED resolution (the user's chat directive, or the closure prompt's outcome) per the decision-lane protocol in 3b.5.
-- **unresolvable (default)**: append a task to \`orbit/changes/<change>/tasks.md\` (or repo-level \`TODO.md\` if no change context); task text is the marker's content + ripple-flag context.
-- **unresolvable (\`@todo:\` or \`@review(escalated):\`)**: replace the marker text in place (do NOT remove — the new form persists as future signal).
-
-#### 3d. Ripple cascade (auto-apply by default; \`--no-cascade\` opts out)
-
-If the resolution edited a normative artifact, compute the ripple-flag set — files that need parallel edits to stay consistent with the primary fix. Then split each ripple into **IN** (auto-applied) and **OUT** (recorded in \`flagged_not_applied[]\`).
-
-**OUT — the four lifecycle-invariant exclusion categories** (these are the ONLY structural exclusions; any other file is IN):
-
-| OUT category | Path prefix | Reason recorded in \`flagged_not_applied\` |
-|---|---|---|
-| Audit trail (all four locations) | \`orbit/changes/<name>/.orbit-runs/*\`, \`orbit/.orbit-runs/*\`, \`orbit/explore/<name>/.orbit-runs/*\`, AND \`orbit/architecture/.orbit-runs/*\` | \`audit-trail file; cascade skipped by policy\` |
-| Baseline specs | \`orbit/specs/<capability>/spec.md\` | \`baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple\` |
-| Cross-change (active + archived) | \`orbit/changes/<other-name>/*\` AND \`orbit/changes/archive/*\` | \`cross-change ripple; cascade scope is current change only\` |
-| Safe-exclusions (exact set) | \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\` | \`safe-exclusion path; never edited\` |
-
-**The safe-exclusion prefix set is EXACT** — do NOT extend ad-hoc to other paths during application. Expanding the set requires a spec change.
-
-**IN — everything else.** File extension is NOT a discriminator: \`.py\`, \`.swift\`, \`.c\`, \`.sh\`, \`.md\`, dotfiles, configs — all eligible if ripple-flagged and not matching an OUT prefix. For each IN file, apply the parallel edit consistent with the primary fix (run pushback against the file's current state first; classify as decision-required if ambiguous and surface a fork prompt). Record the path in \`ripple_cascade.applied[]\`.
-
-**\`--no-cascade\` flag** (opt-out): when set, NO ripples are edited regardless of IN/OUT classification. ALL ripple-flagged files are recorded under \`ripple_cascade.flagged_not_applied[]\` with reason \`--no-cascade suppressed\`. Use case: user wants to inspect the ripple set before allowing edits.
-
-**Cascade trusts the ripple-flag analysis** — no independent "should this file be touched?" judgments beyond the four-category OUT check; if analysis didn't surface a file, cascade doesn't touch it. \`--no-cascade suppressed\` is a mode-suppression reason that fires uniformly when the flag is set — NOT a fifth OUT category (structural OUT reasons fire only when cascade was ON).
-
-#### 3d.5. Record the sweep (\`resolved\` entries only)
-
-As the entry's last step before marker removal — in batch mode, for every entry after the one aggregated cascade — compose its \`sweep\`: five arrays, any of them empty, an empty array being the WRITTEN answer that there is nothing of that kind (shape: \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`). A \`stale\`, \`deferred\` or \`escalated\` entry edited nothing and carries none.
+## The sweep record (Step 3d.5, when an entry resolves)
 
 - \`retired\` — wording the fix made FALSE, which must no longer appear anywhere the gate looks.
 - \`introduced\` — \`{path, text}\`: text the fix added, which must appear in \`path\` (name text specific to this edit).
@@ -1245,31 +1109,23 @@ PATH — strip a trailing :<line> or :<line>:<column> (digits only, at the very 
 \`\`\`
 
 \`orbit emit address-reviews\` checks the record against the files as they stand at emit time. A refusal names the string, the path and the line: fix that file, or list it under \`kept\` with its \`why\` — never trim \`retired\` to get past it.
+`;
+
+const ADDRESS_REVIEWS_READING_FINDINGS_REFERENCE = `# Reference: reading findings (\`pass: "reading"\`)
 
 **A reading finding** (\`pass: "reading"\`, its \`file\` a decision record under \`.orbit-runs/decisions/\`) is never fixed by an edit: a decision record is never edited once written. Resolve it by writing a REPLACEMENT — a new record of the same kind through the same \`orbit emit <ledger|stop|resolution>\` command, its \`replaces\` naming the LATEST record of the chain — the record the finding named, until a replacement of it exists — and every link field unchanged (\`references/decision-records.md\`). Each finding you resolve writes its OWN replacement, of the LATEST record in the record's chain — the second finding on a record replaces the first finding's replacement — so the finding's fix lands in its own cycle; a finding you leave \`stale\`, \`deferred\` or \`escalated\` writes none. The entry's \`file\` stays the record the finding named, and its \`sweep\` records the replacement's path and a phrase of its new wording under \`introduced\` — a phrase free of double quotes, backslashes and line breaks, since the gate matches it against the record's JSON text, where those are escaped — and the record the replacement replaces under \`kept\`, its \`why\` being that a replaced record is never edited. A finding that is a gap in the BRIEF rather than the record (the reader lacked something the record points at) is resolved \`deferred\` against \`orbit-decision-records\`' \`The reading step's brief is rendered by orbit\`, since only orbit's own code can fix it, and writes no replacement. A finding that a record cites the wrong thing is outside what a replacement can fix (its links are fixed): escalate it.
 
-**A reading finding against the ACCOUNT** (\`pass: "reading"\`, its \`file\` an account under \`.orbit-runs/account/\`, which a reading takes only when the project's \`signoff\` setting is \`change\` or \`program\`) is never fixed by an edit either: an account is never edited once written. Resolve it by writing a REPLACEMENT of the LATEST account — \`orbit emit account --change <name>\` with \`replaces\` naming the latest account's filename (list \`.orbit-runs/account/\`; it is the account the finding named until a replacement of it exists) — carrying every field of the latest account with only the wording the finding named changed: a reading replacement rewords and states no new fact. Each finding you resolve writes its OWN replacement, of the latest account — the second finding's replacement replaces the first's — and it is written even in a walk that resolves another finding by reopening tasks, since it states no new fact (step 7 below). The entry's \`file\` and \`sweep\` follow the decision record's rule above, the replaced account under \`kept\`. A finding that is a gap in the BRIEF is resolved \`deferred\` against \`orbit-decision-records\`' \`The reading step's brief is rendered by orbit\`, as for a decision record.
+**A reading finding against the ACCOUNT** (\`pass: "reading"\`, its \`file\` an account under \`.orbit-runs/account/\`, which a reading takes only when the project's \`signoff\` setting is \`change\` or \`program\`) is never fixed by an edit either: an account is never edited once written. Resolve it by writing a REPLACEMENT of the LATEST account — \`orbit emit account --change <name>\` with \`replaces\` naming the latest account's filename (list \`.orbit-runs/account/\`; it is the account the finding named until a replacement of it exists) — carrying every field of the latest account with only the wording the finding named changed: a reading replacement rewords and states no new fact. Each finding you resolve writes its OWN replacement, of the latest account — the second finding's replacement replaces the first's — and it is written even in a walk that resolves another finding by reopening tasks, since it states no new fact (the walk's step 7). The entry's \`file\` and \`sweep\` follow the decision record's rule above, the replaced account under \`kept\`. A finding that is a gap in the BRIEF is resolved \`deferred\` against \`orbit-decision-records\`' \`The reading step's brief is rendered by orbit\`, as for a decision record.
+`;
 
-#### 3e. Remove the marker (invariant)
+const ADDRESS_REVIEWS_REDESIGN_REFERENCE = `# Reference: the REDESIGN route (a remedy of \`redesign\`)
 
-Unless \`--keep-resolved-markers\` is set, delete the original \`@review: <text>\` from its source file:
+**A REDESIGN is never closed in place.** If the unreviewed mechanism can leave the change (separable), remove it from the change, record the entry \`resolved\` with \`routed_to: "orbit/explore/<new-name>/"\`, and sweep the removal. If it cannot (essential), the entry is \`escalated\`. It holds the gate only where the gate reads it: on a CRITICAL or WARNING of a reviewed-gate pass, that pass stays unresolved; an escalated SUGGESTION, or an entry from an audit-drift emit or from markers, records the route and holds nothing. While the hold stands, the eligibility line stays on the walk; that walk carries the routed entry forward unwalked (\`references/triage-sources.md\`) — a named limit until the explored repair lands. \`routed_to\` is \`orbit/changes/<name>/explore.md\` on an ACTIVE change, and on any other scope (an archived change, a project-wide or architecture walk) a new exploration, \`orbit/explore/<new-name>/\`. The report names the route — \`/orbit:explore <new-name>\`, or \`/orbit:explore <name>\` on an active change — and the walk invokes nothing (no-chaining). Where that command lands is the explore re-entry table's to decide; promise no resume.
+`;
 
-- **Markdown**: remove the marker text. If it was the only content on a line, remove the line.
-- **Source code (C-style)**: remove just the marker text. If the comment now contains only whitespace or the comment delimiters (\`//\`, \`/* */\`), remove the whole comment.
-- **Source code (hash)**: same as C-style for \`# @review:\` comments.
-- **Virtual marker (external markdown, internal-review JSON, or audit-drift JSON)**: no-op — there's no source text to remove (the source file is an audit artifact). Log as resolved with the appropriate \`source\` tag (\`external\`, \`internal-review\`, or \`audit-drift\`).
+const ADDRESS_REVIEWS_REPORT_REFERENCE = `# Reference: the walk report (Step 5)
 
-For \`unresolvable\` conversions (\`@todo:\` / \`@review(escalated):\`), the marker is **transformed** in place rather than removed; this is still considered "resolution" for log purposes.
-
-\`--keep-resolved-markers\` flag: skip the removal step entirely. Debug use only — markers persist after resolution.
-
-### 4. (Internal — Step 3 runs inside this loop)
-
-Iteration. After all markers in scope have walked Step 3, proceed to reporting.
-
-### 5. Report — emit the resolution log
-
-Resolution log is NOT a 3-dimension scorecard. Output structure:
+Output structure:
 
 \`\`\`
 ## Address-reviews report
@@ -1312,8 +1168,161 @@ Markers walked: <M> (subset specified: <yes/no>)
 
 0 unresolved inline markers remaining in scope.
 1 escalated marker deliberately persisted.
-Suggested next: re-run /orbit:review --as proposal to confirm clean baseline.
+Suggested next: <the engine's next_command, from orbit status --change <name> --json>
 \`\`\`
+`;
+
+const ADDRESS_REVIEWS_CASCADE_REFERENCE = `# Reference: the ripple cascade (Step 3d)
+
+**OUT — the four lifecycle-invariant exclusion categories** (these are the ONLY structural exclusions; any other file is IN):
+
+| OUT category | Path prefix | Reason recorded in \`flagged_not_applied\` |
+|---|---|---|
+| Audit trail (all four locations) | \`orbit/changes/<name>/.orbit-runs/*\`, \`orbit/.orbit-runs/*\`, \`orbit/explore/<name>/.orbit-runs/*\`, AND \`orbit/architecture/.orbit-runs/*\` | \`audit-trail file; cascade skipped by policy\` |
+| Baseline specs | \`orbit/specs/<capability>/spec.md\` | \`baseline spec; add a delta to your current change's specs/<capability>/spec.md to capture this ripple\` |
+| Cross-change (active + archived) | \`orbit/changes/<other-name>/*\` AND \`orbit/changes/archive/*\` | \`cross-change ripple; cascade scope is current change only\` |
+| Safe-exclusions (exact set) | \`.git/\`, \`node_modules/\`, \`dist/\`, \`build/\` | \`safe-exclusion path; never edited\` |
+
+**The safe-exclusion prefix set is EXACT** — do NOT extend ad-hoc to other paths during application. Expanding the set requires a spec change.
+
+**IN — everything else.** File extension is NOT a discriminator: \`.py\`, \`.swift\`, \`.c\`, \`.sh\`, \`.md\`, dotfiles, configs — all eligible if ripple-flagged and not matching an OUT prefix. For each IN file, apply the parallel edit consistent with the primary fix (run pushback against the file's current state first; classify as decision-required if ambiguous and surface a fork prompt). Record the path in \`ripple_cascade.applied[]\`.
+
+**\`--no-cascade\` flag** (opt-out): when set, NO ripples are edited regardless of IN/OUT classification. ALL ripple-flagged files are recorded under \`ripple_cascade.flagged_not_applied[]\` with reason \`--no-cascade suppressed\`. Use case: user wants to inspect the ripple set before allowing edits.
+
+**Cascade trusts the ripple-flag analysis** — no independent "should this file be touched?" judgments beyond the four-category OUT check; if analysis didn't surface a file, cascade doesn't touch it. \`--no-cascade suppressed\` is a mode-suppression reason that fires uniformly when the flag is set — NOT a fifth OUT category (structural OUT reasons fire only when cascade was ON).
+`;
+
+/**
+ * tighten-bodies (R-rop-14): the body carries no mirror notes; what only authors need is here.
+ *
+ * Checked mirrors (an installed skill has no specs to point at; never edit them here):
+ * - the DISCOVERY fence: `orbit-address-reviews`' `Address-reviews command available`, held by `test/core/discovery-parity.test.ts`;
+ * - the CHECK SCOPE fence: `orbit-emit-composition`'s `The walk write gate checks sweep evidence`, held by
+ *   `test/core/sweep-path-parity.test.ts`.
+ */
+export function getAddressReviewsSkillTemplate(): SkillTemplate {
+  return {
+    name: 'orbit-address-reviews',
+    description: "Walk review findings — every outstanding pass a change's gates report — and `@review:` markers to resolution, one by one: pushback against current state, classify, fix the obvious ones, brief each decision for the user to ratify, cascade ripple edits, and record the walk. Use after `/orbit:review` or `/orbit:audit-drift` writes findings, after an external review returns, or when `@review:` markers have built up.",
+    instructions: `Resolve \`@review:\` markers across the repo, or review findings from a file or a change's trail, with pushback discipline: **discover → triage → walk → report**, each walked finding completing its inner cycle (pushback → classify → fix → ripple-cascade → remove-marker) before the next begins. Ripple edits to IN-set files apply by default, and resolved markers are removed from their source files (the marker-removal invariant) so they don't leak into canonical artifacts.
+
+**Generates resolutions; does not generate findings** — the counterpart to \`/orbit:review\`.
+
+**Input**: Optional scope (path or pattern) and optional flags. Default: whole-repo scan with safe exclusions. Batch mode was removed: a \`--batch\` flag is dropped before the positional resolves, and an invocation carrying it or a retired batch phrase ("fix them all", "batch them", "go ahead with all", "address all at once", or one of the same intent) is walked finding by finding — say so in one line, before discovery.
+
+## Execution disciplines (epitome)
+
+The disciplines from \`orbit-conventions\`, embedded per body; detail lives in the step where each fires.
+
+- **Pushback (review-time) — primary here**: verify every claim against current state before acting (procedure in Step 3a); stale findings are suppressed with evidence, never re-fixed.
+- **Read-before-reference (authoring-time)**: read a file's actual current content before editing or citing it; re-read after edits to confirm they landed.
+- **Change completeness (modification-time)**: apply resolutions across ALL affected artifacts — the Step 3d ripple cascade is this discipline mechanized; sweep just-touched files for residue after mechanical edits.
+- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line, invoking no next command unless the change status's \`chain\` object allows it — gate \`passed\` means *eligible*, not *commanded*.
+${DECISION_WRITING_BASIC}
+
+## Steps
+
+### 1. Discover (or ingest)
+
+**Discovery** decides which sources this invocation walks: read \`references/discovery.md\` and follow it — the DISCOVERY rows, the gate's outstanding set, a marker that restates a finding, and the \`--from-file\` ingest by format (\`references/internal-findings-format.md\`, \`references/external-findings-format.md\`).
+
+**Row 4's offer — stop, or walk now — is (chain: decision)**: on any arrival it is asked, and after it the chain does not continue.
+
+### 2. Triage
+
+**Several sources, or a rediscovered pass** — when discovery yields more than one source, or a pass a log already names, read \`references/triage-sources.md\` first and follow it as you build the triage below.
+
+Present discovered markers (or parsed virtual markers) as a numbered list:
+
+\`\`\`
+Found 12 markers in scope:
+
+  1. orbit/changes/foo/proposal.md:41 — "@review: should this be five or four?"
+  2. orbit/changes/foo/design.md:159  — "@review: 9 vs 8 after merge"
+  3. src/api/auth.ts:88                   — "// @review: token TTL configurable per env?"
+  ...
+ 12. (external) proposal.md:33            — [CRITICAL] orbit-conventions bullet omits three disciplines
+\`\`\`
+
+Mark external-sourced entries \`(external)\`. **Blocks come first**: a source's lifecycle blocks (markdown \`## Blocks\` items; the review JSON's \`blocks[]\`) are listed at the TOP under a \`Blocks (not walked)\` heading, one line each, verbatim — never virtual markers, never walked, never counted (per \`orbit-conventions\`' Severity ladder; the stop is the human's). A CRITICAL marker with no reproduction is tagged \`unreproduced\`. The triage OPENS with the **obvious-fix lane preview**: each finding PROVISIONALLY headed for the obvious-fix lane (pushback has not yet run), listed compactly with its one-line resolution BEFORE any fix lands, so the user can pull it into the decision lane with a word ("discuss the import one"); walk-time pushback may reclassify it, announced before its fix lands. Scoping (walk all — the default — / a subset / only-critical / cancel) is settled by the user's response to the preview; an \`AskUserQuestion\` is optional closure when it doesn't (chain: routine, default: walk all). On an arrival the change status's \`chain\` object allowed, no scoping prompt fires: every finding is walked, and the run summary's \`final_assessment\` carries \`The chain took the default: triage scoping — walk all.\` On any arrival the user typed, scoping is asked as above.
+
+**Ripple-miss attribution** — on a change-scoped walk whose trail holds earlier walk logs, read \`references/sweep-record.md\` now, before any edit, and follow its first section.
+
+### 3. Walk each marker
+
+**Every walk runs finding by finding**: each marker receives its own complete inner cycle — pushback → classify → resolve per LANE → ripple-cascade → remove-marker — before the next marker's pushback begins. Obvious-fix findings (previewed at triage) apply with no prompt and no discussion; decision-lane findings follow the present → discuss → ratify protocol (3b.5). There is NO mandatory per-finding \`AskUserQuestion\` (chain: not a prompt). The user can interrupt between markers; the resolution log captures partial completion if interrupted. A bare mid-walk "go batch" / "switch to batch" / "batch the rest" is a mid-walk delegation of the rest (3b.5), recorded verbatim as \`delegation_directive\`.
+
+For every marker in the chosen scope, execute the lifecycle below sequentially.
+
+#### 3a. Apply pushback (primary discipline)
+
+Run the verification procedure:
+
+0. A CRITICAL marker that carries a \`reproduction\` is RE-RUN FIRST — execute the command, or re-derive the constructed case against the current artifact — and its result is the entry's first evidence: \`reproduction_rerun\` is \`reproduced\` / \`not-reproduced\` / \`cannot-run\`, the output or derivation in \`evidence\`. A CRITICAL carrying none is \`unreproduced\`, and pushback proceeds on the claim alone, never re-grading it (per \`orbit-conventions\`' Severity ladder, severity is the author's). A re-run whose result now matches the expected one makes the marker **stale-with-evidence** (its output IS the evidence), and no edit is made. Below CRITICAL the field is absent.
+1. Identify the marker's referenced symbol, name, or concept.
+2. \`grep -rn\` for current presence in expected locations (the marker's file, related files, baseline specs).
+3. Absent where the marker expects it: \`git log -S "<symbol>" --since=<window>\` (default: since the marker file's last modification) confirms an intentional removal.
+4. Read the file's current content and compare it to the marker's claim.
+5. Decide: **still applies** / **already fixed** / **partially applies**.
+6. Already fixed: record the commit hash or current-content evidence as the suppression and remove the marker with no edit; never re-edit already-fixed state.
+
+#### 3b. Classify
+
+Apply heuristics in order:
+
+1. **stale** — pushback found the issue already resolved at HEAD: go straight to Step 3e (a no-op for virtual markers; log ⚠ Stale). Neither Step 3b.5 nor the Step 3d cascade fires: no fix, so no ripples.
+2. **trivial fix** — a single-line or few-line localized edit with one obvious correct answer (no design implication, scope question or ambiguity of intent): proceed to 3c without \`AskUserQuestion\` (chain: not a prompt). Step 3b.5 does NOT fire; the Step 3d cascade fires after the fix lands.
+3. **decision required** — ambiguity to resolve, a design choice between defensible alternatives, a scope decision, or implications beyond the immediate location: hand off to Step 3b.5 (the decision lane) with 2–4 concrete options FOR THE PROSE BRIEFING (detection supplies them when the recommendation is disjunctive; otherwise derive them from context) — no prompt fires here; the \`AskUserQuestion\` exists only as post-discussion closure per 3b.5 (chain: decision). The Step 3d cascade fires after the ratified fix.
+4. **unresolvable** — it needs information not available now (a deferred decision, a future capability, external input). Default: file it as a task in \`tasks.md\` at Step 3c (action "filed as task"); no cascade; Step 3e removes the marker as usual. Alternatives via **AskUserQuestion** (chain: decision): convert to \`@todo: <content>\` or escalate to \`@review(escalated): <content with explanation>\` — either way the marker is **transformed** in place (Step 3e), not removed, and no cascade fires.
+
+**Then the remedy** — three lanes, recorded per entry as \`remedy\`, separate from the process \`lane\` above (how a finding was CONDUCTED; \`remedy\` is what its resolution DID), decided by one test — does closing the finding require mechanism nobody has reviewed? — never by its size. \`repair\`: the right thing is local, fixed here. \`descope\`: the change was doing something it should not, so it is removed (the removal's sweep rides \`sweep\`). \`redesign\`: closing it needs unreviewed mechanism. Every \`resolved\` entry carries \`remedy\`, and so does every \`escalated\` entry routed out; a \`stale\` entry, and an unrouted \`deferred\` or \`escalated\` one, carries no \`remedy\`.
+
+**A REDESIGN is never closed in place**: on an entry whose remedy is \`redesign\`, read \`references/redesign.md\` and follow it; the report names the route, and the walk invokes nothing.
+
+#### 3b.5. The decision lane: present → discuss → ratify (classify == "decision required")
+
+**Fires only when classify == "decision required"**. Skip this sub-step entirely for \`stale\` / \`trivial fix\` / \`unresolvable\` classifications — they short-circuit straight to 3c.
+
+The lane's protocol: (1) **PRESENT** — a FULL-PROSE briefing in chat: what the finding means, why it matters, terminology level-setting where concepts are novel, and the concrete options with real tradeoffs. The briefing is the presentation — option content is never confined to prompt labels. (2) **DISCUSS** — genuine back-and-forth for as many exchanges as the finding needs (zero exchanges is legitimate for crisp cases). (3) **RATIFY** — a direction the user types in chat IS ratification (user-typed provenance, the consent model's strongest signal); the \`AskUserQuestion\` is an OPTIONAL CLOSURE DEVICE (chain: decision), fired only AFTER the finding's discussion concludes without a crisp user directive (never before the briefing, never mid-discussion), carrying the discussed conclusion as its default option. A dismissed or inconclusive prompt RE-PRESENTS the finding — the walk position and briefing context are never lost. The prompt NEVER precedes the briefing, and one prompt NEVER spans multiple findings (a prompt spanning several findings is prohibited). **A mid-walk DELEGATION** — an explicit user directive compressing the lane ("handle the rest, only brief me on real decisions") — remains the user's prerogative and is recorded verbatim in the resolution log's top-level \`delegation_directive\`.
+
+**Detection and recording** — when a finding enters this lane, read \`references/resolution-detail.md\` and follow its decision-lane section: where the briefing's options come from, and what each resolution records (\`ratified_via\`, and \`resolution\` verbatim when no fork was detected or the direction is off-menu).
+
+#### 3c. Apply the fix
+
+- **a reading finding** (\`pass: "reading"\`, its \`file\` a decision record or an account) is never fixed by an edit: before any edit, read \`references/reading-findings.md\` and follow it; its disposition decides whether 3d and 3d.5 run.
+- **trivial fix**: apply the edit. Re-read the file after to confirm.
+- **decision required**: apply the RATIFIED resolution (the user's chat directive, or the closure prompt's outcome) per the decision-lane protocol in 3b.5.
+- **unresolvable (default)**: append a task to \`orbit/changes/<change>/tasks.md\` (or repo-level \`TODO.md\` if no change context); task text is the marker's content + ripple-flag context.
+- **unresolvable (\`@todo:\` or \`@review(escalated):\`)**: replace the marker text in place (do NOT remove — the new form persists as future signal).
+
+#### 3d. Ripple cascade (auto-apply by default; \`--no-cascade\` opts out)
+
+If the resolution edited a normative artifact, compute the ripple-flag set — files that need parallel edits to stay consistent with the primary fix. Then split each ripple into **IN** (auto-applied) and **OUT** (recorded in \`flagged_not_applied[]\`): read \`references/cascade.md\` and follow it — the four OUT categories, the IN rule (every other file, whatever its extension), and \`--no-cascade\`.
+
+#### 3d.5. Record the sweep (\`resolved\` entries only)
+
+As the entry's last step before marker removal, compose its \`sweep\`: five arrays, any of them empty, an empty array being the WRITTEN answer that there is nothing of that kind (shape: \`orbit-address-reviews\`' \`A resolved walk entry records its sweep evidence\`). A \`stale\`, \`deferred\` or \`escalated\` entry edited nothing and carries none. Read \`references/sweep-record.md\` and follow its sweep section: what each array holds, the CHECK SCOPE and PATH rules the gate checks the record by, and what a refusal asks of you.
+
+#### 3e. Remove the marker (invariant)
+
+Unless \`--keep-resolved-markers\` is set, delete the original \`@review: <text>\` from its source file:
+
+- **Markdown**: remove the marker text. If it was the only content on a line, remove the line.
+- **Source code (C-style)**: remove just the marker text. If the comment now contains only whitespace or the comment delimiters (\`//\`, \`/* */\`), remove the whole comment.
+- **Source code (hash)**: same as C-style for \`# @review:\` comments.
+- **Virtual marker (external markdown, internal-review JSON, or audit-drift JSON)**: no-op — there's no source text to remove (the source file is an audit artifact). Log as resolved with the appropriate \`source\` tag (\`external\`, \`internal-review\`, or \`audit-drift\`).
+
+For \`unresolvable\` conversions (\`@todo:\` / \`@review(escalated):\`), the marker is **transformed** in place rather than removed; this is still considered "resolution" for log purposes.
+
+\`--keep-resolved-markers\` flag: skip the removal step entirely. Debug use only — markers persist after resolution.
+
+### 4. (Internal — Step 3 runs inside this loop)
+
+Iteration. After all markers in scope have walked Step 3, proceed to reporting.
+
+### 5. Report — emit the resolution log
+
+Resolution log is NOT a 3-dimension scorecard: read \`references/report.md\` and follow its output structure, one section per log when the walk wrote several.
 
 The final-assessment line summarizes remaining-in-scope markers (0 if clean) plus any deliberately persisted escalations, and names any REDESIGN's route (\`/orbit:explore <name>\`) without invoking it. What runs next is the engine's eligibility line, read from \`orbit status --change <name> --json\`.
 
@@ -1342,16 +1351,10 @@ Adjacent forms (same discovery grep, different semantics):
 ## Constraints
 
 - **Never write new \`@review:\` markers.** Only \`/orbit:review --as proposal --mark\` does that. address-reviews can transform markers (e.g., to \`@todo:\` or \`@review(escalated):\`) but never creates fresh \`@review:\` markers.
-- **Cascade by default; \`--no-cascade\` opts out.** Ripple-flagged files in the IN set (everything outside the four lifecycle-invariant OUT categories — audit trail, baseline specs, cross-change/archive dirs, safe-exclusions) are auto-edited per Step 3d. File extension is NOT a discriminator.
-- **Walk-mode by default; \`--batch\` opts in.** Each marker gets its own complete pushback → classify → fix → cascade → remove cycle. Batch-mode triggers via \`--batch\` flag, verbal phrase in the invocation message, or a bare command-shape interruption mid-walk (per Step 3 trigger table).
-
-## Worked examples
-
-Two full ingest walkthroughs — a \`--from-file\` external-markdown nine-finding walk and a single-SUGGESTION internal-JSON walk — live in \`references/resolution-detail.md\`.
 
 ## Graceful degradation
 
-Every no-input, malformed-input, and unsupported-format case exits clean with a named error; the exact messages and error shapes live in \`references/resolution-detail.md\`. Two worth knowing at triage: an empty \`findings: []\` JSON is NOT an error (a clean informational walk report), and a marker found in a baseline spec (\`orbit/specs/<capability>/\`) is flagged as unusual but walked per user choice.
+Every no-input, malformed-input and unsupported-format case exits clean with a named error (the messages, and two worked ingest walkthroughs: \`references/resolution-detail.md\`). An empty \`findings: []\` JSON is NOT an error (a clean informational walk), and a marker in a baseline spec (\`orbit/specs/<capability>/\`) is flagged as unusual but walked per user choice.
 
 ${COMMIT_STEP_BASIC}
 
@@ -1366,6 +1369,13 @@ ${CHAIN_END_STEP_BASIC}
         name: 'internal-findings-format.md',
         content: ADDRESS_REVIEWS_INTERNAL_FINDINGS_FORMAT_REFERENCE,
       },
+      { name: 'discovery.md', content: ADDRESS_REVIEWS_DISCOVERY_REFERENCE },
+      { name: 'triage-sources.md', content: ADDRESS_REVIEWS_TRIAGE_SOURCES_REFERENCE },
+      { name: 'sweep-record.md', content: ADDRESS_REVIEWS_SWEEP_RECORD_REFERENCE },
+      { name: 'reading-findings.md', content: ADDRESS_REVIEWS_READING_FINDINGS_REFERENCE },
+      { name: 'redesign.md', content: ADDRESS_REVIEWS_REDESIGN_REFERENCE },
+      { name: 'report.md', content: ADDRESS_REVIEWS_REPORT_REFERENCE },
+      { name: 'cascade.md', content: ADDRESS_REVIEWS_CASCADE_REFERENCE },
       {
         name: 'resolution-detail.md',
         content: ADDRESS_REVIEWS_RESOLUTION_DETAIL_REFERENCE,
@@ -1381,7 +1391,7 @@ ${CHAIN_END_STEP_BASIC}
       { name: 'decision-records.md', content: DECISION_RECORDS_REFERENCE },
     ],
     license: 'MIT',
-    compatibility: "Requires orbit CLI. Ingests findings via `--from-file` (external-review markdown OR internal `review-<mode>-*.json` OR `audit-drift-*.json`) OR via discovery on a change: its inline markers, every outstanding pass `orbit status --change <name> --json` lists on its reviewed gates, and its unwalked audit-drift emits, one log per source. Default behaviors: walk-mode (per-finding); cascade-on (auto-applies ripples to IN-set files). `--batch` opts INTO batch-mode; `--no-cascade` opts OUT of cascade. `--mark` is optional, not prerequisite.",
+    compatibility: "Requires orbit CLI. Ingests findings via `--from-file` (external-review markdown OR internal `review-<mode>-*.json` OR `audit-drift-*.json`) OR via discovery on a change: its inline markers, every outstanding pass `orbit status --change <name> --json` lists on its reviewed gates, and its unwalked audit-drift emits, one log per source. Default behaviors: every walk runs finding by finding; cascade-on (auto-applies ripples to IN-set files). `--no-cascade` opts OUT of cascade. `--mark` is optional, not prerequisite.",
     metadata: { author: 'openspec', version: '0.1', capability: 'orbit-address-reviews' },
   };
 }
@@ -1394,6 +1404,6 @@ export function getOrbitAddressReviewsCommandTemplate(): CommandTemplate {
     tags: ["workflow","review","orbit"],
     content: `Resolve \`@review:\` markers or review findings (via \`--from-file\`, or discovered from a change's outstanding passes) by walking each through pushback → classify → fix → ripple-cascade → remove-marker.
 
-This command is a thin launcher: invoke the \`orbit-address-reviews\` skill, passing along any arguments given with the command (e.g., \`/orbit:address-reviews [<change-or-scope>] [--from-file <path>] [--batch] [--no-cascade]\`). The skill carries the complete workflow instructions — upstream behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
+This command is a thin launcher: invoke the \`orbit-address-reviews\` skill, passing along any arguments given with the command (e.g., \`/orbit:address-reviews [<change-or-scope>] [--from-file <path>] [--no-cascade]\`). The skill carries the complete workflow instructions — upstream behavior plus orbit's additions. Do not improvise the workflow from this file; load the skill.`
   };
 }

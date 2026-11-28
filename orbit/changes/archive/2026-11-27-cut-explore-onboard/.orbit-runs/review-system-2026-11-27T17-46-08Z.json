@@ -1,0 +1,110 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-27T17:46:08Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 488,
+      "title": "A stray blank line splits explore's disciplines epitome after its Change-completeness bullet",
+      "recommendation": "Delete the blank line at src/core/templates/workflows/explore.ts:488 (generated .claude/skills/orbit-explore/SKILL.md:157), so the five epitome bullets sit together as in every other body. Drop the trailing \"\\n\" from the `after` of the `R3-epitome-completeness` pair in test/core/templates/cut-ledger-pairs.ts to match, then re-pin explore's hash in skill-templates-parity.test.ts.",
+      "reproduction": "The R3-epitome-completeness pair's `after` ends in \"re-read the section to confirm.\\n\"; its `before` has no trailing newline. The generated SKILL.md shows a blank line between the Change-completeness bullet (156) and the Pushback bullet (158). No other pair of this stage gains a leading or trailing newline. The cut ledger names the byte, so the reconstruction passes and G0 holds. The bullet list is still one (loose) markdown list, so no reader behaviour changes: this is cosmetic."
+    },
+    {
+      "pass": "1",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "orbit/specs/orbit-onboard/spec.md",
+      "line": 56,
+      "title": "orbit-onboard's identity scenario still names \"D-arc Stage D2\" beside the program-architecture layer, which the body no longer says",
+      "recommendation": "In the Shipped as at archive, note that D4 removed onboard's stage tags and that the `Enumerates orbit-distinctive layers` scenario's \"D-arc Stage D2\" is provenance the body need not carry. Then no later reader takes the scenario as owing the tag. No delta is needed for this stage: the scenario's two text tests (orbit-content-fidelity.test.ts:447, blind-pair-command.test.ts:285) do not assert the tag.",
+      "reproduction": "The scenario's THEN lists \"program architecture (`/orbit:architect`, `orbit architecture status` — the cross-change declaration tier, D-arc Stage D2)\". The generated onboard body's Program architecture bullet now reads \"`/orbit:architect` and `orbit architecture status`: the cross-change declaration tier above per-change flow\", with no stage tag. No delta in this change touches orbit-onboard."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Pass 0 ran inline, not as /orbit:verify: a dispatched worker runs no other orbit command. All 15 tasks are checked. The scenario map reads 40 delta scenarios, 0 uncovered, 0 orphans. A full `npm test` run here passed 220 files, 4,549 tests, matching the apply record. `npm run size:report` reads explore at 4,964 estimated tokens and onboard at 4,985, with every body within 5,000. `validate --strict` passes (the declared capabilities breach is informational). Pass 6 also ran inline as a residue sweep, not through /orbit:audit-drift, which would write its own emit. It covered stale pointers to the moved or removed explore sections across src/, docs/, README.md and the baseline specs, stale body counts, and the convention file. It found no residue. Passes 4 and 5 were skipped because the project has no orbit/lenses/ directory.\n\nWhat was probed hardest is whether the rewording kept the meaning, which the cut ledger leaves to reviewers. I read every explore `reworded` pair, before against after, and the onboard word diff against orbit-onboard's scenarios. The upstream portion was diffed against the change-start body: only the R-rop2-13 table's rows changed. Each body read was checked against the moment it serves. Crystallization is read before any file is written. The metadata is read at a new scaffold, at a resume that lacks it, and after a confirmed crystallization. The grammar is read before a Mechanism entry is written, swept or added. Decisions-entry prose is read before the first entry, and the emit detail before the first emit. Nothing turned up that a session would do differently.\n\nOne candidate was dropped on evidence. The Mode C row now sends an accepted name through crystallization.md's warning and confirmation gate, where the old row went straight to Mode B. That is not a behaviour change: orbit-run-summary-emit's Mode C begin-emit scenario already presumes \"the user confirmed the crystallization warning\". The sweep paragraph lost the old sentence on a rule settled in conversation being written into its entry. The kept slot list (domain table, closure token, residual slots, move dispositions) still covers it. \"Pauses briefly\" left the offer phrasing, which the offer scenario names, but it carries no behaviour.\n\nRisk texture: both bodies sit within about 150 characters of G1's 20,000-character cap (explore 19,854, onboard 19,939), so any later addition to either one, or to the shared decision-writing bullet, breaches the budget test at once. That is by design, but the next edit to these bodies will need to move text out first. For payload shape, this pass opened one earlier proposal-mode pass record's first finding. Nothing from it entered these findings.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The stage does what its charter asks. Explore and onboard each fit the tokens a compaction keeps. The upstream removals are exactly the ratified table's rows, and every body edit is a named pair the reconstruction accounts for. Each reference is read at the moment it serves, the timing staying in the body as orbit-run-summary-emit's table requires. Explore came under the shared read rule, and the shortened decision-writing bullet keeps its three branches. Reading the rewordings against the baseline scenarios turned up nothing a session would do differently. What this pass notes is cosmetic: a stray blank line in explore's epitome, and a stage tag still named in an onboard scenario. Neither warrants holding the stage. They can be folded in or left, and the change can move on to archive."
+  },
+  "final_assessment": "0 critical, 0 warning, 2 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-explore-onboard",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "a71057ea755e9ef64f8ee9049ad884a2a860c202",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

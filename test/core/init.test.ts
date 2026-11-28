@@ -98,7 +98,6 @@ describe('InitCommand', () => {
         'orbit-continue-change',
         'orbit-ff-change',
         'orbit-sync-specs',
-        'orbit-bulk-archive-change',
         'orbit-verify-change',
         'orbit-onboard',
         'orbit-review',
@@ -132,7 +131,6 @@ describe('InitCommand', () => {
         'orbit/continue.md',
         'orbit/ff.md',
         'orbit/sync.md',
-        'orbit/bulk-archive.md',
         'orbit/verify.md',
         'orbit/onboard.md',
         'orbit/review.md',
@@ -731,7 +729,7 @@ describe('InitCommand - profile and detection features', () => {
     expect(await fileExists(cmdFile)).toBe(true);
   });
 
-  it('should remove ALL 15 skill dirs on re-init when delivery changes to commands', async () => {
+  it('should remove ALL 14 skill dirs on re-init when delivery changes to commands', async () => {
     saveGlobalConfig({
       featureFlags: {},
       profile: 'core',
@@ -743,7 +741,7 @@ describe('InitCommand - profile and detection features', () => {
 
     const skillsDir = path.join(testDir, '.claude', 'skills');
     const installed = await fs.readdir(skillsDir);
-    expect(installed.filter((d) => d.startsWith('orbit-'))).toHaveLength(15);
+    expect(installed.filter((d) => d.startsWith('orbit-'))).toHaveLength(14);
 
     saveGlobalConfig({
       featureFlags: {},
@@ -759,7 +757,7 @@ describe('InitCommand - profile and detection features', () => {
     for (const dirName of [
       'orbit-propose', 'orbit-explore', 'orbit-apply-change', 'orbit-archive-change',
       'orbit-new-change', 'orbit-continue-change', 'orbit-ff-change', 'orbit-sync-specs',
-      'orbit-bulk-archive-change', 'orbit-verify-change', 'orbit-onboard',
+      'orbit-verify-change', 'orbit-onboard',
       'orbit-review', 'orbit-address-reviews', 'orbit-audit-drift',
     ]) {
       expect(await fileExists(path.join(skillsDir, dirName, 'SKILL.md'))).toBe(false);

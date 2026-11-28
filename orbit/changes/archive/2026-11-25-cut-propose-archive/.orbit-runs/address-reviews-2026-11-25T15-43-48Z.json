@@ -1,0 +1,168 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-25T15:43:48Z",
+  "change": "cut-propose-archive",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-propose-archive/.orbit-runs/review-proposal-2026-11-25T15-27-00Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-25T15-27-00Z",
+  "latest_apply_token": null,
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 1,
+    "suggestion": 1
+  },
+  "pushback_verification": "Both findings verified against current state at a83d6f88: design.md D2 A1 still moved the AI-mediated and Granted bullets whole, with no classifying sentence kept, and task 4.1 still read \"bullets go to its\". Neither was stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-propose-archive/tasks.md",
+          "orbit/changes/cut-propose-archive/proposal.md",
+          "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "severity": "WARNING",
+      "title": "The consent read keys on a classification whose AI-mediated and Granted definitions leave the body",
+      "file": "orbit/changes/cut-propose-archive/design.md",
+      "line": 102,
+      "action": "D2's A1 now moves only the two bullets' procedures. Each bullet's classifying sentence stays in the body (AI-mediated: 'everything else — …'; Granted: its opening sentence ending 'with `may_run: true`'), so the body holds the whole classification, as the lifecycle-consent delta says. The AI-mediated procedure's '(next bullet)' is named as a reworded pair. The size table, the margin sentence and the Risks entry are re-measured: archive's A1 span is 556, not 680; about 5,290 after moves and 4,780 after R2; apply's half is 204. Task 4.1 names the kept sentences and its test asserts them. The proposal's A1 line no longer says 'not user-typed', and the consent scenario says each class is defined in the body.",
+      "evidence": "Generated SKILL.md bodies: archive's AI-mediated classifying sentence is 173 characters and its Granted one 321 (494, about 124 tokens); apply's are 176 and 346 (522, about 130). Both AI-mediated lines carry 'Unless the arrival is granted (next bullet)'. The lifecycle-consent delta's bullet (spec.md:39-41) lists 'the provenance classification' among what the body keeps.",
+      "ripple_miss_of": {
+        "walk": "2026-11-25T04-15-18Z",
+        "title": "The consent-reference trigger uses two definitions of user invocation",
+        "file": "orbit/changes/cut-propose-archive/design.md",
+        "kind": "judgement"
+      },
+      "sweep": {
+        "retired": [
+          "is not user-typed",
+          "about 170 over",
+          "about 340 to spare"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "bullet keeps its classifying sentence in the body"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/design.md",
+            "text": "procedure's \"Unless the arrival is granted (next bullet)\" (archive and apply) loses \"(next bullet)\""
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/tasks.md",
+            "text": "each bullet's classifying sentence staying in its body"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/proposal.md",
+            "text": "the classification itself stays in the body"
+          },
+          {
+            "path": "orbit/changes/cut-propose-archive/specs/orbit-lifecycle-consent/spec.md",
+            "text": "each of its classes defined there"
+          }
+        ],
+        "searched": [
+          "not user-typed",
+          "consent-at-entry",
+          "AI-mediated or granted",
+          "next bullet",
+          "170 over",
+          "340 to spare",
+          "5,170",
+          "4,660",
+          "3,430"
+        ],
+        "scope": [
+          "src/core/templates/workflows/archive-change.ts",
+          "src/core/templates/workflows/apply-change.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "marker_source": "internal-review",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "severity": "SUGGESTION",
+      "title": "Task 4.1 reads \"then move archive's AI-mediated and Granted bullets go to its\"",
+      "file": "orbit/changes/cut-propose-archive/tasks.md",
+      "line": 32,
+      "action": "Task 4.1 reads 'then move archive's AI-mediated and Granted bullets to its references/consent-at-entry.md'.",
+      "evidence": "tasks.md:32 read 'then move archive's AI-mediated and Granted bullets go to its', left when the fresh walk put the reword clause before the sentence.",
+      "sweep": {
+        "retired": [
+          "Granted bullets go to its"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-propose-archive/tasks.md",
+            "text": "then move archive's AI-mediated and Granted bullets to its"
+          }
+        ],
+        "searched": [
+          "bullets go to"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Walked the verification pass finding by finding (Sal: walk all). The AI-mediated and Granted classifying sentences now stay in each body, and only the two paths' procedures move. That makes D2 agree with the lifecycle-consent delta's 'the provenance classification'. The consent scenario says each class is defined in the body, and the AI-mediated procedure's \"(next bullet)\" pointer is named as a reworded pair. Archive is re-measured: about 290 over after its moves, about 220 to spare after R2. Task 4.1's doubled verb is fixed.",
+  "iteration": 3,
+  "next_recommended": "/orbit:apply cut-propose-archive — user-invoked",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "a83d6f882296b87c99916aae485794e7dec3d1e1",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

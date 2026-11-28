@@ -24,7 +24,8 @@ function skill(dirName: string): { body: string; ref: (name: string) => string }
 
 const passes = skill('orbit-review').ref('passes-system.md');
 const step = passes.slice(passes.indexOf('#### The reading step'), passes.indexOf('##### `--fast` subset'));
-const walk = skill('orbit-address-reviews').body;
+// cut-review-walk (M7): the walk body reads `references/reading-findings.md` on a reading finding, which holds the rule.
+const walk = skill('orbit-address-reviews').ref('reading-findings.md');
 
 describe('the review fold step names the account path', () => {
   // @scenario text orbit-review :: The reading step checks decision records in system review :: An account alone is read under `change`
@@ -52,7 +53,7 @@ describe('the walk resolves a reading finding against the account by a replaceme
 
   it('step 7 carries the exception and the order of a fact-changing replacement after reading replacements', () => {
     // once-per-session-detail: the body carries step 7's basic content; its reference carries the full step.
-    expect(walk).toContain(ACCOUNT_WALK_STEP_BASIC);
+    expect(skill('orbit-address-reviews').body).toContain(ACCOUNT_WALK_STEP_BASIC);
     expect(skill('orbit-address-reviews').ref(ACCOUNT_WALK_STEP_REFERENCE_NAME)).toContain(ACCOUNT_WALK_STEP);
     expect(ACCOUNT_WALK_STEP).toContain('The one exception is a reading finding against the account, below: its replacement rewords and states no new fact.');
     expect(ACCOUNT_WALK_STEP).toContain(

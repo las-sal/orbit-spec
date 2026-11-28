@@ -1,0 +1,17 @@
+schema: spec-driven
+created: 2026-11-25
+schema_version: 5
+architecture:
+  doc: reduce-orbit-phase2
+  stage: cut-explore-onboard
+base_fingerprints:
+  orbit-conventions:
+    Decision-writing discipline: sha256:860d2fb319e30471a54689376c37aead7a09805226e77e7f28dbde7d9b06e861
+    Restated Guardrails lines are removed from orbit-modified bodies: sha256:872b7d6590f33aca6a73ddea06bfb0fc394c470661daf71ea340d0e080047533
+  orbit-emit-composition:
+    The explore grammar has one source in code: sha256:5d79d367a69ecb880807197833cea1fc3e68a93b12ad3540d60cc2a87f768774
+  orbit-explore-modifications:
+    Upstream explore stance preserved: sha256:d9c924255e5201f7a28a5069748ad308538ab7086b52d2f8f72ffd5b47f6eeda
+    Nine moves applied per rule in the Mechanism section: sha256:51a4f94f51455974dc65dd915a9159ef10191e48b27be67c5a3cc8cfa8a243c4
+  orbit-run-summary-emit:
+    A body reads its run-summary detail before the session's first run-summary emit: sha256:956f611d1249fa4ab401e29f57258cbf187a958f79a076666f1b65e22d541f77

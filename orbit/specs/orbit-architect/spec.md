@@ -17,7 +17,8 @@ The system SHALL expose `/orbit:architect [<doc-name>]` as a first-class generat
 the complete command anatomy: a generated skill (`orbit-architect`) plus a thin launcher command
 (per the D14 pattern), the execution disciplines block, a run-summary emit, registration in
 every generator registry, and installation for all tools (D15 full surface — the addition
-grew the generated surface to 16 workflows at D2; 15 post-D5's review-external merge). Invoked with a `<doc-name>`: create `orbit/architecture/
+grew the generated surface to 16 workflows at D2; 15 post-D5's review-external merge; 14 since `cut-propose-archive`
+retired bulk-archive). Invoked with a `<doc-name>`: create `orbit/architecture/
 <doc-name>.md` scaffolded in the parseable format (per `orbit-architecture-engine`) if absent, or
 resume the existing doc. Invoked bare: list parseable docs via `orbit architecture status` and
 prompt selection (offering create-new).
@@ -202,10 +203,7 @@ Every orbit surface that suggests where NEW work starts SHALL name `/orbit:archi
 A strict surface is checked by a test that fails when it names another start. A prose surface may
 describe explore, after architect and never as the default; a checked prose surface's test reads that order. Named limit: the table is the
 set a sweep of the command names found. Residual kind: a surface that steers new work to explore or new without naming either command (e.g. "start by thinking it through").
-Residual method: whenever a change adds or edits a user-visible start string, grep the generated bodies and the CLI's user-visible strings for "start", "begin", "first change", "new work", "entry" and "create", and classify each hit against this table; it first ran at architect-first's apply. Known residual instance: the
-bulk-archive body's no-changes output (`No active changes found. Create a new change to get started.`)
-lies in the upstream portion of an orbit-modified body, which changes only through a named edit
-(`orbit-conventions`' `Generated-file disposition`); it is recorded here, not edited.
+Residual method: whenever a change adds or edits a user-visible start string, grep the generated bodies and the CLI's user-visible strings for "start", "begin", "first change", "new work", "entry" and "create", and classify each hit against this table; it first ran at architect-first's apply.
 
 #### Scenario: A strict surface names only architect
 

@@ -799,13 +799,13 @@ The system SHALL classify every skill and command file orbit generates into one 
 
 #### Scenario: Orbit-authored — full ownership
 
-- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review (whose `--reviewer external` branch absorbed the external packaging at D-arc Stage D5's merge; the standalone review-external template joined at B3 and RETIRED at D5), audit-drift, address-reviews; and `orbit-architect`, fully orbit-authored — joined as the 16th workflow at D-arc Stage D2, the surface standing at 15 post-D5)
+- **WHEN** a generated file's template body has no upstream-derived content (currently `orbit-onboard`, whose body replaces upstream's guided-tour content entirely; the net-new editorial workflows — review (whose `--reviewer external` branch absorbed the external packaging at D-arc Stage D5's merge; the standalone review-external template joined at B3 and RETIRED at D5), audit-drift, address-reviews; and `orbit-architect`, fully orbit-authored — joined as the 16th workflow at D-arc Stage D2, the surface standing at 15 post-D5 and at 14 since `cut-propose-archive` retired bulk-archive)
 - **THEN** the template is fully owned by orbit; orbit's contributors edit it freely; the file uses the `orbit-*` directory naming convention for consistency with siblings even when the body is 100% orbit-authored
 
 #### Scenario: Orbit-modified — upstream body with `# Orbit additions`
 
-- **WHEN** a generated file's template bundles upstream's body with an appended `# Orbit additions` section (`orbit-explore`, `orbit-propose`, `orbit-archive-change`, `orbit-apply-change`, `orbit-verify-change`, `orbit-continue-change`, `orbit-ff-change`, `orbit-new-change`, `orbit-bulk-archive-change`)
-- **THEN** the upstream-authored portion is the vendored-baseline snapshot and SHALL change only through a change whose delta spec names the edit — the step it replaces and the requirement that replaces it — so a future upstream cherry-pick can find every edit as a named act; an edit so named lands IN PLACE, and no additions-section text overrides a step edited under this rule, so the body carries one instruction for that step; orbit's other behavior and constraints land in the additions section. Known limits, both from before this rule and outside its clauses: upstream portions already edited name no delta — `orbit-apply-change` and `orbit-archive-change` carry semantic edits, found by diffing each body's upstream portion against `upstream/v1.3.1` with the rename normalized (2026-10-04) — and additions sections already override upstream steps, such as `orbit-propose`'s consume mode replacing Step 1 and `orbit-bulk-archive-change`'s fingerprint check superseding Step 5c's heuristic; a cherry-pick finds the first kind by diffing against that tag and the second by reading the additions sections
+- **WHEN** a generated file's template bundles upstream's body with an appended `# Orbit additions` section (`orbit-explore`, `orbit-propose`, `orbit-archive-change`, `orbit-apply-change`, `orbit-verify-change`, `orbit-continue-change`, `orbit-ff-change`, `orbit-new-change`)
+- **THEN** the upstream-authored portion is the vendored-baseline snapshot and SHALL change only through a change whose delta spec names the edit — the step it replaces and the requirement that replaces it — so a future upstream cherry-pick can find every edit as a named act; an edit so named lands IN PLACE, and no additions-section text overrides a step edited under this rule, so the body carries one instruction for that step; orbit's other behavior and constraints land in the additions section. Known limits, both from before this rule and outside its clauses: upstream portions already edited name no delta — `orbit-apply-change` and `orbit-archive-change` carry semantic edits, found by diffing each body's upstream portion against `upstream/v1.3.1` with the rename normalized (2026-10-04) — and additions sections already override upstream steps, such as `orbit-propose`'s consume mode replacing Step 1, its procedure carried by `references/consume-mode.md`, which the additions section tells the agent to read; a cherry-pick finds the first kind by diffing against that tag and the second by reading the additions sections and the references they read
 
 #### Scenario: A named edit replaces an upstream step in place
 
@@ -980,17 +980,21 @@ step that uses it (detail-to-situ) — the full normative text keeps ONE home (t
 discipline requirements), an epitome echo is COMPLIANT, and body-fidelity checks pin the
 epitome form, not the pre-D5 full block. The bodies whose end can name a change's next command — propose, ff,
 apply, review and address-reviews — carry the `chain` allowance in their echo and in their closing step, the chain end
-step, which is carried in two halves (`reduce-orbit-phase1`'s R-rop-3 and R-rop-6): its BASIC CONTENT — when it runs, the
-`chain` read (with the `--chain-ran`/`--chain-head` flags a command a chain ran adds to it, since the read comes before
-the reference is opened), the `configured: false` result, the meaning of the three prompt tags (`(chain: target)`,
-`(chain: routine, default: …)`, `(chain: decision)`) and what a chained command records — composed once in code and
-carried byte-equal by each of those bodies; and the full step, composed once in code (`CHAIN_END_STEP`) and carried
-byte-equal in each one's `references/chain-end-step.md`, which the basic content tells the agent to read and follow,
-from the result it already has, on any result but `configured: false`, a non-zero exit included. Each of those five
-bodies therefore explains the three prompt tags its own prompts carry, and `(chain: not a prompt)` names itself. Named
-limit: archive, which a chain can arrive at, carries `(chain: decision)` tags and no chain end step, so its body
-explains none of them, as before this requirement was modified; a chained archive relies on the tag meaning the arriving
-session read in the chaining body that ran it (`reduce-orbit-phase1`'s R-rop-6 as amended).
+step, which is carried in two halves (`reduce-orbit-phase1`'s R-rop-3 and R-rop-6, as `reduce-orbit-phase2`'s
+R-rop2-14 amends it): its BASIC CONTENT — when it runs, the `chain` read (with the `--chain-ran`/`--chain-head` flags a
+command a chain ran adds to it, since the read comes before the reference is opened), the `configured: false` result,
+and one sentence telling a command a chain ran that what its prompts' tags mean, and what it records, is in
+`references/chain-end-step.md`, to be read before its first tagged prompt when the session has not read it — composed once in code and carried byte-equal by each of those bodies; and the full
+step, composed once in code (`CHAIN_END_STEP`, which carries the meaning of the three prompt tags (`(chain: target)`,
+`(chain: routine, default: …)`, `(chain: decision)`) and what a chained command records) and carried byte-equal in each
+one's `references/chain-end-step.md`, which the basic content tells the agent to read and follow, from the result it
+already has, on any result but `configured: false`, a non-zero exit included. Each of those five bodies therefore points
+at where its prompt tags are explained, and `(chain: not a prompt)` names itself. Named limit: a command a chain ran in
+the session that chained it meets its tags after that session read `references/chain-end-step.md` at its chain end
+step; a chained command in a fresh session, or after a compaction, learns their meaning by following its body's pointer
+(R-rop2-14). Archive, which a chain can arrive at, carries `(chain: decision)` tags and no chain end step, so its body
+neither explains nor points at them, as before; a chained archive relies on the tag meaning the arriving session read in
+the chaining body's reference (`reduce-orbit-phase1`'s R-rop-6 as amended).
 
 #### Scenario: Command completion ends the turn
 
@@ -1062,12 +1066,13 @@ session read in the chaining body that ran it (`reduce-orbit-phase1`'s R-rop-6 a
 - **THEN** its chain end step's basic content handles `configured: false` itself, printing nothing more, and names
   `references/chain-end-step.md` only for the other results
 
-#### Scenario: Each chaining body explains the tags itself
+#### Scenario: Each chaining body points at the tags' meaning
 
 - **WHEN** the propose, ff, apply, review and address-reviews skills are generated
-- **THEN** each body carries the chain end step's basic content byte-equal, including the `--chain-ran`/`--chain-head` clause, the meaning of the three
-  prompt tags and the `Chained: granted by chain.<key>.` sentence, and each skill ships `references/chain-end-step.md` holding
-  `CHAIN_END_STEP` byte-equal
+- **THEN** each body carries the chain end step's basic content byte-equal, including the `--chain-ran`/`--chain-head` clause and
+  the sentence pointing at `references/chain-end-step.md` for the tags' meaning, and carries neither the meaning of the three prompt
+  tags nor the `Chained: granted by chain.<key>.` sentence; each skill ships `references/chain-end-step.md` holding
+  `CHAIN_END_STEP` byte-equal, which carries both
 
 ### Requirement: Residual outward-actions rule
 
@@ -1242,10 +1247,10 @@ not a stop, where records go), carried byte-equal by the `references/decision-re
 (`Decision-record reference ships beside the statement`). The basic content:
 
 ```
-- **Decision-writing (call-time)**: at each command's first step, and again after this session edits the project config (`orbit/config.yaml` or `.yml`), run `orbit decisions status --json`. On `write: true`, read `references/decision-records.md` and follow its rule for the rest of the command. On `write: false`, write no new ledger entry or stop record; a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written — read that reference when you write one.
+- **Decision-writing (call-time)**: run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`). On `write: true`, follow `references/decision-records.md` for the rest of the command. On `write: false`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).
 ```
 
-It names the moment, the command, the usual result and the link, so an orbit command's result picks the branch, never
+(Shortened at `reduce-orbit-phase2`'s `cut-explore-onboard`, D-inv-2, its branches and link unchanged.) It names the moment, the command, the usual result and the link, so an orbit command's result picks the branch, never
 the agent's judgement (R-rop-4): `orbit decisions status` (`orbit-decision-records`' `orbit decisions status says
 whether decision records are written`) reports `write: false` at the defaults, and the rule is then read only by a
 session that answers or fixes a record already in its trail. On `write: false` the AI writes no NEW ledger entry or stop
@@ -1348,6 +1353,14 @@ when it is written, never that a record was owed.
   walk resolves the finding
 - **THEN** the walk writes a replacement of that entry, as `orbit-decision-records`' `A record is fixed by a replacement,
   never edited` says, and writes no new ledger entry
+
+#### Scenario: The shortened basic content keeps its three branches
+
+- **WHEN** the basic content is read
+- **THEN** it carries the moment with the config re-run, the `orbit decisions status --json` call, the `write: true`
+  branch with its read of `references/decision-records.md`, and the `write: false` branch with the two records it still
+  writes (a resolution answering a stop already in the trail, a replacement fixing a record there) and its read of that
+  reference
 
 #### Scenario: The basic content names when the command runs
 
@@ -1640,7 +1653,6 @@ half) persists its pass and returns, and never runs the step. The bodies, SOURCE
 | address-reviews | yes: before the position readout; with no change target it does nothing |
 | archive | yes: after the PR-attached tail and before the completion readout, not after a failed `tail` step; the tail commits its enumerated scope, and under `commit: true` the step commits the rest in a second commit, so the tail's unrelated-paths guarantee (`orbit-archive-modifications`' `PR-attached archive tail`) holds for the tail's own commit |
 | new, continue | no: never attached (`orbit-pr-lifecycle`'s `PR entry points`) |
-| bulk-archive | no: it archives several changes and runs no tail; its writes ride the next carrying body's commit |
 | architect, audit-drift | no: no change target |
 | sync-specs | no: it writes no run record; its writes ride the next carrying body's commit |
 | verify | no: a system review's Pass 0 runs it inside the review's own session, where a commit would land mid-review; its run summary rides the next carrying body's commit |
@@ -1650,7 +1662,7 @@ half) persists its pass and returns, and never runs the step. The bodies, SOURCE
 (`feedback` is not generated, and `pr-choreography` is text propose and ff share, not a body.) At the defaults (neither
 setting granted) the step's one act is that read-only call: the record is `off`, and the basic content handles it: the
 body prints nothing and runs nothing (G0, as R-adf-12 words it). Named limits: an apply session's work stays uncommitted until the session closes,
-however many chunks it completes; and the writes of bulk-archive, sync-specs, verify and explore wait for the next
+however many chunks it completes; and the writes of sync-specs, verify and explore wait for the next
 carrying body.
 
 #### Scenario: At the defaults the step prints nothing
@@ -1706,7 +1718,8 @@ carrying body.
 
 ### Requirement: Restated Guardrails lines are removed from orbit-modified bodies
 
-The system SHALL remove from an orbit-modified body's upstream `**Guardrails**` list each line that a step line of the
+The system SHALL remove from an orbit-modified body's upstream `**Guardrails**` list, explore's excepted
+(`orbit-explore-modifications`' `Upstream explore stance preserved` names its lines), each line that a step line of the
 same body states with nothing added — no timing, scope or case of its own — and SHALL keep every other line; the
 heading goes when no line is left. This requirement is the named edit `Generated-file disposition` asks of a change to
 an upstream portion: each removed line is named below with the step that states it, and a test holds the step line
@@ -1738,8 +1751,10 @@ present. The lines it covers, from the bodies generated at `a5ba0f0c`:
 | sync-specs: all five lines | kept — `Generated-file disposition` classes sync-specs as upstream-verbatim, its upstream body unchanged |
 
 The table is sourced from the `**Guardrails**` blocks of the seven bodies that carry one among the twelve
-`tighten-bodies` tightens (explore's and bulk-archive's are untouched until `reduce-orbit-phase1`'s evaluation): 42
-lines, 23 removed.
+`tighten-bodies` tightens (explore's and bulk-archive's are outside it): 42 lines, 23 removed. Explore's Guardrails lines
+are named instead by `orbit-explore-modifications`' `Upstream explore stance preserved` (`reduce-orbit-phase2`'s
+`cut-explore-onboard`), because the opening or a stance bullet states them, not a step line; bulk-archive's left with
+its body (R-rop2-11).
 
 #### Scenario: A line a step states goes
 
@@ -1806,8 +1821,9 @@ and its named limit is this:
 Residual kind: a provenance form outside the six above (a coined tag, an archive name, a pointer to orbit's own history), or a member of the six whose removal would take characters none of the patterns covers (an id or tag with a suffix or prefix: `R-crc-11(f)`, `rc04a's`, `D1's`, `pre-D2`)
 Residual method: reading each tightened body whole after its edits, recording each find in the change's account and leaving it in place for the evaluation, and the removal test, which lists every removed span with its kind
 
-Explore, onboard and bulk-archive keep their own text until `reduce-orbit-phase1`'s evaluation, and so does the
-disciplines epitome's opening line, which explore and bulk-archive share; specs keep their own tags. Provenance in text
+Explore and onboard keep their own text until `reduce-orbit-phase1`'s evaluation (bulk-archive did too, until
+`cut-propose-archive` retired it), and so does the disciplines epitome's opening line, which explore carries; specs keep
+their own tags. Provenance in text
 a body shares with a block `moved-blocks.test.ts` pins leaves the body's copy only: that copy is split from the block's
 constant, and the block stays byte-equal to its record. At `a5ba0f0c` the shared texts carrying provenance are four step
 headings (the commit step's, the chain end step's and the two account steps') and three paragraphs a body shares with
@@ -1845,10 +1861,12 @@ note and "No emit without sweep" paragraph.
 ### Requirement: An edit ledger holds every tightened body to its recorded text
 
 The system SHALL hold every edit `tighten-bodies` makes to a body's instructions — in the twelve bodies it tightens,
-and in explore and bulk-archive for the shared decision-writing bullet — in an edit-ledger test: the sha256 of each
+and in explore for the shared decision-writing bullet — in an edit-ledger test (bulk-archive's recorded body, and its
+pairs, left the ledger when `cut-propose-archive` retired that workflow, since no body remains to undo onto): the sha256 of each
 edited body's `instructions` is recorded before the first edit, and the test lists every edit as a (before, after)
 pair of one kind, checks each kind, and undoes every pair on today's body to compare with the recorded hash, first
-undoing the one later edit to those bodies, `records-by-setting`'s:
+undoing the later edits to those bodies: those a cut stage's ledger names (`A cut ledger names every body edit a cut
+stage makes`), undone by that ledger's own pairs, then `records-by-setting`'s:
 
 | member | covered by |
 |---|---|
@@ -1856,8 +1874,9 @@ undoing the one later edit to those bodies, `records-by-setting`'s:
 | a provenance span removed | a pair of kind `provenance`; the test asserts the removed span is COVERED by the patterns in `Tightened bodies carry no provenance` — every character a token match or a connector once its mirror-note spans are taken out — so no instruction is filed as provenance |
 | an id dropped from a name | a pair of kind `provenance` at each use; the test asserts the id-bearing name occurs nowhere in the body |
 | a mirror note removed | a pair of kind `provenance`; the copied text after it is held unchanged by its parity test |
-| the decision-writing bullet restructured | one pair of kind `restructured`, shared by the fourteen bodies; the test asserts each clause of the one-paragraph form (the five conditions with their glosses, the eighteen areas, the three commands (`orbit emit stop`, `orbit emit resolution`, `orbit emit ledger`), the seam sentence, the record-routing sentence, the reference pointer) is in the rule, which `records-by-setting` moved to `references/decision-records.md`, its opening clause replaced as `Decision-writing discipline`'s `The labelled form keeps every clause` names |
-| `records-by-setting`'s swap of the labelled bullet for its basic content | undone first in each of the fourteen bodies: the basic content is replaced by the labelled bullet as `tighten-bodies` left it (the rule with "under every setting," restored), and the pairs above are then undone as before |
+| the decision-writing bullet restructured | one pair of kind `restructured`, shared by the thirteen bodies that carry it (fourteen until bulk-archive's retirement); the test asserts each clause of the one-paragraph form (the five conditions with their glosses, the eighteen areas, the three commands (`orbit emit stop`, `orbit emit resolution`, `orbit emit ledger`), the seam sentence, the record-routing sentence, the reference pointer) is in the rule, which `records-by-setting` moved to `references/decision-records.md`, its opening clause replaced as `Decision-writing discipline`'s `The labelled form keeps every clause` names |
+| a `reduce-orbit-phase2` cut stage's edits | undone first, by the cut ledger's pairs in reverse order, on today's body; what remains is the body as `records-by-setting` left it |
+| `records-by-setting`'s swap of the labelled bullet for its basic content | undone first in each of the thirteen bodies: the basic content is replaced by the labelled bullet as `tighten-bodies` left it (the rule with "under every setting," restored), and the pairs above are then undone as before |
 | review's flag row naming its two prompt references | a pair of kind `link` |
 | any edit the list misses | the undo of every pair no longer matches the recorded hash, and the test fails |
 
@@ -1901,8 +1920,67 @@ The second table is sourced from a grep of `test/` for each removed string, the 
 - **WHEN** a pair of kind `restated` names a step line the body no longer carries
 - **THEN** the test fails naming the pair
 
+#### Scenario: A cut stage's edits are undone first
+
+- **WHEN** `cut-review-walk` has moved review's VERIFICATION procedure to a reference and its pairs are in the cut ledger
+- **THEN** the tighten-bodies ledger undoes the cut ledger's pairs on today's review body first, and its own reconstruction
+  of review's text at `ef55ee46` still matches the recorded hash
+
 #### Scenario: A clause dropped from the bullet fails
 
 - **WHEN** the decision-writing rule loses a clause of its one-paragraph form
 - **THEN** the test fails naming the clause
+
+### Requirement: A cut ledger names every body edit a cut stage makes
+
+The system SHALL hold every edit a `reduce-orbit-phase2` cut stage makes to a generated body's `instructions` in a
+cut-ledger test (`test/core/templates/cut-ledger.test.ts`), so that every change is named (that program's G0): before the
+stage's first edit, the sha256 of each body it will edit is recorded, and the test lists every edit as a pair of one
+kind, checks each kind, and undoes every pair, in reverse order, on today's body to compare with the recorded hash. Each
+cut stage appends its own pairs and recorded hashes, a body a later stage edits again being recorded afresh by that
+stage, whose undo runs first. A pair is of one kind:
+
+| member | covered by |
+|---|---|
+| `moved` — text that leaves a body for a reference file, the body keeping its basic content | the pair names the span by a start and an end anchor, each unique in the reference, and records the sha256 of the text before the move; the undo replaces the basic content with the span read between the anchors, and where the reference already held that text before the move (a span it shared with the body) the undo copies it back into the body and adds nothing to the reference; the test asserts the span hashes to the recorded digest and that the body names the reference by path |
+| `removed` — text a removal ruling takes | the pair names the ruling; the undo restores the text; the test asserts that a phrase the pair names, specific to the removed text, occurs nowhere in the generated skill, body or references |
+| `reworded` — text a rewording replaces, a positional pointer that a move would make wrong included | the undo restores it; whether the rewording keeps its meaning is the reviewer's judgement, so the test asserts only the reconstruction |
+| `restated` — text dropped because it restates a step the body keeps | the pair names the step text it restates; the undo restores the dropped text; the test asserts the step text is still in the body |
+| `shared` — any of the three on a constant several bodies carry | undone in every carrier the pair names |
+| `retired` — a whole workflow a removal ruling takes (its template, skill and launcher) | the pair names the ruling, the skill directory and the command id, and records no hash: no body remains to undo onto, so the pair is outside the reconstruction; the test asserts that no generated skill or launcher carries that directory or id, that both are in the retired-artifacts registry (`orbit-skill-generation`'s `Retired surface artifacts converge on update`), and that a phrase the pair names, specific to the workflow, occurs in no generated skill |
+| an edit no pair lists | the undo does not reproduce the recorded hash, and the test fails naming the body |
+
+The closure is DERIVED: the reconstruction equals the recorded hash only when the pairs account for every changed byte
+of each body the ledger records; a workflow removed whole has no body and is held by its `retired` pair alone. Each check carries a mutation shown to make it fail. Text is reworded before it moves, so a moved text is
+byte-equal to its source. Named limit — reference files are not hashed: a moved text's bytes are held by the `moved`
+check and a removal's absence by its phrase check, but an edit inside a reference that is neither is outside this
+ledger, and grading it is the stage's reviewers'.
+
+#### Scenario: An unlisted edit fails the cut ledger
+
+- **WHEN** a sentence of address-reviews' body is reworded and no pair lists it
+- **THEN** the undo of every pair does not reproduce the recorded hash, and the test fails naming `orbit-address-reviews`
+
+#### Scenario: A moved text changed in its reference fails
+
+- **WHEN** a pair of kind `moved` names review's VERIFICATION procedure and a word of it is changed in
+  `references/verification.md`
+- **THEN** the test fails naming the pair, because the span between its anchors no longer hashes to the digest recorded before the move
+
+#### Scenario: A removed text still present fails
+
+- **WHEN** a pair of kind `removed` names R-rop2-12 and the phrase `walk_mode_source`, and a reference still carries it
+- **THEN** the test fails naming the pair and the file that carries the phrase
+
+#### Scenario: A retired workflow still generated fails
+
+- **WHEN** a pair of kind `retired` names R-rop2-11, `orbit-bulk-archive-change` and `bulk-archive`, and the generator
+  still emits that skill
+- **THEN** the test fails naming the pair and the generated skill
+
+#### Scenario: A shared constant is undone in each carrier
+
+- **WHEN** the chain end step's tag paragraph leaves `CHAIN_END_STEP_BASIC` as one `shared` pair
+- **THEN** the undo restores it in propose, ff, apply, review and address-reviews, and each of those bodies reproduces its
+  recorded hash
 

@@ -34,10 +34,15 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
   const detail = files['references/resolution-detail.md'];
   const schema = files['references/run-summary-schema.md'];
   const step = (n: string, next: string) => skill.split(`### ${n}`)[1].split(`### ${next}`)[0];
-  const step1 = step('1. Discover', '2. Triage');
-  const step2 = step('2. Triage', '3. Walk each marker');
-  const classify = skill.split('#### 3b. Classify')[1].split('#### 3b.5.')[0];
-  const persist = step('6. Persist the run summary', 'never-matches');
+  // cut-review-walk: a step reads as a session reads it — its text, then the references it reads there.
+  const reads = (text: string, ...refs: string[]) => {
+    for (const r of refs) expect(text, r).toContain(`references/${r}`);
+    return [text, ...refs.map((r) => files[`references/${r}`])].join('\n\n');
+  };
+  const step1 = reads(step('1. Discover', '2. Triage'), 'discovery.md');
+  const step2 = reads(step('2. Triage', '3. Walk each marker'), 'triage-sources.md', 'sweep-record.md');
+  const classify = reads(skill.split('#### 3b. Classify')[1].split('#### 3b.5.')[0], 'redesign.md');
+  const persist = reads(step('6. Persist the run summary', 'never-matches'), 'run-summary-emit.md');
 
   it('Step 1 reads unresolvedPasses and openPair from the change-tier status JSON', () => {
     expect(step1).toContain('orbit status --change <name> --json');
@@ -67,7 +72,7 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
   it('repair and descope are remedy values, recorded beside the process lane', () => {
     expect(classify).toMatch(/`repair`: the right thing is local/);
     expect(classify).toMatch(/`descope`: the change was doing something it should not/);
-    expect(classify).toContain('a field separate from the process `lane`');
+    expect(classify).toContain('separate from the process `lane`');
   });
 
   // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A blind pair walks in two logs
@@ -105,9 +110,9 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
     expect(step2).toContain('reproduced — the fix regressed — it is walked again like any finding, with a fresh `sweep`');
   });
 
-  // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: A batch walk over two sources writes both logs after its cascade
-  it('batch mode writes every log after its one cascade', () => {
-    expect(persist).toMatch(/runs its ONE aggregated cascade, then writes every source's log/);
+  it('batch mode is gone: no log is written after an aggregated cascade (R-rop2-12)', () => {
+    expect(persist).not.toMatch(/ONE aggregated cascade/);
+    expect(skill).not.toMatch(/ONE aggregated cascade/);
   });
 
   // @scenario text orbit-address-reviews :: One invocation writes one log per discovered source :: An interrupted walk resumes by rediscovery
@@ -118,7 +123,6 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
   // @scenario text orbit-address-reviews :: A walk entry records its remedy, and a REDESIGN leaves the walk :: A separable redesign is descoped and routed
   it('classify carries the remedy test and points at the remedy table; REDESIGN names the route and invokes nothing', () => {
     expect(classify).toContain('does closing the finding require mechanism nobody has reviewed?');
-    expect(classify).toContain('`A walk entry records its remedy, and a REDESIGN leaves the walk`');
     expect(classify).toMatch(/names the route/);
     expect(classify).toMatch(/invokes nothing/);
     expect(classify).toContain('`routed_to`');
@@ -140,34 +144,24 @@ describe('rc08b — the walk body discovers what the gate holds (task 3.1)', () 
     expect(classify).toMatch(/`stale`[^.]*carr(?:y|ies) no `remedy`/);
   });
 
-  // @scenario text orbit-address-reviews :: A disagreement between the halves of a pair is settled by one test :: A contradiction is settled by one test
-  it('a disagreement is settled at triage by one test and recorded on the later log', () => {
-    expect(step2).toContain('ONE cheap empirical test');
-    expect(step2).toContain('AT TRIAGE');
-    expect(step2).toContain('`disagreement: {with, test, observed}`');
+  it('the blind-pair disagreement test is gone: two contradictory findings are each walked by pushback (R-rop2-12)', () => {
+    expect(step2).not.toContain('cheap empirical test');
+    expect(step2).toContain("Two passes' contradictory findings are each walked like any finding, by pushback against current state.");
+    for (const text of Object.values(files)) expect(text).not.toContain('disagreement');
   });
 
-  // @scenario text orbit-address-reviews :: A disagreement between the halves of a pair is settled by one test :: The earlier pass's claim is refuted
-  it('a refuted claim is stale in its OWN pass log, the test output its evidence', () => {
-    expect(step2).toMatch(/refutes is `stale` with the test's output as its evidence, in its OWN pass's log/);
-  });
-
-  // @scenario text orbit-address-reviews :: A disagreement between the halves of a pair is settled by one test :: An untestable contradiction goes to the user
-  it('an untestable contradiction enters the decision lane', () => {
-    expect(step2).toMatch(/cannot be run[^.]*decision lane/);
-  });
-
-  it('the schema reference documents remedy, routed_to and disagreement, and no longer documents tie_break_rationale as written', () => {
+  it('the schema reference documents remedy and routed_to, and no longer documents tie_break_rationale or disagreement', () => {
     const block = schema.split('## Schema (v2)')[1].split('## Example payloads')[0];
     expect(block).toContain('"remedy":');
     expect(block).toContain('"routed_to":');
-    expect(block).toContain('"disagreement":');
+    expect(block).not.toContain('"disagreement":');
     expect(block).not.toContain('"tie_break_rationale":');
     const notes = schema.split('## Field notes')[1];
-    for (const k of ['remedy', 'routed_to', 'disagreement']) expect(notes).toContain('`' + k + '`');
+    for (const k of ['remedy', 'routed_to']) expect(notes).toContain('`' + k + '`');
     const examples = schema.split('## Example payloads')[1].split('## v1 → v2')[0];
-    for (const k of ['"remedy"', '"routed_to"', '"disagreement"']) expect(examples).toContain(k);
+    for (const k of ['"remedy"', '"routed_to"']) expect(examples).toContain(k);
     expect(examples).not.toContain('"tie_break_rationale"');
+    expect(examples).not.toContain('"disagreement"');
   });
 
   it('the frontmatter describes discovery, not the retired "no markers" fallback', () => {
@@ -182,8 +176,9 @@ describe('rc08b 5.1 — the discovery scenarios the walk body carries', () => {
   const files = skillFiles('orbit-address-reviews');
   const skill = files['SKILL.md'];
   const detail = files['references/resolution-detail.md'];
-  const step1 = skill.split('### 1. Discover')[1].split('### 2. Triage')[0];
-  const persist = skill.split('### 6. Persist the run summary')[1];
+  // cut-review-walk: Step 1 reads `references/discovery.md`, and the emit step `references/run-summary-emit.md`.
+  const step1 = skill.split('### 1. Discover')[1].split('### 2. Triage')[0] + '\n\n' + files['references/discovery.md'];
+  const persist = skill.split('### 6. Persist the run summary')[1] + '\n\n' + files['references/run-summary-emit.md'];
   const row = (n: number) => step1.split('\n').find(l => l.startsWith(`${n} `))!;
   const R = 'orbit-address-reviews :: Address-reviews command available :: ';
   void R;

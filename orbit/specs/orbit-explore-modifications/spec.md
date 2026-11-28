@@ -7,6 +7,27 @@ Orbit's additions to upstream's explore stance, which is otherwise preserved: th
 
 The system SHALL preserve upstream `/orbit:explore`'s "stance, not workflow" character — thinking-partner mode, no fixed steps, no mandatory outputs, no implementation.
 
+The upstream portion of the explore body SHALL change only by the edits `reduce-orbit-phase2`'s R-rop2-13 rules (Sal,
+2026-11-23: "ok to remove some of openspec's original stuff") and the table below names: illustrative text the stance
+already states. This requirement is the named edit `orbit-conventions`' `Generated-file disposition` asks of a change to
+an orbit-modified body's upstream portion. Each edit is named below, in the body generated at `9a122611`, and every other
+line of the upstream portion is unchanged; a further removal is a further named edit, never this requirement read as a
+general rule:
+
+| member | covered by |
+|---|---|
+| "Handling Different Entry Points": its heading, its four dialogues (a vague idea, a specific problem, stuck mid-implementation, comparing options) and the `---` separator that closes it, the one before its heading staying between "What You Don't Have To Do" and "Ending Discovery" | removed (R-rop2-13): the stance bullets and "What You Might Do" carry what they illustrate |
+| "What You Might Do": the `**Visualize**` label and its ASCII box | removed (R-rop2-13): the stance's "**Visual** - Use ASCII diagrams liberally when they'd help clarify thinking" says it |
+| "Ending Discovery": the "What We Figured Out" summary template | removed (R-rop2-13); the sentence before it ("When it feels like things are crystallizing, you might summarize:") and the one after it ("But this summary is optional.") join as one: "When it feels like things are crystallizing, you might summarize what you figured out, but this summary is optional."; "Sometimes the thinking IS the value." stays |
+| Guardrails: "Don't implement" | removed as restated: the opening's "**IMPORTANT: Explore mode is for thinking, not implementing.**" paragraph |
+| Guardrails: "Don't rush", "Don't force structure" | removed as restated: the stance's "**Patient** - Don't rush to conclusions, let the shape of the problem emerge" |
+| Guardrails: "Don't auto-capture" | kept: no single line states it at its scope, the whole skill ("Orbit Awareness" step 4's "Don't auto-capture" sits under "When a change exists") |
+| Guardrails: "Do visualize" | removed as restated: the stance's "**Visual**" bullet |
+| Guardrails: "Do explore the codebase" | removed as restated: the stance's "**Grounded** - Explore the actual codebase when relevant" |
+| Guardrails: "Don't fake understanding", "Do question assumptions" | kept: no other line states either ("Including the user's and your own" adds to "Challenge assumptions") |
+
+The table is sourced from the upstream portion's sections as generated at `9a122611`, read whole.
+
 #### Scenario: Bare invocation
 
 - **WHEN** the user invokes `/orbit:explore` with no argument and no orbit-specific capture trigger fires
@@ -15,7 +36,21 @@ The system SHALL preserve upstream `/orbit:explore`'s "stance, not workflow" cha
 #### Scenario: Implementation guardrail preserved
 
 - **WHEN** the user asks the command to implement code or apply features
-- **THEN** the command refuses and reminds the user to exit explore mode (same as upstream)
+- **THEN** the command refuses and reminds the user to exit explore mode (same as upstream); the opening's IMPORTANT
+  paragraph, which states the refusal, is still in the body after the Guardrails line restating it is removed
+
+#### Scenario: The illustrative upstream text is gone
+
+- **WHEN** the explore skill is generated
+- **THEN** it carries no "Handling Different Entry Points" heading, no `COLLABORATION SPECTRUM` dialogue, no ASCII box
+  under a `**Visualize**` label and no `## What We Figured Out` template, and its Guardrails list carries exactly the
+  three kept lines
+
+#### Scenario: A removed Guardrails line's statement stays
+
+- **WHEN** the explore skill is generated
+- **THEN** each line the table names as a Guardrails restatement is still in the body: the opening's IMPORTANT
+  paragraph and the stance's "Patient", "Visual" and "Grounded" bullets
 
 ### Requirement: Three invocation modes supported
 
@@ -209,7 +244,7 @@ The body SHALL treat a rule's Mechanism entry as the record of NINE MOVES applie
 
 READ is the read-before-reference discipline and ENUMERATE is the accounting obligation, both existing rulings made checkable where mechanism is AUTHORED. EXECUTE is NOT sufficient alone: an executed case demonstrates one path, and eleven of one stage's fifteen CRITICALs were READ, ENUMERATE or COHERE failures with zero EXECUTE failures.
 
-The shipped body carries TWO conforming exemplar entries, one per closure outcome (D-bcs-3, CLOSED, and D-bcs-12, BOUNDED with both residual slots — of the archived `bounded-closure-semantics` change), so the convention shows both shapes rather than describing them.
+The shipped skill carries TWO conforming exemplar entries, one per closure outcome (D-bcs-3, CLOSED, and D-bcs-12, BOUNDED with both residual slots — of the archived `bounded-closure-semantics` change), so the convention shows both shapes rather than describing them. They, the nine moves' table and the Mechanism entry grammar are carried by the skill's `references/mechanism-entries.md`, which the body reads before a Mechanism entry is written or edited (a rule captured, a Mechanism entry swept at a boundary, a resume adding the section); the body keeps which rules owe an entry, so a session knows when to read it (`reduce-orbit-phase2`'s `cut-explore-onboard`, D-inv-5).
 
 #### Scenario: A rule's entry records all nine moves
 
@@ -223,8 +258,14 @@ The shipped body carries TWO conforming exemplar entries, one per closure outcom
 
 #### Scenario: The exemplar conforms
 
-- **WHEN** the explore body is generated
-- **THEN** each exemplar entry's lines match the grammar's productions, the BOUNDED branch included — the generated-surface test asserts it, and the engine's form parse accepts the same entries under the grammar `orbit-emit-composition`'s `The explore grammar has one source in code` carries
+- **WHEN** the explore skill is generated
+- **THEN** each exemplar entry's lines in its `references/mechanism-entries.md` match the grammar's productions, the BOUNDED branch included — the generated-surface test asserts it, and the engine's form parse accepts the same entries under the grammar `orbit-emit-composition`'s `The explore grammar has one source in code` carries
+
+#### Scenario: The body reads the grammar before writing an entry
+
+- **WHEN** the explore skill is generated
+- **THEN** its body names `references/mechanism-entries.md`, says to read it before a Mechanism entry is written or
+  edited, and carries neither the nine moves' table nor an exemplar entry
 
 ### Requirement: Re-entry resolution and the conclude verb
 
@@ -262,3 +303,4 @@ A staging directory WITHOUT `explore.md`, or whose header carries neither fixed 
 
 - **WHEN** the user declares, in a named session, that nothing will be built
 - **THEN** the body sweeps, writes the CONCLUDED entry, flips the header, and fires the boundary emit — in that order — and leaves the directory and its metadata where they are
+

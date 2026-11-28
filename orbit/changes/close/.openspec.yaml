@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-11-28
+schema_version: 5
+architecture:
+  doc: reduce-orbit-phase2
+  stage: close

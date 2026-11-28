@@ -157,11 +157,36 @@ ${PR_CONSUMPTION_TABLE}
 /** The reference emitted into the archive skill. */
 export const PR_ARCHIVE_TAIL_REFERENCE = `# Reference: the PR-attached archive
 
-Loaded when \`orbit pr preflight\` returned anything but \`off\`. The ATTACHMENT recorded at propose
+## Contents
+
+- Entry observation, before any write
+- Preflight, before the move
+- Tail, after the move and the emit
+- At the close
+- Acting on the record
+
+Read at the archive's Step 0.7 when the change's trail carries a \`pr_attachment\`, and at Step 4.9 when
+\`orbit pr preflight\` returns anything but \`off\`. The ATTACHMENT recorded at propose
 or ff is the only gate: the live \`pr:\` value is not consulted, so \`pr: never\` stops new
 attachments and never abandons an open PR. \`orbit pr\` observes through read-only \`git\` and \`gh\`
 and PRINTS each write; you act on its record by the table below and author only the judgment.
 Never re-derive a step the record decided.
+
+## Entry observation, before any write
+
+Before ANY archive write — before upstream Step 1, before sync (Step 4) and the move (Step 5)
+— resolve whether this change is PR-ATTACHED: read \`pr_attachment\` from the LATEST
+attachment-bearing PROPOSE or FF emit on the change's trail (the same read the consent
+preview in Step 0 uses on the AI-mediated path; Step 4.9's \`orbit pr preflight\` reads the same record). This
+step mutates nothing and runs on EVERY provenance path, user-typed included. When attached,
+compare HEAD's branch (\`git branch --show-current\`) with \`pr_attachment.branch\`. On mismatch,
+SAY SO NOW — in the consent preview when one fires, otherwise as one line before Step 1 (on a
+granted arrival that line is the only notice and nobody is asked: the archive proceeds and the tail
+skips, a named limit) — naming both branches and the case-specific switch (\`git switch <branch>\` locally; the
+tracking form when only the remote has it). The tail's HEAD precondition (Tail, after the move and the emit, below)
+remains the GUARD that skips the PR half; this observation is the early warning that lets the
+user switch first instead of carrying uncommitted sync, move, and emit writes across a
+\`git switch\` afterward. Unattached changes see nothing here.
 
 ## Preflight, before the move
 
@@ -215,6 +240,11 @@ directory, staged with the archived tree as the change's own material.
 Show every \`human_acts\` argv verbatim, labelled as the user's own act: the merge, then the return
 to the default branch after it. Run none of them. A program PR's tail prints none; its flip and
 merge belong to arc-done.
+
+After a program-PR append: the program PR is named and the flip
+stays at arc-done. After a tail whose PR half was SKIPPED on positive invalidation (the commit
+and push landed; the rewrite/append and flip did not): name the specific reason and that any
+action on that pull request is the user's.
 
 ## Acting on the record
 

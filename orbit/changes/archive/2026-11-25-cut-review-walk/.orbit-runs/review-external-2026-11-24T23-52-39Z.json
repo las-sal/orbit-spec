@@ -1,0 +1,14 @@
+{
+  "command": "review-external",
+  "timestamp": "2026-11-24T23:52:39Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "prompt_path": "orbit/changes/cut-review-walk/.orbit-runs/external-prompt-system-2026-11-24T23-52-21Z.md",
+  "target": "codex",
+  "final_assessment": "External review prompt packaged for cut-review-walk (iter 1, mode system) as the external half of a launched blind pair; awaiting findings from codex.",
+  "pair": true,
+  "awaiting_findings": true,
+  "next_recommended": "Paste orbit/changes/cut-review-walk/.orbit-runs/external-prompt-system-2026-11-24T23-52-21Z.md into the target AI, and save the response as orbit/changes/cut-review-walk/.orbit-runs/external-system-<TS>.md"
+}

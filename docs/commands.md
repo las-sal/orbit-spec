@@ -1,13 +1,12 @@
 # Commands
 
 orbit's workflows are commands you type to your AI assistant. In Claude Code each is `/orbit:<id>`. Every install
-carries all 15. The [CLI](cli.md) is the terminal side; the workflows call it.
+carries all 14. The [CLI](cli.md) is the terminal side; the workflows call it.
 
 Every workflow ends its turn with a `Ready when you are:` line naming what is eligible next. The AI recommends the
 next step and does not run it unasked, unless your project's `chain` setting grants that command
-([Customization](customization.md)): otherwise you invoke each workflow. When the AI arrives at `apply`, `archive` or
-`bulk-archive` by any route other than your typing it or your `chain` setting granting it, it asks before writing
-anything; `bulk-archive` is never granted.
+([Customization](customization.md)): otherwise you invoke each workflow. When the AI arrives at `apply` or `archive`
+by any route other than your typing it or your `chain` setting granting it, it asks before writing anything.
 
 ## Quick reference
 
@@ -25,7 +24,6 @@ anything; `bulk-archive` is never granted.
 | [`/orbit:verify`](#orbitverify) | Check the implementation against the artifacts |
 | [`/orbit:sync`](#orbitsync) | Merge a change's delta specs into the baseline without archiving |
 | [`/orbit:archive`](#orbitarchive) | Merge the specs and archive the change |
-| [`/orbit:bulk-archive`](#orbitbulk-archive) | Archive several changes at once |
 | [`/orbit:audit-drift`](#orbitaudit-drift) | Find drift between the project's documents and the repository |
 | [`/orbit:onboard`](#orbitonboard) | A one-page orientation to orbit |
 
@@ -166,7 +164,6 @@ and one active change, it aims at that change; otherwise it scans the repository
 | Option | Effect |
 |---|---|
 | `--from-file <path>` | Walk one file only: an external review, a review record or a drift audit |
-| `--batch` | Triage and resolve all findings together rather than one at a time |
 | `--no-cascade` | Do not apply ripple edits to other files |
 
 ### `/orbit:verify`
@@ -230,6 +227,8 @@ Finish a change: merge its delta specs into `orbit/specs/` and move it to
 /orbit:archive add-dark-mode
 ```
 
+It archives one change. To archive several finished changes, run it once for each.
+
 In a project whose `orbit/config.yaml` sets `pr:`, it then commits, pushes, and marks the change's pull request
 ready. Merging it stays yours.
 
@@ -237,22 +236,6 @@ With `commit: true` and `push: true` also set, propose, ff, apply, review, addre
 push whatever is left uncommitted at their close, on the change's own branch, so the pull request carries the work as
 it goes. Archive's commit comes after the tail's own, which carries only the archive's paths. See
 [orbit's config keys](customization.md#orbits-config-keys).
-
-### `/orbit:bulk-archive`
-
-Archive several finished changes in one go. It asks which, then, for each change in turn, settles the tasks left for
-you to validate, checks the fingerprints, and saves the change's brief — under `signoff: change`, asking for your
-sign-off on it, so a change you decline is not archived and the others go on — before it merges the specs and moves
-the change. When two changes touch
-the same spec, it applies them in the order they were created.
-
-It does less than `/orbit:archive` run once per change: it does not report unpassed reviewed gates, does not run
-`/orbit:audit-drift`, and makes no commit, push or pull-request change, whatever `pr:` says. Archive a change on its
-own when you want those.
-
-```text
-/orbit:bulk-archive
-```
 
 ---
 

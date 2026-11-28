@@ -1,0 +1,96 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-24T23:59:16Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "system",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 3
+    }
+  },
+  "findings": [
+    {
+      "pass": "0",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "test/core/templates/skill-body-budget.test.ts",
+      "line": 43,
+      "title": "The new ceilings sit above G1's 20,000 characters, so nothing holds the two bodies under 5,000 tokens",
+      "recommendation": "Review is at 19,962 characters (4,991 tokens) and address-reviews at 19,921 (4,981): 9 and 19 tokens of margin. Their ceilings (20,961 and 20,918, size plus 5% per D7) let either body regrow past 5,000 estimated tokens with the suite green, and the size report always exits 0 (scripts/skill-size-report.mjs:61), so a walk fix or a later cut stage that adds one sentence to either body breaks this stage's exit criterion (G1) unseen until archive measures it. Either cap the ceiling of every body that already fits G1 at 20,000 characters, or keep D7's rule and name the gap as a limit the archive's size-report reading closes.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Cap the character ceiling of each body that fits G1 at min(size + 5%, 20,000) (review and address-reviews now; every other fitting body's ceiling already sits below 20,000), a named edit in skill-body-budget.test.ts, so the suite fails the moment either body crosses 5,000 estimated tokens."
+        },
+        {
+          "label": "B",
+          "body": "Keep D7's size-plus-5% rule unchanged and record in the design's Risks that G1 for these two bodies is held only by the archive's size-report reading, which re-measures after the walk's last body edit."
+        }
+      ]
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/address-reviews.ts",
+      "line": 951,
+      "title": "The schema reference still calls per_finding the default walk mode",
+      "recommendation": "With batch mode removed, per_finding is the only walk mode (the field note at address-reviews.ts:935 says so), yet the run-summary schema reference's Contents entry (:563) and snippet heading (:951) read \"(a) Walk-mode clean run (per_finding default, all IN, no fork)\", and resolution-detail.md's worked report (:458) prints \"Walk mode: per_finding (default)\". Each implies a non-default alternative. Drop \"default\" from the heading and its Contents entry (for example \"(a) Clean run (per_finding, all IN, no fork)\"); the worked example is a historical walk and may keep its line, or lose the \"(default)\"."
+    },
+    {
+      "pass": "3",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "src/core/templates/workflows/review.ts",
+      "line": 1147,
+      "title": "The flag table moved into flags-detail.md still points readers at flags-detail.md",
+      "recommendation": "V4 moved the flag table byte-equal into references/flags-detail.md, and its --focus row (review.ts:1147) and --mark row (:1154) still end \"See `references/flags-detail.md`.\" — the file the reader is in. D4 rewords pointers a new home makes wrong; these are not wrong, only circular. Re-point them to the sections that hold the detail (\"section 13 below\", \"section 11 below\") as reworded pairs, or leave them; references are not hashed by the cut ledger, so either way the archive names the choice."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Probed hard where a reduction can silently lose behaviour. The full suite was run on the frozen tree (npm run build && npm test: 217 files, 4,513 tests, all passing), with node bin/orbit.js validate cut-review-walk --strict valid, npm run validate:skills passing, and the scenario map at 131 delta scenarios with none uncovered and no orphans. The moves are byte-proven by construction: tightened-bodies.test.ts undoes the cut ledger and then tighten-bodies' pairs back to phase 1's recorded ef55ee46 hashes for all six edited bodies, so any edit the ledger does not name fails twice. That left the 34 reworded pairs, the only edits whose meaning the tests cannot judge; each was read before-and-after, and none shifts what a session does. The drops are restatements or spec citations an installed skill cannot open (the remedy table's pointer, R-crc-11(f), rc04a's vocabulary note).\n\nOutside the hashed bodies: every new reference's positional pointers were grepped (resolution-detail.md's two DISCOVERY pointers, the schema reference's Step 5 VERIFICATION branch, architecture-mode.md's change-oriented steps, blind-pair.md's step 5c, all re-pointed). The generated .claude surface was compared file by file against dist and matches. Batch-mode and disagreement-test residue was swept across src, docs, README, CLAUDE.md, the skills and the baseline specs: what remains in the baseline specs sits inside requirements the deltas modify, rename or remove, plus the Purpose line the design edits at archive. The engine has no reader of walk_mode_source, walk_mode_shifted_at_finding or disagreement, and the refusal of the two retired fields is behaviour-tested with a mutation.\n\nPass 0 ran inline as the verify-change checks (tasks 16/16, scenario coverage, design D1 to D7 adherence) rather than through the verify skill, and Pass 6 ran as a bounded vocabulary-residue sweep over the renamed and removed requirements rather than a full audit-drift. Neither wrote a record of its own to the trail. Passes 4 and 5 were skipped because orbit/lenses/ is absent. The reading step belongs to the in-context pass.\n\nThe risk texture is margin, not defect. Both bodies fit by under 20 tokens, so the first finding matters more than its grade suggests if the walk edits either body. docs/concepts.md:178 (\"where they disagree, the disagreement itself is evidence\") was weighed as disagreement-test residue and kept: it still holds once contradictions are walked by pushback.",
+  "passes_run": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "6"
+  ],
+  "passes_skipped": [
+    "4",
+    "5"
+  ],
+  "direction": {
+    "disposition": "forward",
+    "reasoning": "The change does what its proposal says. The moves are mechanically proven byte-equal through two chained ledgers, the removals are complete across the skill, the engine table and the docs, and the bodies fit G1 as measured. What I found is polish plus one margin risk. The margin is worth settling before any walk edit touches either body, because the suite would not catch a regrowth past 5,000 tokens. None of it calls for holding the change."
+  },
+  "final_assessment": "0 critical, 0 warning, 3 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews cut-review-walk"
+}

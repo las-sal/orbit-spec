@@ -1,0 +1,65 @@
+{
+  "command": "apply",
+  "timestamp": "2026-11-20T17:52:59Z",
+  "change": "replay-set",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "consent": "user-invoked",
+  "tasks_completed": 12,
+  "tasks_remaining": 7,
+  "user_validation_remaining": 0,
+  "chunk": null,
+  "chunk_name": null,
+  "chunk_complete": false,
+  "tasks_completed_this_session": 12,
+  "files_touched": [
+    "orbit/changes/replay-set/.orbit-runs/address-reviews-2026-11-20T17-18-05Z.json",
+    "orbit/changes/replay-set/.orbit-runs/address-reviews-2026-11-20T17-18-37Z.json",
+    "orbit/changes/replay-set/.orbit-runs/address-reviews-2026-11-20T17-32-34Z.json",
+    "orbit/changes/replay-set/.orbit-runs/external-prompt-proposal-2026-11-20T17-05-45Z.md",
+    "orbit/changes/replay-set/.orbit-runs/external-proposal-2026-11-20T17-12-19Z.md",
+    "orbit/changes/replay-set/.orbit-runs/propose-2026-11-20T16-58-37Z.json",
+    "orbit/changes/replay-set/.orbit-runs/review-external-2026-11-20T17-06-02Z.json",
+    "orbit/changes/replay-set/.orbit-runs/review-proposal-2026-11-20T17-11-58Z.json",
+    "orbit/changes/replay-set/.orbit-runs/review-proposal-2026-11-20T17-25-51Z.json",
+    "orbit/changes/replay-set/design.md",
+    "orbit/changes/replay-set/proposal.md",
+    "orbit/changes/replay-set/specs/orbit-replay-set/spec.md",
+    "orbit/changes/replay-set/tasks.md",
+    "package.json"
+  ],
+  "diff_base": "cb4d8940612df7bf69d44ddcb37a9f096b593765",
+  "final_assessment": "12 of 19 tasks done. the harness, the comparison and six cases built; every seed builds from orbit emits on the repo build, every start check holds, and every grader fails on its seed (no-system-review on its known-bad scaffold)",
+  "next_recommended": "/orbit:apply replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "9c54a9fc8301e8b483ae6092d234c2bcd2641944",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

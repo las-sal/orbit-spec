@@ -1,0 +1,19 @@
+# Archive the walked change: review-system has passed.
+max_turns: 60
+max_budget_usd: 4
+start:
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=review-system].state
+    equals: passed
+  - args: [status, --change, greet-name, --json]
+    path: gates[id=apply].state
+    equals: passed
+break:
+  # The whole body and every reference: the 2026-11-23 re-run showed a session rebuilding the emit
+  # step without the body's emit section (from the seeded trail's records of the same kind, `orbit
+  # emit --help` and the write gate's refusals, and orbit-bulk-archive-change's body), so this break
+  # asks whether the case depends on its skill's text at all.
+  file: .claude/skills/orbit-archive-change/SKILL.md
+  whole_body: true
+  remove: [references]
+  grader: archive-emit-printed

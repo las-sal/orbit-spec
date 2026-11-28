@@ -68,7 +68,7 @@ Finally /orbit-apply to implement`;
       'ff',
       'sync',
       'archive',
-      'bulk-archive',
+      'audit-drift',
       'verify',
       'explore',
       'onboard',

@@ -1,0 +1,37 @@
+{
+  "command": "architect",
+  "timestamp": "2026-11-24T00:13:00Z",
+  "change": null,
+  "doc": "reduce-orbit-phase2",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Session continued after CI run 45258559650 on c871f875: the Linux leg passed its tests, its size report and validate:skills, R-rop2-8's condition for replay-set's fourth exit criterion. Sal ratified replay-set, its second criterion in the weaker form its Shipped as records. The macOS leg's failures (the zsh-completion test, red on main, and three oracle shards that timed out after passing two runs earlier) are recorded as outside the stage. inventory is next.",
+  "stages_touched": [
+    "replay-set"
+  ],
+  "rulings_captured": [],
+  "completions_ratified": [
+    "replay-set"
+  ],
+  "stages_ended": [],
+  "handoff": {
+    "boot_sequence": [
+      {
+        "path": "orbit/architecture/reduce-orbit-phase2.md",
+        "why": "stage inventory's charter and exit criteria, R-rop2-5 (its evidence), R-rop2-9 (evaluation's two replay-gated cuts as inputs), and replay-set's Shipped as (which emit sections the model recovers)"
+      },
+      {
+        "path": "orbit/explore/evaluation/explore.md",
+        "why": "D-eval-1's two deferred cuts and the other D-eval decisions the inventory takes as given"
+      },
+      {
+        "path": "replay/README.md",
+        "why": "how a cut is graded before and after, and the baseline record to compare against"
+      }
+    ],
+    "next_command": "/orbit:explore inventory",
+    "model_hint": null,
+    "seam": "replay-set is complete; inventory opens as a named exploration citing this doc's stage inventory, on the branch reduce-orbit-phase2 (R-rop2-7), and ends in Sal's removal rulings."
+  },
+  "next_recommended": "/orbit:explore inventory"
+}

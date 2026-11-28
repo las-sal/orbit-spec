@@ -1,0 +1,132 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-27T18:09:23Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-explore-onboard/.orbit-runs/review-system-2026-11-27T17-46-08Z.json",
+  "source_command": "review",
+  "source_token": "2026-11-27T17-46-08Z",
+  "latest_apply_token": "2026-11-27T17-04-33Z",
+  "external_reviewer": null,
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 0,
+    "suggestion": 2
+  },
+  "pushback_verification": "Both findings verified against current state; none stale.",
+  "resolution_summary": {
+    "resolved": 2,
+    "stale_suppressed": 0,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "SUGGESTION",
+      "title": "A stray blank line splits explore's disciplines epitome after its Change-completeness bullet",
+      "marker_source": "internal-review",
+      "file": "src/core/templates/workflows/explore.ts",
+      "line": 488,
+      "classification": "trivial_fix",
+      "action": "The R3-epitome-completeness pair's after lost its trailing newline (a slip in the stage's pair file), explore.ts was regenerated without the blank line, and explore's two parity hashes were re-pinned.",
+      "evidence": "The generated SKILL.md carried an empty line between the Change-completeness and Pushback bullets; the pair recorded it as part of its after.",
+      "ripple_cascade": {
+        "applied": [
+          "test/core/templates/cut-ledger-pairs.ts",
+          "test/core/templates/skill-templates-parity.test.ts"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [],
+        "searched": [
+          "re-read the section to confirm."
+        ],
+        "scope": [],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "orbit-onboard's identity scenario still names \"D-arc Stage D2\" beside the program-architecture layer, which the body no longer says",
+      "marker_source": "internal-review",
+      "file": "orbit/specs/orbit-onboard/spec.md",
+      "line": 56,
+      "classification": "trivial_fix",
+      "action": "Added the recommended note to design.md's At archive list: the Shipped as says D4 removed onboard's stage tags and that the scenario's tag is provenance the body need not carry. No delta; neither of the scenario's tests asserts the tag.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-explore-onboard/design.md"
+        ],
+        "flagged_not_applied": [
+          {
+            "path": "orbit/specs/orbit-onboard/spec.md",
+            "reason": "baseline spec: edited only through a delta at archive"
+          }
+        ]
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-explore-onboard/design.md",
+            "text": "is provenance the body need not carry"
+          }
+        ],
+        "searched": [
+          "D-arc Stage D2"
+        ],
+        "scope": [
+          "test/core/templates/orbit-content-fidelity.test.ts",
+          "test/core/templates/blind-pair-command.test.ts"
+        ],
+        "kept": []
+      },
+      "remedy": "repair",
+      "outcome": "resolved"
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "Both suggestions of the fresh system pass resolved: the stray blank line in explore's epitome is gone, and the onboard scenario's stage tag is noted for the Shipped as.",
+  "iteration": 4,
+  "next_recommended": "/orbit:address-reviews cut-explore-onboard",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "a71057ea755e9ef64f8ee9049ad884a2a860c202",
+      "frozen": true,
+      "evidence": {
+        "files": [],
+        "share": 0,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 0
+}

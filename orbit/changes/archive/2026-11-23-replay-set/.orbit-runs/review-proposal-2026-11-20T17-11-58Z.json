@@ -1,0 +1,212 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-20T17:11:58Z",
+  "change": "replay-set",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "fresh",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": true,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 5,
+      "suggestion": 3
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 2
+    }
+  },
+  "findings": [
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 140,
+      "title": "The seeds' gate states do not match the engine's default cadence",
+      "recommendation": "Name each seed's trail in the engine's own terms, read from schemas/spec-driven/schema.yaml's default cadence [invoked, in-context] and gates.ts. (1) The apply gate is a TRACKED gate: gates.ts:885-916 sets it 'passed' only when every task is checked (or only declared User-validation handoffs remain), so on any apply seed with unchecked tasks it reads 'ready', and tasks.md 2.3's start check 'the apply gate passes' fails on the seed it is meant to admit. The start check the case needs is review-proposal passed. (2) review-proposal and review-system both declare cadence [invoked, in-context] (schema.yaml:185, :202): the invoked slot is covered only by a fresh or external single or a complete blind pair, and the trailing in-context slot must be a pass later than the walk that resolved the invoked slot's findings. So 'a proposal review pass and walk' (tasks.md:62) leaves review-proposal unpassed, and a walk case seeded with 'a system review with obvious-fix findings' (design.md:142, tasks.md:66) can never leave 'the archive gate passed', whatever the session does, if that review is the only pass. Write each seed as the slot sequence it holds: apply = a fresh proposal pass (with direction), its walk, and a later in-context proposal pass with no substantive findings; review = an applied change plus a fresh system pass and its walk, so the typed /orbit:review <name> fills the in-context slot; walk = that plus the in-context system pass with obvious-fix findings; archive = the walked state. Rename 'the apply gate passes' to review-proposal passed, and 'the archive gate passed' to review-system passed (there is no gate with id archive; review-system is the one declaring before: archive). Every one of these gets a start check in case.yaml, so the free checks catch a seed that does not reach it.",
+      "reproduction": "Read schemas/spec-driven/schema.yaml lines 154-162 and 185/202 (cadence [invoked, in-context]; the invoked slot needs an outside pass) and src/core/artifact-graph/gates.ts:885-916 (tracked gate: passed only when checked === total). Then: a seed with one in-context or fresh system pass and its walk leaves review-system 'unpassed' with the in-context slot uncovered, so the walk case's grader 'the archive gate passed' fails on every run; an apply seed with 0/n tasks checked reads apply 'ready', so tasks.md 2.3's start check fails before any session."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 63,
+      "title": "The apply case's 'the project's test passes' fact has no grader type that can grade it",
+      "recommendation": "Design Decision 6 (design.md:150-156) and the spec (spec.md:140-142) fix three grader types, file_exists, regex (over orbit_output or a fixture file) and orbit (an orbit command with --json). None runs the fixture project's own test, and the spec's first table admits only what orbit printed or wrote, so tasks.md 2.3's grader 'the project's test passing' cannot be written as specified; an implementer will either invent a fourth type or silently drop the fact. Decide which.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Add a fourth grader type, command: a fixed command named in the grader file, run in the fixture after the session, graded by its exit status. Add its row to the spec's source table ('a command the case names, run in the fixture after the session: allowed, it reads the fixture, never the trace') and to design Decision 6 and task 1.4, and give it the same known-bad check (it fails on the seed, where the code the apply case adds is missing)."
+        },
+        {
+          "label": "B",
+          "body": "Drop the fact from the apply case and grade only orbit's facts there (every task checked, an apply emit, no review emit), noting in the case's README entry that the project's test is not graded."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 161,
+      "title": "The free checks link .orbit-cli to the repository root, where the shim finds no orbit.js",
+      "recommendation": "The shim (design Decision 2, sketches/spike-files/orbit-shim.sh) looks only for <dir>/.orbit-cli/node_modules/orbit-spec/bin/orbit.js. With .orbit-cli linked to the repository root (design.md:161-162, tasks.md 3.2 'linked to the repository root') that path is <repo>/node_modules/orbit-spec/bin/orbit.js, which does not exist, so every orbit call a scaffold makes through the shim exits 127 and no seed builds in npm test. Specify the free checks' layout so it matches the installed one: a temporary .orbit-cli directory whose node_modules/orbit-spec is a symlink to the repository root (Node resolves the symlink, so the repository's own node_modules still serves the dependencies). Say it in Decision 6 and task 3.2.",
+      "reproduction": "ls node_modules/orbit-spec in the repository root: 'No such file or directory'. The shim's loop tests only $d/.orbit-cli/node_modules/orbit-spec/bin/orbit.js, then exits 127."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 131,
+      "title": "A file_exists grader cannot tell a file orbit wrote from one the session wrote by hand",
+      "recommendation": "The spec admits 'the files orbit wrote in the fixture' (spec.md:131), but a file_exists grader checks only that a path exists, and explore.md's own Case 1 (D-rs-11) is a session writing explore.md with the Write tool when the CLI failed and reporting the step done. The two known-bad inputs the spec requires (the unrun seed, and a trace with no orbit answer) both miss that failure: the hand-written file exists after the session. The explore case's 'explore.md exists' grader is exactly the false pass Case 1 recorded. Require each case's fact set to hold at least one fact only orbit's answer can make true, for each file the session could write itself: a regex over orbit_output matching the emit path orbit printed (the spike's g3b form), or an orbit grader whose answer reflects orbit's own write. State in the spec that a file_exists fact over a file the session can write by hand is paired so, and name the residual (a session hand-writing a well-formed emit and never calling orbit) as a named limit."
+    },
+    {
+      "pass": "6",
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 192,
+      "title": "The comparison does not say how a run that was not run, or failed at its start state, counts",
+      "recommendation": "The record holds runs 'not run' at the ceiling and runs 'failed at its start state' with no grades (spec.md:120-122, :184-186), but the four-row table (spec.md:192-197) and design Decision 9 classify only graded results. Read literally, a cut record the ceiling stopped after zero sessions 'passes every cut run' vacuously and is judged no worse; two implementers would differ (skip ungraded runs, count them as fails, or refuse the comparison). Add the rule: a cut whose record has a case with fewer graded runs than the baseline's (or any run not run or stopped at its start state) is reported incomplete and the comparison exits non-zero without a no-worse verdict for that case; and add a scenario for it beside the two comparison scenarios, with a test in task 1.6."
+    },
+    {
+      "pass": "2",
+      "severity": "WARNING",
+      "dimension": "correctness",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 114,
+      "title": "The broken-body run on the cheap model departs from D-rs-4 and from the spec's 'plumbing only'",
+      "recommendation": "The spec says a cheaper model with one run 'is for proving the plumbing only' (spec.md:114-116), and the proposal says cheap one-run sessions are 'only for proving the plumbing (D-rs-4)' (proposal.md:40-41); D-rs-4, a scope decision, has graded runs on Sal's model and only the spike on a cheaper one. Design Decision 8 and task 5.3 run the broken-body run, the exit criterion that each case can fail, on Sonnet with one run. The design's reason (it tests the graders, not the body's quality) is arguable: a body with a section deleted is more likely to be recovered from by a stronger model, so a grader seen failing on Sonnet is not shown failing for the model the baseline and the cuts run on. Reconcile the artifacts, and since D-rs-4 is scope, put the choice to Sal.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Keep the broken-body run on the cheap model: amend the spec's sentence to admit it ('for proving the plumbing and the broken-body run only'), the proposal's line likewise, and record the narrowing of D-rs-4 as a decision with the design's reason and its residual (a stronger model may recover from a broken body that Sonnet fails on)."
+        },
+        {
+          "label": "B",
+          "body": "Run the broken-body run on Sal's model, one run a case: change design Decision 8, its Alternatives entry and task 5.3, and size its ceiling from the plumbing run's costs as 5.4 does."
+        }
+      ]
+    },
+    {
+      "pass": "5",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "tasks.md",
+      "line": 74,
+      "title": "The runner's free checks need seams the design does not name",
+      "recommendation": "Task 3.1 runs the runner end to end with a stub claude (the ceiling, the record holding every case and run, a seed missing its start state). As Decisions 2 and 7 stand, that run builds the commit's CLI (a git worktree, npm ci, npm run build, npm pack, npm install from the registry) inside npm test on both CI legs, and writes its record into the repository's own replay/results/. Name the seams in Decision 7 and task 1.5: an option or environment variable that points the run at an already-built CLI directory, and one that sets the results directory, so the tests use a temporary one and never dirty the tree."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 89,
+      "title": "The per-commit cache sits in a per-run directory, and records can overwrite each other",
+      "recommendation": "The CLI is 'cached by commit' (design.md:89) but installed into <workdir>/cli/, and the work directory defaults to <os.tmpdir()>/orbit-replay/<run-id>/ (design.md:97), so a second run never sees the first's build. Either key the cache outside the run directory (<os.tmpdir()>/orbit-replay/cli/<sha>/) or drop the claim. Also: the record name <YYYY-MM-DD>-<sha7>-<label>.json collides for two runs of one commit with one label on one day (a re-run after 5.3's repair, for instance) and --label is optional; say what the name is without a label and refuse or suffix an existing name. And since the work directory is never cleaned, each run's detached git worktree stays registered in this repository's .git/worktrees; say whether the runner removes it (git worktree remove) after the pack."
+    },
+    {
+      "pass": "6",
+      "severity": "SUGGESTION",
+      "dimension": "completeness",
+      "file": "design.md",
+      "line": 192,
+      "title": "The ceiling can be overshot by a session, and a session that ends without a result record is unhandled",
+      "recommendation": "The runner compares spend so far with --max-total-usd before each session (design.md:191-193), so the last session can take the total past the ceiling by up to its own max_budget_usd; starting a session only when spend plus the case's max_budget_usd stays under the ceiling makes 'capped' (spec.md:9) hold. Also name the error paths: a session that crashes or is killed and leaves no result record (its cost unknown, so the spend undercounts), and a hung session (no wall-clock timeout is given). Record such a run with its reason, count its case budget as spent, and add a timeout."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 106,
+      "title": "--no-session-persistence does not keep the user's settings out",
+      "recommendation": "The row 'the user's own settings kept out' is covered by '--setting-sources project and --no-session-persistence'. The second flag stops the session from being saved to the user's history; it keeps nothing out. Move it to its own row (the run leaves no session behind in the user's history) or drop it from this one."
+    },
+    {
+      "pass": "9",
+      "severity": "SUGGESTION",
+      "dimension": "coherence",
+      "file": "specs/orbit-replay-set/spec.md",
+      "line": 5,
+      "title": "The release tree does carry replay/; what it installs does not",
+      "recommendation": "The requirement says nothing 'npm pack, the release tree, orbit init or orbit update carries changes' (also proposal.md:13-14). orbit-release's release tree is the commit's whole tree built (orbit/specs/orbit-release/spec.md:7-22), so it carries replay/ and its committed records; only its installed file set, read through files, is unchanged. Say 'nothing npm pack or an install from the release tree carries'."
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "The instrument is well argued. The spike's evidence carries through, the runner, shim and grader rules each trace to a decision, and the free-versus-billed split keeps npm test clean of spend. The weak point is where the harness meets orbit's own engine: the seeds and graders are described in words that do not match how the gates work (a tracked apply gate, the [invoked, in-context] cadence, no gate named archive). Task 2's 'read the fields from the engine' only protects the field names. It does not fix a seed whose sequence of passes can never reach the state its grader expects. Probed: the default cadence in schemas/spec-driven/schema.yaml and presentInvoked in gates.ts; the tracked-gate evaluation; the spike shim against the repository's node_modules layout; a grep of the generated skills for non-bare orbit invocations (none, so the spec's SOURCED table holds); the CI workflow and orbit-public-repository's CI requirement and test (no conflict: no pnpm, no publish); orbit-release's release tree; tsconfig's exclusion of test/ (so tsc --noEmit is unaffected by .mjs imports); vitest's include pattern (test/replay/*.test.ts is picked up). orbit validate replay-set --strict passes; its 13 scenario-map INFO lines are the undeclared scenarios tasks 1.6, 3.1, 3.2 and 4.1 declare, and every one of the 13 has a declaring task. No @review: markers. Readings came from the live checkout at 10b46041, whose change artifacts are unchanged since the propose commit c4121c84.",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "direction": {
+    "disposition": "hold",
+    "reasoning": "Walk these before apply. The seed and grader design is the core of this stage, and as written two of the six cases cannot produce the facts their graders expect at orbit's default cadence: the apply seed's start check reads a tracked gate that cannot pass before apply, and the walk case's 'archive gate passed' needs an in-context pass after the walk that the seed does not hold. One grader (the project's test) has no type to express it. The free checks cannot build any seed because the shim cannot find the repository's build. Each is a small artifact edit. Fixed after apply, they would surface as six cases' seeds and graders reworked in the middle of task group 2. The cheap-model broken-body run departs from a scope decision (D-rs-4), which is Sal's call; it should be put to him in the walk, not settled in apply. The rest (comparison over unrun runs, the hand-written-file false pass, test seams) are gaps an implementer would otherwise fill by guessing. Closing them now keeps the instrument trustworthy for every cut it later grades."
+  },
+  "final_assessment": "0 critical, 6 warning, 5 suggestion.",
+  "pass_genre": "REVIEW",
+  "verified_walks": [],
+  "iteration": 1,
+  "next_recommended": "/orbit:address-reviews replay-set",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "10b46041a3e8a1592ef5e2b60440702da6bc4fba",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

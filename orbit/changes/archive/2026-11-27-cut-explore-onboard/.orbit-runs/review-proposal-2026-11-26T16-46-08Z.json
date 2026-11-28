@@ -1,0 +1,190 @@
+{
+  "command": "review",
+  "timestamp": "2026-11-26T16:46:08Z",
+  "change": "cut-explore-onboard",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "mode": "proposal",
+  "reviewer_class": "in-context",
+  "depth": "full",
+  "flags": {
+    "parallel": false,
+    "focus": null,
+    "strict": false,
+    "fresh": false,
+    "mark": false,
+    "skip_verify": false
+  },
+  "scorecard": {
+    "completeness": {
+      "critical": 0,
+      "warning": 1,
+      "suggestion": 0
+    },
+    "correctness": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 1
+    },
+    "coherence": {
+      "critical": 0,
+      "warning": 0,
+      "suggestion": 0
+    }
+  },
+  "findings": [
+    {
+      "severity": "WARNING",
+      "dimension": "completeness",
+      "pass": "5",
+      "title": "The walk's list of explore's mixed emit paragraphs names two; three more are mixed",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "line": 74,
+      "description": "The walk's repair says every paragraph of explore's emit section fell in one row \"save two mixed ones\" (BEGIN, the residency sweep). Read against the table, three more mix rows (.claude/skills/orbit-explore/SKILL.md): the invocation paragraph (:619) carries the command, which stays, with the payload's fields (`final_assessment` + the required nullable `model`), which leave; the engine paragraph (:625) carries what the engine owns, which leaves, with bare mode's non-emission and its pointer, which stay; and the Bare-mode non-emission subsection (:646) carries the statement, which stays, with its rationale (\"Emitting before a name exists would pollute project scope…\"), which leaves. An implementer trusting the closed list could keep payload detail, engine-owned text or rationale in the body, against the table and the scenario `Explore's emit step keeps its timing in the body`.",
+      "recommendation": "Name the three paragraphs beside the two, each with the part that stays, or drop the count and say each mixed paragraph is split by the table at apply's classification.",
+      "recommendation_options": [
+        {
+          "label": "A",
+          "body": "Name all five mixed paragraphs (BEGIN, the sweep, the invocation, the engine paragraph, bare-mode non-emission), each with the part that stays and the part that leaves."
+        },
+        {
+          "label": "B",
+          "body": "Drop the enumeration: say the section's mixed paragraphs are split by the table at apply's classification (task 3.3), naming none, so no closed list can be short."
+        }
+      ],
+      "walk_entry": {
+        "title": "The classification note says every explore emit paragraph fell in one row, but the BEGIN and sweep paragraphs are mixed",
+        "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md"
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "dimension": "correctness",
+      "pass": "4",
+      "title": "The carried Guardrails requirement's SHALL still covers explore and keeps its lines",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+      "line": 209,
+      "description": "The walk carried `Restated Guardrails lines are removed from orbit-modified bodies` to point explore's lines at their own edit, but only its sourcing sentence changed. Its SHALL still reads: remove \"from an orbit-modified body's upstream `**Guardrails**` list each line that a step line of the same body states … and SHALL keep every other line\". Explore is an orbit-modified body, and none of its five removed lines is stated by a step line (the opening paragraph and stance bullets state them), so the SHALL read alone requires keeping them, while `orbit-explore-modifications` removes them. The two owners still state different rules for one list. Also cosmetic: the carried block opens with two blank lines after its heading.",
+      "recommendation": "Scope the SHALL itself: \"…from an orbit-modified body's upstream `**Guardrails**` list, explore's excepted (`orbit-explore-modifications`' `Upstream explore stance preserved` names its lines), each line that …\", and drop the doubled blank line.",
+      "walk_entry": {
+        "title": "orbit-conventions' Guardrails requirement still scopes explore out, and its rule differs from the one this change applies",
+        "file": "orbit/specs/orbit-conventions/spec.md"
+      }
+    }
+  ],
+  "stale_suppressed": [],
+  "commentary": "Verification of the two walk logs. Each resolved entry was read at its file and cascade paths, and its sweep.scope where named: the emit-timing rewording (B) is consistent across design D1/D2/D5, the run-summary delta's SHALL and paragraph, tasks 3.1/3.5 and the proposal; the bullet's 441 characters were re-measured against today's 514 (a probe over DECISION_WRITING_BASIC), and the parity test's semicolon clause still holds; the compaction paragraph's refusal claims were read in validatePayload (src/core/emit-composition.ts:967). The two regressions are both a repair narrower than the claim it made: a closed list of mixed paragraphs that the emit section's own text contradicts, and a sourcing sentence fixed while the SHALL it qualifies still covers explore. The residual diff since the codex return touches only files named in the walks' edit records. orbit validate --strict passes; no @review: marker is open (the explore delta's two mentions are spec text).",
+  "passes_run": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ],
+  "passes_skipped": [],
+  "verification": [
+    {
+      "title": "R3 rewords explore's emit timing that stays, but the emit reference must hold that timing byte-equal",
+      "file": "orbit/changes/cut-explore-onboard/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The shortened bullet drops \"is still written\", which two scenario-ledger entries and the parity test cite as evidence",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-conventions/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The new SHALL (\"no illustrative text that the stance already states\") is broader than the named removals, and its day-one truth is contested",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "orbit-conventions' Guardrails requirement still scopes explore out, and its rule differs from the one this change applies",
+      "file": "orbit/specs/orbit-conventions/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "Task 2.1 removes a `---` separator that the requirement's table does not name",
+      "file": "orbit/changes/cut-explore-onboard/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The classification note says every explore emit paragraph fell in one row, but the BEGIN and sweep paragraphs are mixed",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "regressed"
+    },
+    {
+      "title": "The MODIFIED grammar requirement still says the skill's hash pin does not move, while this change re-pins explore",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-emit-composition/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The line named as restating Guardrails' \"Don't auto-capture\" is scoped to \"When a change exists\"",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-explore-modifications/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The emit reference can disappear before the boundary it serves",
+      "file": "orbit/changes/cut-explore-onboard/specs/orbit-run-summary-emit/spec.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The Mode C flow lacks an explicit metadata handoff",
+      "file": "orbit/changes/cut-explore-onboard/design.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "The one-sentence propose handoff has no acceptance criteria",
+      "file": "orbit/changes/cut-explore-onboard/tasks.md",
+      "verdict": "landed"
+    },
+    {
+      "title": "An exact reference-list test is missing from the apply tasks",
+      "file": "orbit/changes/cut-explore-onboard/tasks.md",
+      "verdict": "landed"
+    }
+  ],
+  "final_assessment": "0 critical, 1 warning, 1 suggestion.",
+  "pass_genre": "VERIFICATION",
+  "verified_walks": [
+    "2026-11-26T16-03-41Z",
+    "2026-11-26T16-42-54Z"
+  ],
+  "iteration": 3,
+  "next_recommended": "/orbit:address-reviews cut-explore-onboard",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "c49704460a164a6199bd102aa59c2550876dd10d",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ]
+}

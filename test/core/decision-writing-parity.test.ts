@@ -35,11 +35,11 @@ import { decisionStatus } from '../../src/core/decision-status.js';
 const FIRST_LINE = '- **Decision-writing (call-time)**';
 /**
  * The two fences share the label, and `fencedProduction` returns the first fence it finds, so each is found by a
- * prefix longer than the label: the rule's continues "when `orbit decisions status`", the basic content's "at each
- * command's first step".
+ * prefix longer than the label: the rule's continues "when `orbit decisions status`", the basic content's "run
+ * `orbit decisions status --json`" (cut-explore-onboard shortened it, design D3).
  */
 const RULE_PREFIX = FIRST_LINE + ': when `orbit decisions status`';
-const BASIC_PREFIX = FIRST_LINE + ": at each command's first step";
+const BASIC_PREFIX = FIRST_LINE + ': run `orbit decisions status --json`';
 const RULE_HEADING = '## When to write a record';
 const REF_NAME = 'decision-records.md';
 const EPITOME = '## Execution disciplines (epitome)';
@@ -189,8 +189,8 @@ describe('every epitome-carrying workflow body carries the basic content, and no
   const skills = getSkillTemplates();
   const carriers = skills.filter(s => s.template.instructions.includes(EPITOME));
 
-  it('fourteen bodies carry an epitome; onboard is the one that does not', () => {
-    expect(carriers.length).toBe(14);
+  it('thirteen bodies carry an epitome; onboard is the one that does not', () => {
+    expect(carriers.length).toBe(13); // fourteen until bulk-archive's removal (cut-propose-archive, R-rop2-11)
     expect(skills.filter(s => !carriers.includes(s)).map(s => s.dirName)).toEqual(['orbit-onboard']);
   });
 
@@ -227,10 +227,25 @@ describe('every epitome-carrying workflow body carries the basic content, and no
 
   // @scenario text orbit-conventions :: Decision-writing discipline :: The basic content names when the command runs
   it('the basic content names each command\'s first step and the session\'s config edit as the moments, and the result governs the command', () => {
-    expect(DECISION_WRITING_BASIC).toContain("at each command's first step");
-    expect(DECISION_WRITING_BASIC).toContain('again after this session edits the project config (`orbit/config.yaml` or `.yml`)');
-    expect(DECISION_WRITING_BASIC).toContain('run `orbit decisions status --json`');
-    expect(DECISION_WRITING_BASIC).toContain(`On \`write: true\`, read \`references/${REF_NAME}\` and follow its rule for the rest of the command.`);
+    expect(DECISION_WRITING_BASIC).toContain("run `orbit decisions status --json` at each command's first step");
+    expect(DECISION_WRITING_BASIC).toContain('and after this session edits `orbit/config.yaml` (or `.yml`).');
+    expect(DECISION_WRITING_BASIC).toContain(`On \`write: true\`, follow \`references/${REF_NAME}\` for the rest of the command.`);
+  });
+
+  // @scenario text orbit-conventions :: Decision-writing discipline :: The shortened basic content keeps its three branches
+  it('the shortened basic content keeps the moment and the re-run, the call, and both branches with their reads (cut-explore-onboard, D3)', () => {
+    const branches = [
+      // the moment, with the config re-run, and the call
+      "run `orbit decisions status --json` at each command's first step and after this session edits `orbit/config.yaml` (or `.yml`).",
+      // write: true, with its read
+      `On \`write: true\`, follow \`references/${REF_NAME}\` for the rest of the command.`,
+      // write: false, the two records it still writes, and its read
+      'On `write: false`, write no new ledger entry or stop record; still write a resolution answering a stop already in the trail or a replacement fixing a record there (read that reference first).',
+    ];
+    expect(DECISION_WRITING_BASIC).toBe(`${FIRST_LINE}: ${branches.join(' ')}`);
+    // Mutation: a branch dropped from the text fails the equality.
+    expect(`${FIRST_LINE}: ${branches.slice(0, 2).join(' ')}`).not.toBe(DECISION_WRITING_BASIC);
+    expect(DECISION_WRITING_BASIC.length).toBe(441);
   });
 
   // @scenario behaviour orbit-conventions :: Decision-writing discipline :: At the defaults the body directs no record
@@ -243,7 +258,7 @@ describe('every epitome-carrying workflow body carries the basic content, and no
     }
     expect(DECISION_WRITING_BASIC).toContain('On `write: false`, write no new ledger entry or stop record;');
     // and an answer or a fix of a record already in the trail is still written
-    expect(DECISION_WRITING_BASIC).toContain('a resolution answering a stop already in the trail, or a replacement fixing a record already there, is still written');
+    expect(DECISION_WRITING_BASIC).toContain('still write a resolution answering a stop already in the trail or a replacement fixing a record there');
   });
 
   /** Why an epitome is not one bullet per discipline ending no-chaining, decision-writing, or null (review leads with pushback). */
@@ -281,7 +296,7 @@ describe('every epitome-carrying workflow body carries the basic content, and no
     moved.splice(nc, 0, DECISION_WRITING_BASIC);
     expect(carryFailure(moved.join('\n'), DECISION_WRITING_BASIC)).toMatch(/after no-chaining/);
     // A clause dropped from one body's copy is caught too.
-    const short = body.replace(' — read that reference when you write one', '');
+    const short = body.replace(' (read that reference first)', '');
     expect(carryFailure(short, DECISION_WRITING_BASIC)).toMatch(/0 times/);
   });
 

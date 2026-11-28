@@ -208,7 +208,7 @@ time, read its modified, removed and renamed requirements against the current ba
 ## What changes for you
 
 - **Commands are `/orbit:`**, not `/opsx:`: `/orbit:propose`, `/orbit:apply`, `/orbit:archive`, and so on.
-  [Commands](commands.md) lists all 15, and every install carries all of them.
+  [Commands](commands.md) lists all 14, and every install carries all of them.
 - **The CLI is `orbit`** and the project directory is `orbit/`. A change's metadata file keeps its name,
   `.openspec.yaml`, and orbit shares the global config directory `~/.config/openspec/` with OpenSpec.
 - **Reviews sit between the steps.** The `spec-driven` schema adds reviewed gates: a review of the proposal before

@@ -93,7 +93,8 @@ function insideInnerFence(lines: string[], i: number): boolean {
 }
 
 /** References a REVIEW pass loads to READ (system walk 2): every `.orbit-runs/` line outside a `':!…'` exclusion. */
-export const READ_REFERENCES = ['passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'mode-sections.md', 'flags-detail.md'];
+// cut-review-walk: `architecture-mode.md` joins them (V3), and V4 makes `flags-detail.md` a read of every pass.
+export const READ_REFERENCES = ['passes-proposal.md', 'passes-system.md', 'passes-architecture.md', 'architecture-mode.md', 'mode-sections.md', 'flags-detail.md'];
 export function readReferenceRegionHits(name: string, text: string): Hit[] {
   const hits: Hit[] = [];
   text.split('\n').forEach((l, i) => {
@@ -104,18 +105,18 @@ export function readReferenceRegionHits(name: string, text: string): Hit[] {
   return hits;
 }
 
-/** The fenced brief inside the body's "Dispatching a fresh pass" step: every `.orbit-runs/` line. */
-export function freshBriefRegionHits(body: string): Hit[] {
-  const lines = body.split('\n');
-  const start = lines.findIndex(l => /^#{2,4} /.test(l) && l.includes(FRESH_STEP));
-  if (start < 0) return [];
+/**
+ * The fenced brief in `references/fresh-dispatch.md` (cut-review-walk, V2: the "Dispatching a fresh pass" step's
+ * procedure and brief moved there; the body keeps the step's heading and basic content): every `.orbit-runs/` line.
+ */
+export function freshBriefRegionHits(dispatch: string): Hit[] {
+  const lines = dispatch.split('\n');
   const hits: Hit[] = [];
   let inFence = false;
-  for (let i = start + 1; i < lines.length; i++) {
-    if (/^#{2,4} /.test(lines[i]) && !inFence) break;
+  for (let i = 0; i < lines.length; i++) {
     if (/^\s*```/.test(lines[i])) { inFence = !inFence; continue; }
     if (inFence && lines[i].includes(TRAIL)) {
-      hits.push({ skill: 'orbit-review', file: 'SKILL.md', line: i + 1, rule: 'REGION', text: lines[i].trim() });
+      hits.push({ skill: 'orbit-review', file: 'references/fresh-dispatch.md', line: i + 1, rule: 'REGION', text: lines[i].trim() });
     }
   }
   return hits;
@@ -127,8 +128,8 @@ function surfaceHits(): Hit[] {
     for (const [file, text] of files) hits.push(...phraseHits(dirName, file, text));
     if (dirName !== 'orbit-review') continue;
     const template = files.find(([f]) => f === 'references/prompt-template.md')![1];
-    const skill = files.find(([f]) => f === 'SKILL.md')![1];
-    hits.push(...promptTemplateRegionHits(template), ...freshBriefRegionHits(skill));
+    const dispatch = files.find(([f]) => f === 'references/fresh-dispatch.md')![1];
+    hits.push(...promptTemplateRegionHits(template), ...freshBriefRegionHits(dispatch));
     for (const name of READ_REFERENCES) {
       const ref = files.find(([f]) => f === `references/${name}`);
       expect(ref, `the review skill ships references/${name}`).toBeDefined();
@@ -144,13 +145,15 @@ describe('review-genre brief: the generated surface carries no finding and no tr
     expect(surfaceHits()).toEqual([]);
   });
 
-  it('the review skill carries the "Dispatching a fresh pass" step with a fenced brief (the region the rule reads exists)', () => {
-    const body = getSkillTemplates(['review'])[0].template.instructions;
-    const step = body.split(`### ${FRESH_STEP}`)[1];
+  it('the review skill carries the "Dispatching a fresh pass" step, and its reference the fenced brief (the region the rule reads exists)', () => {
+    const t = getSkillTemplates(['review'])[0].template;
+    const step = t.instructions.split(`### ${FRESH_STEP}`)[1];
     expect(step, 'the step exists').toBeDefined();
-    expect(step.split(/\n#{2,3} /)[0]).toMatch(/```/);
+    expect(step.split(/\n#{2,3} /)[0]).toContain('reads `references/fresh-dispatch.md` and follows it');
+    expect(t.references!.find(r => r.name === 'fresh-dispatch.md')!.content).toMatch(/```/);
   });
 
+  // @scenario behaviour orbit-review :: Review-genre passes read the artifacts and the code, never the trail's findings :: Generated surface grep-tested by a decidable rule
   it('a PLANTED read pointer in a copy of the prompt template is red; the three required output paths stay green', () => {
     const template = getSkillTemplates(['review'])[0].template.references!.find(r => r.name === 'prompt-template.md')!.content;
     // Unplanted: the output paths exist (header line, output section, after-completion section) and none is a hit.
@@ -199,12 +202,11 @@ describe('review-genre brief: the generated surface carries no finding and no tr
     expect(modes).toContain("':!orbit/changes/<change-name>/.orbit-runs'");
     expect(readReferenceRegionHits('mode-sections.md', modes)).toEqual([]);
     // Reworded reads: no trail path, no listed phrase — undecidable by grep, held by the rule alone.
-    const body = review.instructions;
-    const i = body.indexOf(`### ${FRESH_STEP}`);
-    const eol = body.indexOf('\n', body.indexOf('```', i));
+    const body = review.references!.find(r => r.name === 'fresh-dispatch.md')!.content;
+    const eol = body.indexOf('\n', body.indexOf('```'));
     const reworded = body.slice(0, eol + 1) + 'Read the last review pass findings before you begin.\n' + body.slice(eol + 1);
     expect(freshBriefRegionHits(reworded)).toEqual([]);
-    expect(phraseHits('orbit-review', 'SKILL.md', reworded).filter(h => h.text.includes('last review pass'))).toEqual([]);
+    expect(phraseHits('orbit-review', 'references/fresh-dispatch.md', reworded).filter(h => h.text.includes('last review pass'))).toEqual([]);
     const template = review.references!.find(r => r.name === 'prompt-template.md')!.content;
     const reworded2 = template.replace('## Cycle context', '- Read the previous review summary before beginning.\n\n## Cycle context');
     expect(reworded2).not.toBe(template);
@@ -212,19 +214,18 @@ describe('review-genre brief: the generated surface carries no finding and no tr
   });
 
   it('the fresh brief names its reader as the dispatched WORKER that skips the dispatch step (system walk 2, external W1)', () => {
-    const body = getSkillTemplates(['review'])[0].template.instructions;
-    const step = body.split(`### ${FRESH_STEP}`)[1].split(/\n### /)[0];
+    const t = getSkillTemplates(['review'])[0].template;
+    const step = t.instructions.split(`### ${FRESH_STEP}`)[1].split(/\n### /)[0];
     expect(step).toMatch(/INVOKING session's act alone/);
-    const brief = step.split('```')[1];
+    const brief = t.references!.find(r => r.name === 'fresh-dispatch.md')!.content.split('```')[1];
     expect(brief).toMatch(/WORKER, not a dispatcher/);
     expect(brief).toMatch(/SKIPPING its "Dispatching a fresh\s+pass" step/);
     expect(brief).toMatch(/never dispatch again/);
   });
 
   it('a planted read pointer inside the fresh brief fence is red', () => {
-    const body = getSkillTemplates(['review'])[0].template.instructions;
-    const i = body.indexOf(`### ${FRESH_STEP}`);
-    const fence = body.indexOf('```', i);
+    const body = getSkillTemplates(['review'])[0].template.references!.find(r => r.name === 'fresh-dispatch.md')!.content;
+    const fence = body.indexOf('```');
     const eol = body.indexOf('\n', fence);
     const planted = body.slice(0, eol + 1) + 'Read orbit/changes/<name>/.orbit-runs/ first.\n' + body.slice(eol + 1);
     expect(freshBriefRegionHits(planted).length).toBe(1);

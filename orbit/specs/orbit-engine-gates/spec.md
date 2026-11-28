@@ -949,9 +949,7 @@ prompt each that is not `passed` and whose `superseded` field is not true — an
 gate (its `before` names a gate that has passed) is NOT listed: it gated a phase that has run, and
 that phase's seam owned the decision. Named limit: a phase entered without its workflow — tasks
 checked by hand, so the `apply` gate passes with no apply-seam prompt — leaves the earlier gate
-superseded with no recorded decision, and archive does not ask again. A second named limit:
-`/orbit:bulk-archive` fires no gate prompt, so a change archived in a batch past a gate this rule
-would list records no decision; the prompt this rule binds is the single-change archive's. A `tracked` gate is NOT listed: its unchecked work is the archive's task check.
+superseded with no recorded decision, and archive does not ask again. A `tracked` gate is NOT listed: its unchecked work is the archive's task check.
 The recorded `independentSpend` MAY be shown beside a listed gate and SHALL NOT decide whether the
 prompt fires or which gates it lists — effort is recorded, never targeted. Proceeding records one
 entry per listed gate. When no gate is listed, the prompt does not fire.
@@ -1530,7 +1528,6 @@ things; each member of what they cover is disposed of here:
 | archive tail: `ready`, on a per-change PR only | key `archive`, named in its row |
 | the tail's `human_acts`: the merge, the return to the default branch | never granted by any key; shown, never run |
 | an unattached change | no tail runs, so nothing outward is granted |
-| `/orbit:bulk-archive` | never named as a next command, so never granted; it runs no tail |
 
 The tail's steps are the step names `orbit pr tail` composes (`stage`, `commit`, `push`, `append` or `rewrite`,
 `ready`) and `human_acts` is its other output; the in-repo writes are the archive flow's sync, move and emit. The

@@ -43,6 +43,23 @@ export const APPLY_RUN_SUMMARY_EMIT_BASIC = [
   APPLY_EMIT_COMPLETION_OVERRIDE_BODY,
 ].join('\n\n');
 
+/**
+ * cut-propose-archive (A1): what Step 0's AI-mediated and granted paths do, moved byte-equal from the body, which keeps
+ * the classification and reads this reference on either of those two arrivals (archive's Step 0 moves the same way).
+ */
+const APPLY_CONSENT_AT_ENTRY_REFERENCE = `# Reference: consent at entry off the user-invoked path (apply Step 0)
+
+Read when Step 0 classifies the arrival as AI-mediated or granted, before any write or anomaly prompt.
+
+## An AI-mediated arrival
+
+Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after the read-only status/instructions loads in Steps 2–3, so the prompt can show real state): the position readout, what apply will write ("begin implementing N tasks from the artifacts"), and exactly two options — **Proceed** / **Abort**. On Abort: stop; no writes, no run summary.
+
+## A granted arrival
+
+Record \`setting\`, fire no consent prompt, and stamp the consent era (the body's Consent-era stamp) as on the other two paths; every anomaly prompt still fires as on a typed arrival. Whether an arrival is granted is read from that object, never judged from how this command was reached: "continue" and a chain's closing step are the same arrival, granted alike when the object allows this command and prompted alike when it does not.
+`;
+
 export function getApplyChangeSkillTemplate(): SkillTemplate {
   return {
     name: 'orbit-apply-change',
@@ -57,9 +74,11 @@ export function getApplyChangeSkillTemplate(): SkillTemplate {
 
    Apply is a consent-scoped command (the \`review-proposal\` gate carries \`consent: user-invoked\`). Determine invocation provenance — an observable transcript fact, never a judgment of delegated intent:
    - **User-invoked**: the triggering turn contains an explicit user invocation — the typed \`/orbit:apply\` command, or an unambiguous same-turn prose request naming the act ("apply it", "implement the change"). Proceed with ZERO added prompts (only anomaly prompts — the Step 3 gate inflection — may interrupt).
-   - **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here. Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after the read-only status/instructions loads in Steps 2–3, so the prompt can show real state): the position readout, what apply will write ("begin implementing N tasks from the artifacts"), and exactly two options — **Proceed** / **Abort**. On Abort: stop; no writes, no run summary.
-   - **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\` — the Step 2 read, made at entry; it is read-only — reports \`next\` as this command (\`/orbit:apply <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`. Record \`setting\`, fire no consent prompt, and stamp the consent era below as on the other two paths; every anomaly prompt still fires as on a typed arrival. Whether an arrival is granted is read from that object, never judged from how this command was reached: "continue" and a chain's closing step are the same arrival, granted alike when the object allows this command and prompted alike when it does not.
+   - **AI-mediated**: everything else — delegation phrases ("finish the cadence"), inference ("continue"), a handoff document, a chain, or an eligibility readout pointing here.
+   - **Granted** (an AI-mediated arrival the project's \`chain\` setting allows): the arrival is not typed, and the \`chain\` object of \`orbit status --change "<name>" --json\` — the Step 2 read, made at entry; it is read-only — reports \`next\` as this command (\`/orbit:apply <name>\`, with or without the \` — user-invoked\` marker) with \`may_run: true\`.
    - **When provenance is uncertain, treat the arrival as AI-mediated** — erring toward one extra click, never toward a silent proceed.
+
+   On an arrival classified above as AI-mediated or granted, read \`references/consent-at-entry.md\` and follow it before any write or anomaly prompt.
 
    **Ordering invariant**: provenance is CLASSIFIED at entry (it is a fact about the triggering turn, known before anything runs); the consent prompt itself — and the era stamp below — fire AFTER read-only discovery (change selection, the Step 2–3 status/instructions loads, the \`chain\` object among them) and BEFORE any write or anomaly prompt. Read-only steps never require consent; writes always follow it.
 
@@ -229,6 +248,7 @@ ${COMMIT_STEP_BASIC}
 ${CHAIN_END_STEP_BASIC}
 `,
     references: [
+      { name: 'consent-at-entry.md', content: APPLY_CONSENT_AT_ENTRY_REFERENCE },
       { name: ACCOUNT_STEP_REFERENCE_NAME, content: ACCOUNT_STEP_REFERENCE },
       { name: RUN_SUMMARY_EMIT_REFERENCE_NAME, content: runSummaryEmitReference(APPLY_RUN_SUMMARY_EMIT) },
       { name: COMMIT_STEP_REFERENCE_NAME, content: COMMIT_STEP_REFERENCE },

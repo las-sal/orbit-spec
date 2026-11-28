@@ -67,7 +67,7 @@ nothing: deciding not to build is an outcome.
 Several changes can be in flight at once, each in its own folder. Each change fingerprints the baseline
 requirements its delta specs touch when it is proposed. If one change archives and edits a requirement another
 change also touches, archiving the second refuses to overwrite the first's edit and asks you to reconcile, rather
-than lose it. `/orbit:bulk-archive` archives several finished changes with the same check.
+than lose it. Archive several finished changes one at a time with `/orbit:archive`; each runs the same check.
 
 `orbit status` shows every change in flight; `orbit status --full` adds the architecture view.
 

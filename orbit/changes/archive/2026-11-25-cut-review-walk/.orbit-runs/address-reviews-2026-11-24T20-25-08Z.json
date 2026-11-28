@@ -1,0 +1,340 @@
+{
+  "command": "address-reviews",
+  "timestamp": "2026-11-24T20:25:08Z",
+  "change": "cut-review-walk",
+  "kind": "editorial",
+  "model": "claude-opus-5-5",
+  "source": "auto-discovered",
+  "source_path": "orbit/changes/cut-review-walk/.orbit-runs/external-proposal-2026-11-24T20-10-02Z.md",
+  "source_command": null,
+  "source_token": "2026-11-24T20-10-02Z",
+  "latest_apply_token": null,
+  "external_reviewer": "GPT-6 Codex (run log: gpt-6.2-sol)",
+  "walk_mode": "per_finding",
+  "input_findings_summary": {
+    "critical": 0,
+    "warning": 7,
+    "suggestion": 3
+  },
+  "pushback_verification": "All ten verified against current state. E1's claim checked in the body (attribution under Step 2) and in the baseline requirement (attributes at triage); E10 measured over the tracked logs. Five converge with the fresh pass's findings: three are stale against walk log 1's fixes (each checked sub-point by sub-point), E2 needed one more site log 1 missed, and E7 and E9 each carried a unique half resolved here.",
+  "resolution_summary": {
+    "resolved": 6,
+    "stale_suppressed": 4,
+    "deferred": 0,
+    "escalated": 0
+  },
+  "resolutions": [
+    {
+      "severity": "WARNING",
+      "title": "Ripple-miss attribution is routed after triage",
+      "file": "orbit/changes/cut-review-walk/proposal.md",
+      "line": 18,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "address-reviews.ts's body places ripple-miss attribution under '### 2. Triage'; orbit-address-reviews' `A ripple miss is attributed by the walk that finds it` says the walker attributes at TRIAGE; design D1 and the proposal routed sweep-record.md 'when an entry resolves' only.",
+      "action": "sweep-record.md is now read at two moments: Step 2, on a change-scoped walk whose trail holds earlier walk logs, for the attribution; Step 3d.5 for the sweep. Design D1, the proposal's What Changes and task 3.2 say so.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/design.md",
+          "orbit/changes/cut-review-walk/tasks.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "ripple-miss attribution (when an entry\n  resolves)"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/proposal.md",
+            "text": "ripple-miss attribution (at triage, on a change-scoped walk"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "read at TWO moments: at triage (Step 2)"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/tasks.md",
+            "text": "the body keeping two read cues: Step 2's"
+          }
+        ],
+        "searched": [
+          "ripple-miss",
+          "ripple_miss_of",
+          "sweep-record.md",
+          "triage"
+        ],
+        "scope": [
+          "src/core/templates/workflows/address-reviews.ts"
+        ],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The source-by-source loop loses its scheduling instruction",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 56,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "Converged with the fresh pass's \"M10 moves the walk-time rule for several sources to the emit step's reference, which a session following the steps reads only after it has walked every source\" (orbit/changes/cut-review-walk/design.md); walk log 2026-11-24T20-23-26Z split the per-source paragraph in design D1 and task 3.3 (with the converged-finding and interrupted-walk checks this finding asks for), but left the proposal's What Changes sending 'one log per source' whole to run-summary-emit.md.",
+      "action": "The proposal's What Changes now sends the order of a walk over several sources to triage-sources.md, read before the walk, and only each log's fields and the scope forms to run-summary-emit.md.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "ripple_miss_of": {
+        "walk": "2026-11-24T20-23-26Z",
+        "title": "M10 moves the walk-time rule for several sources to the emit step's reference, which a session following the steps reads only after it has walked every source",
+        "file": "orbit/changes/cut-review-walk/design.md",
+        "kind": "query"
+      },
+      "sweep": {
+        "retired": [
+          "one log per source and the emit scope forms"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/proposal.md",
+            "text": "the order of a walk over several sources"
+          }
+        ],
+        "searched": [
+          "one log per source",
+          "run-summary-emit.md",
+          "per-source"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "Retired trigger handling leaves discovery inputs ambiguous",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 177,
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "evidence": "Converged with the fresh pass's \"A command-shaped mid-walk batch switch (\"go batch\", \"batch the rest\") has no specified behaviour once batch mode is removed\" (orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md), resolved in walk log 2026-11-24T20-23-26Z: the rule now drops `--batch` before discovery resolves the positional (`foo --batch` discovers `foo`), names the retired verbal forms that get the notice, and reads the mid-walk switch as a delegation recorded verbatim — each sub-point of this finding."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The removal checklist misses live schema instructions and examples",
+      "file": "orbit/changes/cut-review-walk/tasks.md",
+      "line": 8,
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "evidence": "Converged with the fresh pass's \"Task 2.2 lists only some of the schema reference's batch and disagreement text\" (orbit/changes/cut-review-walk/tasks.md), resolved in walk log 2026-11-24T20-23-26Z: task 2.2 now lists the spine-extension list, the schema union, the walk_mode field note, the verbal-batch snippet and the examples' intro; task 2.3 adds the external example's disagreement prose (line 730); the live example's delegation_directive uses no retired phrase."
+    },
+    {
+      "severity": "WARNING",
+      "title": "The cut ledger cannot reliably identify the bytes it must restore",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 154,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "Design D5's and the ADDED requirement's `moved` row recorded only 'the moved text's first line' and checked the reference against itself; M5 inserts into an existing reference, and M10 and the chain paragraph move text the reference already holds.",
+      "action": "A `moved` pair now names its span by a start and an end anchor, each unique in the reference, and records the sha256 of the text before the move; the check hashes the span against that digest; where the reference already held the text, the undo copies it back into the body and adds nothing to the reference. The scenario 'A moved text changed in its reference fails' follows.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "the moved text's first line",
+          "the moved text is no longer in the reference byte-equal"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "the moved span's start and end anchors"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-conventions/spec.md",
+            "text": "the span between its anchors no longer hashes to the digest recorded before the move"
+          }
+        ],
+        "searched": [
+          "moved",
+          "anchor",
+          "digest",
+          "byte-equal"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "WARNING",
+      "title": "The body and emitter have different guarantees for new logs",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 179,
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "evidence": "Converged with the fresh pass's \"Task 2.2 lists only some of the schema reference's batch and disagreement text\" (orbit/changes/cut-review-walk/tasks.md), resolved in walk log 2026-11-24T20-23-26Z: `Every walk runs finding by finding` now says these rules govern what the walk writes, and names the limit that the write gate checks neither walk_mode's value nor a per-resolution disagreement object (no reader reads either), which answers this finding's 'skill-generated payloads or every new emit' with the first."
+    },
+    {
+      "severity": "WARNING",
+      "title": "Two reference read cues need an explicit call site",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 129,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "Its fresh-dispatch half converged with the fresh pass's \"V2's basic content is unstated, and its read condition ('the reviewer is fresh') also matches the dispatched worker\", resolved in walk log 2026-11-24T20-23-26Z (the read sits in the invoking session's dispatch branch, a blind pair's step 5c included). Its chain-tag half is unique: D2's pointer sentence named no moment.",
+      "action": "D2's pointer sentence and the No-chaining contract's basic-content description now say a command a chain ran reads the tag meaning before its first tagged prompt, when its session has not read it.",
+      "ripple_cascade": {
+        "applied": [
+          "orbit/changes/cut-review-walk/specs/orbit-conventions/spec.md"
+        ],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "before its first tagged prompt when this session has not read it"
+          },
+          {
+            "path": "orbit/changes/cut-review-walk/specs/orbit-conventions/spec.md",
+            "text": "to be read before its first tagged prompt when the session has not read it"
+          }
+        ],
+        "searched": [
+          "tagged prompt",
+          "chain-end-step.md",
+          "pointer"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Retired batch vocabulary still labels the surviving delegation",
+      "file": "orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md",
+      "line": 270,
+      "marker_source": "external",
+      "classification": "stale",
+      "outcome": "stale",
+      "evidence": "Converged with the fresh pass's \"The scenario 'Batch delegation compresses the lane; batch prompts never fire' keeps 'batch' in its title after batch mode is removed\" (orbit/changes/cut-review-walk/specs/orbit-address-reviews/spec.md), resolved in walk log 2026-11-24T20-23-26Z: the scenario is renamed 'A delegation compresses the lane; multi-finding prompts never fire', the requirement says 'a mid-walk DELEGATION', and task 2.2 rewords the body's 'Batch DELEGATION'."
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "Two design references disagree with their source",
+      "file": "orbit/changes/cut-review-walk/design.md",
+      "line": 74,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "Its exit-criterion half converged with the fresh pass's \"Design cites 'the stage's third exit criterion' for the shared steps, and its Goals leave out onboard's ceiling\", resolved in walk log 2026-11-24T20-23-26Z. Its D6 half is unique: 'Four sentences in three owners' against six placements listed (DISCOVERY, Verdicts, CHECK SCOPE, the VERIFICATION branch, its verdicts mirror, the dispatch brief) in five requirements.",
+      "action": "D6 opens 'Six placements, in five requirements of three owners, put a fence or a step in a BODY'.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "Four sentences in three owners"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/changes/cut-review-walk/design.md",
+            "text": "Six placements, in five requirements of three owners"
+          }
+        ],
+        "searched": [
+          "Four sentences",
+          "three owners"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    },
+    {
+      "severity": "SUGGESTION",
+      "title": "The evidence breakdown leaves eight logs unexplained",
+      "file": "orbit/architecture/reduce-orbit-phase2.md",
+      "line": 122,
+      "marker_source": "external",
+      "classification": "trivial_fix",
+      "remedy": "repair",
+      "outcome": "resolved",
+      "evidence": "Measured 2026-11-24 over the 476 tracked address-reviews-*.json logs (git ls-files): walk_mode per_finding 438, the legacy value walk 30, no walk_mode field 8, batch 0; no resolution carries disagreement.",
+      "action": "R-rop2-12's evidence now gives the measured split, the eight being logs written before the walk_mode field existed.",
+      "ripple_cascade": {
+        "applied": [],
+        "flagged_not_applied": []
+      },
+      "sweep": {
+        "retired": [
+          "30 legacy walk-mode\n  logs, none batch"
+        ],
+        "introduced": [
+          {
+            "path": "orbit/architecture/reduce-orbit-phase2.md",
+            "text": "8 written before the field existed"
+          }
+        ],
+        "searched": [
+          "476",
+          "438",
+          "30 legacy"
+        ],
+        "scope": [],
+        "kept": []
+      }
+    }
+  ],
+  "remaining_markers_in_scope": 0,
+  "persisted_escalations": [],
+  "final_assessment": "The external pass walked: six resolved as repairs (E2 completing log 1's M10 split at the proposal, attributed as a ripple miss of kind query), four stale by convergence with walk log 1's fixes.",
+  "iteration": 2,
+  "next_recommended": "/orbit:review --as proposal cut-review-walk",
+  "tripwires": [
+    {
+      "sensor": "touchpoints",
+      "outcome": "quiet",
+      "deviations": [],
+      "reference": "de0bb814a6858c3621cb716f1482f848f50e3629",
+      "frozen": false,
+      "evidence": {
+        "files": [],
+        "share": null,
+        "share_fired": false,
+        "malformed": [],
+        "settings": {
+          "on_fire": "record",
+          "exempt": [
+            "orbit/",
+            "test/",
+            "tests/",
+            "__tests__/",
+            "*.test.*",
+            "*.spec.*",
+            "docs/",
+            "*.md"
+          ],
+          "per_file_lines": 40,
+          "share_percent": 20
+        },
+        "notes": []
+      }
+    }
+  ],
+  "ripple_misses": 1
+}

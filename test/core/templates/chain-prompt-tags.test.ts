@@ -31,6 +31,10 @@ const ref = (dir: string, name: string): string => {
 const noChainingBullet = (body: string): string | undefined =>
   body.split('\n').find(l => l.startsWith('- **No-chaining (turn boundary)**'));
 
+/** The chain end step's pointer to the tags' meaning (R-rop2-14), the last sentence of its basic content. */
+const POINTER =
+  "A command a chain ran reads what its prompts' `(chain: …)` tags mean, and what it records, in `references/chain-end-step.md`, before its first tagged prompt when this session has not read it.";
+
 /** The no-chaining bullet every OTHER epitome-carrying body carries, exactly as before this change. */
 const STANDARD_BULLET =
   "- **No-chaining (turn boundary)**: invoke only the orbit workflow commands the user's message explicitly requests; completing a command ENDS the turn at the position readout + the engine's eligibility line — gate `passed` means *eligible*, not *commanded*.";
@@ -65,11 +69,14 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
     expect(CHAIN_END_STEP).toContain('a chained apply or archive records it as its `consent: "setting"` value and writes no sentence');
     const apply = skill('orbit-apply-change').instructions;
     expect(apply).toContain(CHAIN_END_STEP_BASIC);
-    expect(CHAIN_END_STEP_BASIC).toContain('a chained apply or archive records it as its `consent: "setting"` value and writes no sentence');
+    // cut-review-walk (R-rop2-14): the basic content points at the reference, which carries the sentence.
+    expect(ref('orbit-apply-change', 'chain-end-step.md')).toContain('a chained apply or archive records it as its `consent: "setting"` value and writes no sentence');
     expect(apply).toContain('`setting` (granted by `chain.apply`, no prompt) — it lands in every apply emit this session writes');
     const archive = skill('orbit-archive-change').instructions;
-    expect(archive).toContain('Record `consent: "setting"`, fire no consent prompt');
+    // cut-propose-archive (A1): the granted path is the archive skill's references/consent-at-entry.md.
+    expect(ref('orbit-archive-change', 'consent-at-entry.md')).toContain('Record `consent: "setting"`, fire no consent prompt');
     expect(archive).not.toContain('Chained: granted by chain');
+    expect(ref('orbit-archive-change', 'consent-at-entry.md')).not.toContain('Chained: granted by chain');
   });
 
   // @scenario text orbit-conventions :: No-chaining contract :: A chain ends by stating why
@@ -78,11 +85,14 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
     expect(CHAIN_END_STEP).toMatch(/`configured: false`\*\* → print nothing more: the turn ends at the eligibility line exactly as without the setting/);
   });
 
-  // @scenario text orbit-conventions :: No-chaining contract :: Each chaining body explains the tags itself
+  // @scenario text orbit-conventions :: No-chaining contract :: Each chaining body points at the tags' meaning
   it('exactly the five bodies carry the end step\'s basic content once, ship the full step in references/chain-end-step.md, and carry the clause in their bullet; every other bullet is unchanged', () => {
-    // The basic content each of the five carries holds the flags clause, the three tags' meaning and the record sentence.
+    // The basic content each of the five carries holds the flags clause and the pointer to the tags' meaning
+    // (R-rop2-14); the meaning and the record sentence are the reference's, never the body's.
     expect(CHAIN_END_STEP_BASIC).toContain('`--chain-ran "<next>" --chain-head "<head>"`');
-    expect(CHAIN_END_STEP_BASIC).toContain(CHAIN_TAG_MEANING);
+    expect(CHAIN_END_STEP_BASIC).toContain(POINTER);
+    expect(CHAIN_END_STEP_BASIC).not.toContain(CHAIN_TAG_MEANING);
+    expect(CHAIN_END_STEP).toContain(CHAIN_TAG_MEANING);
     expect(CHAIN_TAG_MEANING).toContain('`Chained: granted by chain.<key>.`');
     const five = new Set<string>(CHAIN_END_STEP_SKILLS);
     let others = 0;
@@ -93,6 +103,8 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
       if (five.has(s.dirName)) {
         expect(body.split(CHAIN_END_STEP_BASIC).length - 1, s.dirName).toBe(1);
         expect(body, s.dirName).not.toContain(CHAIN_END_STEP);
+        expect(body, s.dirName).not.toContain(CHAIN_TAG_MEANING);
+        expect(body, s.dirName).not.toContain('`Chained: granted by chain.<key>.`');
         expect(reference?.content.split(CHAIN_END_STEP).length, s.dirName).toBe(2);
         expect(bullet, s.dirName).toContain(`invoking no next command ${NO_CHAINING_CHAIN_CLAUSE}`);
       } else {
@@ -105,7 +117,7 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
         }
       }
     }
-    expect(others).toBe(9);
+    expect(others).toBe(8); // nine until bulk-archive's removal (cut-propose-archive, R-rop2-11)
   });
 
   // @scenario text orbit-conventions :: No-chaining contract :: Without a chain setting the basic content handles the result
@@ -114,11 +126,12 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
     const other = CHAIN_END_STEP_BASIC.indexOf('On any other result, or a non-zero exit, read `references/chain-end-step.md` and follow it from the result you already have.');
     expect(off).toBeGreaterThan(-1);
     expect(other).toBeGreaterThan(off);
-    expect(CHAIN_END_STEP_BASIC.split('references/chain-end-step.md').length - 1).toBe(1);
+    // Two names: the read for every other result, and the pointer to the tags' meaning (R-rop2-14).
+    expect(CHAIN_END_STEP_BASIC.split('references/chain-end-step.md').length - 1).toBe(2);
     // The read keeps the flags a chained command adds, since it comes before the reference is opened.
     expect(CHAIN_END_STEP_BASIC).toContain('a command a chain ran adds `--chain-ran "<next>" --chain-head "<head>"` to that read');
-    // The tag meaning and the record sentence are one text in both halves.
-    expect(CHAIN_END_STEP_BASIC.endsWith(`\n\n${CHAIN_TAG_MEANING}`)).toBe(true);
+    // The tag meaning and the record sentence are the full step's; the basic content ends at the pointer to them.
+    expect(CHAIN_END_STEP_BASIC.endsWith(`\n\n${POINTER}`)).toBe(true);
     expect(CHAIN_END_STEP).toContain(`  ${CHAIN_TAG_MEANING} The chained command's closing step reads`);
     for (const t of ['`(chain: target)`', '`(chain: routine, default: <option>)`', '`(chain: decision)`', '`Chained: granted by chain.<key>.`']) {
       expect(CHAIN_TAG_MEANING, t).toContain(t);
@@ -136,13 +149,15 @@ describe('No-chaining contract — the five bodies carry the end step and the cl
 
   // @scenario text orbit-conventions :: No-chaining contract :: A dispatched worker never chains
   it('the fresh-reviewer brief — standalone and as the blind pair\'s fresh half — tells the worker not to chain', () => {
-    const body = skill('orbit-review').instructions;
-    const brief = body.slice(body.indexOf('You are the fresh-context reviewer'), body.indexOf('```', body.indexOf('You are the fresh-context reviewer')));
+    // cut-review-walk (V2): the brief and the dispatch are `references/fresh-dispatch.md`; the body keeps the worker's skips.
+    const dispatch = ref('orbit-review', 'fresh-dispatch.md');
+    const brief = dispatch.slice(dispatch.indexOf('You are the fresh-context reviewer'), dispatch.indexOf('```', dispatch.indexOf('You are the fresh-context reviewer')));
     expect(brief).toContain("Skip the skill's closing Commit step and Chain end step too:\nonce your pass is persisted, return — never commit, and never run another orbit command, whatever the\nchange status's chain object says.");
-    expect(body).toContain('So are the Commit step and the Chain end step: the worker skips both and returns once its pass is persisted');
+    expect(dispatch).toContain('So are the Commit step and the Chain end step: the worker skips both and returns once its pass is persisted');
+    expect(skill('orbit-review').instructions).toContain('a subagent holding the brief is the worker — it skips this step without reading its reference, skips the Commit step and the Chain end step, and returns once its pass is persisted');
     expect(CHAIN_END_STEP).toContain("A worker that session dispatched — a fresh reviewer, a blind pair's fresh half — never runs it");
     // The pair's fresh half is dispatched with that same brief, unchanged.
-    expect(ref('orbit-review', 'blind-pair.md')).toContain("per the trunk's **Dispatching a fresh pass** — a clean-context subagent with that section's brief, unchanged");
+    expect(ref('orbit-review', 'blind-pair.md')).toContain("per `references/fresh-dispatch.md` — a clean-context subagent with that reference's brief, unchanged");
   });
 });
 
@@ -186,18 +201,18 @@ type Entry = { file: string; anchor: string; tags: string[]; row: string; exact?
 const matches = (e: Entry, line: string): boolean => (e.exact ? line.trim() === e.anchor : line.includes(e.anchor));
 
 const INVENTORY: Entry[] = [
-  { file: 'orbit-review/SKILL.md', anchor: 'If change name omitted, prompt via `AskUserQuestion` over `orbit list --json`', tags: ['(chain: target)'], row: 'review: which change' },
+  { file: 'orbit-review/SKILL.md', anchor: 'a missing target is prompted for at Step 2 (chain: target)', tags: ['(chain: target)'], row: 'review: which change' },
   { file: 'orbit-review/SKILL.md', anchor: 'mixed or ambiguous → `AskUserQuestion` (chain: target)', tags: ['(chain: target)'], row: 'review: which mode' },
   { file: 'orbit-review/SKILL.md', anchor: 'otherwise prompt via `AskUserQuestion` over `orbit list --json` (mark changes', tags: ['(chain: target)'], row: 'review: which change' },
-  { file: 'orbit-review/SKILL.md', anchor: "prompt over `orbit architecture status --json`'s parseable docs (chain: target)", tags: ['(chain: target)'], row: 'review: which doc' },
-  { file: 'orbit-review/SKILL.md', anchor: '**Missing `tasks.md`** → use `AskUserQuestion` for mode', tags: ['(chain: target)'], row: 'review: which mode' },
+  { file: 'orbit-review/architecture-mode.md', anchor: "prompt over `orbit architecture status --json`'s parseable docs (chain: target)", tags: ['(chain: target)'], row: 'review: which doc' },
+  { file: 'orbit-review/SKILL.md', anchor: '**Missing `tasks.md`** → ask for the mode with `AskUserQuestion`', tags: ['(chain: target)'], row: 'review: which mode' },
   { file: 'orbit-review/external-handoff.md', anchor: '- Use **AskUserQuestion** to let the user select.', tags: ['(chain: target)'], row: 'review: which change, in the external handoff' },
   { file: 'orbit-review/external-handoff.md', anchor: '**Ambiguous** → use **AskUserQuestion** to let the user pick.', tags: ['(chain: target)'], row: 'review: which mode' },
   { file: 'orbit-review/external-handoff.md', anchor: 'the external return the user pastes back is', tags: ['(chain: not a prompt)'], row: 'review: the external return the user pastes back' },
   { file: 'orbit-address-reviews/SKILL.md', anchor: "**Row 4's offer — stop, or walk now — is", tags: ['(chain: decision)'], row: 'address-reviews: a half-landed pair' },
-  { file: 'orbit-address-reviews/SKILL.md', anchor: "an `AskUserQuestion` is optional closure when the response doesn't settle it", tags: ['(chain: routine, default: walk all)'], row: 'address-reviews: triage scoping' },
+  { file: 'orbit-address-reviews/SKILL.md', anchor: "an `AskUserQuestion` is optional closure when it doesn't", tags: ['(chain: routine, default: walk all)'], row: 'address-reviews: triage scoping' },
   { file: 'orbit-address-reviews/SKILL.md', anchor: 'There is NO mandatory per-finding `AskUserQuestion`', tags: ['(chain: not a prompt)'], row: 'mention' },
-  { file: 'orbit-address-reviews/SKILL.md', anchor: 'Proceed to 3c without `AskUserQuestion`', tags: ['(chain: not a prompt)'], row: 'mention' },
+  { file: 'orbit-address-reviews/SKILL.md', anchor: 'proceed to 3c without `AskUserQuestion`', tags: ['(chain: not a prompt)'], row: 'mention' },
   { file: 'orbit-address-reviews/SKILL.md', anchor: 'exists only as post-discussion closure per 3b.5', tags: ['(chain: decision)'], row: 'address-reviews: a decision-lane finding' },
   { file: 'orbit-address-reviews/SKILL.md', anchor: 'Alternatives via **AskUserQuestion**', tags: ['(chain: decision)'], row: "address-reviews: an unresolvable finding's alternatives" },
   { file: 'orbit-address-reviews/SKILL.md', anchor: 'is an OPTIONAL CLOSURE DEVICE', tags: ['(chain: decision)'], row: 'address-reviews: a decision-lane finding' },
@@ -205,7 +220,8 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-address-reviews/resolution-detail.md', anchor: 'it offers to stop (walk nothing, write no log', tags: ['(chain: decision)'], row: 'address-reviews: a half-landed pair' },
   { file: 'orbit-address-reviews/run-summary-schema.md', anchor: 'closure `AskUserQuestion` did) (chain: not a prompt)', tags: ['(chain: not a prompt)'], row: 'mention' },
   // seam-chaining-grants: the apply and archive surface.
-  { file: 'orbit-apply-change/SKILL.md', anchor: 'Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after', tags: ['(chain: not a prompt)'], row: 'apply: the consent prompt' },
+  // cut-propose-archive (A1): the consent prompt is each skill's references/consent-at-entry.md.
+  { file: 'orbit-apply-change/consent-at-entry.md', anchor: 'Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any write (after', tags: ['(chain: not a prompt)'], row: 'apply: the consent prompt' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'use the **AskUserQuestion tool** to let the user select (chain: target)', tags: ['(chain: target)'], row: 'apply: which change' },
   { file: 'orbit-apply-change/SKILL.md', anchor: 'fire the gate INFLECTION PROMPT via **AskUserQuestion** (chain: decision)', tags: ['(chain: decision)'], row: 'apply: the gate inflection' },
   { file: 'orbit-apply-change/SKILL.md', anchor: '**Pause if:** (chain: decision)', tags: ['(chain: decision)'], row: 'apply: a pause' },
@@ -222,9 +238,11 @@ const INVENTORY: Entry[] = [
   { file: 'orbit-archive-change/SKILL.md', anchor: '- Use **AskUserQuestion tool** to confirm user wants to proceed (chain: decision)', tags: ['(chain: decision)'], row: 'archive: incomplete artifacts; archive: incomplete tasks', exact: true, count: 2 },
   { file: 'orbit-archive-change/SKILL.md', anchor: '"Sync now (recommended)", "Archive without syncing" (chain: routine, default: Sync now)', tags: ['(chain: routine, default: Sync now)'], row: 'archive: the sync assessment' },
   { file: 'orbit-archive-change/SKILL.md', anchor: '"Archive now", "Sync anyway", "Cancel" (chain: routine, default: Archive now)', tags: ['(chain: routine, default: Archive now)'], row: 'archive: the sync assessment' },
-  { file: 'orbit-archive-change/SKILL.md', anchor: 'Unless the arrival is granted (next bullet), fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command', tags: ['(chain: not a prompt)'], row: 'archive: the consent prompt' },
+  { file: 'orbit-archive-change/consent-at-entry.md', anchor: 'Unless the arrival is granted, fire a consent **AskUserQuestion** (chain: not a prompt) BEFORE any of the command', tags: ['(chain: not a prompt)'], row: 'archive: the consent prompt' },
   { file: 'orbit-archive-change/SKILL.md', anchor: 'Prompt via `AskUserQuestion` (chain: decision):', tags: ['(chain: decision)'], row: 'archive: unaddressed `@review:` markers', exact: true },
-  { file: 'orbit-archive-change/SKILL.md', anchor: 'who repairs `tasks.md` before the archive proceeds, or aborts (chain: decision)', tags: ['(chain: decision)'], row: 'archive: a user-validation task line the closure cannot dispose of' },
+  // cut-propose-archive (A2): the closure's procedure is references/user-validation.md; the body keeps the unreadable case.
+  { file: 'orbit-archive-change/user-validation.md', anchor: 'who repairs `tasks.md` before the archive proceeds, or aborts (chain: decision)', tags: ['(chain: decision)'], row: 'archive: a user-validation task line the closure cannot dispose of' },
+  { file: 'orbit-archive-change/SKILL.md', anchor: 'who repairs it before the archive proceeds, or aborts (chain: decision)', tags: ['(chain: decision)'], row: 'archive: an unreadable tasks.md at the user-validation scan' },
   { file: 'orbit-archive-change/gate-inflection.md', anchor: 'fire ONE inflection prompt via **AskUserQuestion** (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the gate inflection' },
   { file: 'orbit-archive-change/fingerprint-divergence.md', anchor: '| `unverified` present, none `diverged` | Prompt via `AskUserQuestion` (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the base-fingerprint check' },
   { file: 'orbit-archive-change/fingerprint-divergence.md', anchor: '### Divergence inflection prompt (`AskUserQuestion`) (chain: decision)', tags: ['(chain: decision)'], row: 'archive: the base-fingerprint check' },
@@ -336,12 +354,18 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   const review = skill('orbit-review').instructions;
   const walk = skill('orbit-address-reviews').instructions;
   const handoff = ref('orbit-review', 'external-handoff.md');
+  const architecture = ref('orbit-review', 'architecture-mode.md');
   const detail = ref('orbit-address-reviews', 'resolution-detail.md');
   const apply = skill('orbit-apply-change').instructions;
   const archive = skill('orbit-archive-change').instructions;
   const gateRef = ref('orbit-archive-change', 'gate-inflection.md');
   const divergenceRef = ref('orbit-archive-change', 'fingerprint-divergence.md');
   const holdRef = ref('orbit-archive-change', 'signoff-hold.md');
+  const applyConsent = ref('orbit-apply-change', 'consent-at-entry.md');
+  const archiveConsent = ref('orbit-archive-change', 'consent-at-entry.md');
+  const uvRef = ref('orbit-archive-change', 'user-validation.md');
+  /** The granted path, from its heading in the consent reference to the end. */
+  const grantedPath = archiveConsent.slice(archiveConsent.indexOf('## A granted arrival'));
   /** The line right after the one carrying `anchor` (for the two byte-identical upstream confirm lines). */
   const lineAfter = (text: string, anchor: string): string => {
     const lines = text.split('\n');
@@ -364,20 +388,20 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
 
   const ROWS: Array<[string, string, string, string]> = [
     ['review: which change', review, 'otherwise prompt via `AskUserQuestion` over `orbit list --json`', '(chain: target)'],
-    ['review: which doc (architecture mode)', review, "prompt over `orbit architecture status --json`'s parseable docs (chain: target)", '(chain: target)'],
+    ['review: which doc (architecture mode)', architecture, "prompt over `orbit architecture status --json`'s parseable docs (chain: target)", '(chain: target)'],
     ['review: which mode (mixed or ambiguous)', review, 'mixed or ambiguous → `AskUserQuestion`', '(chain: target)'],
-    ['review: which mode (missing tasks.md)', review, '**Missing `tasks.md`** → use `AskUserQuestion` for mode', '(chain: target)'],
+    ['review: which mode (missing tasks.md)', review, '**Missing `tasks.md`** → ask for the mode with `AskUserQuestion`', '(chain: target)'],
     ['review: which change, in the external handoff', handoff, '- Use **AskUserQuestion** to let the user select.', '(chain: target)'],
     ['review: which mode, in the external handoff', handoff, '**Ambiguous** → use **AskUserQuestion** to let the user pick.', '(chain: target)'],
     ['review: the external return the user pastes back', handoff, 'the external return the user pastes back is', '(chain: not a prompt)'],
-    ['address-reviews: triage scoping', walk, "an `AskUserQuestion` is optional closure when the response doesn't settle it", '(chain: routine, default: walk all)'],
+    ['address-reviews: triage scoping', walk, "an `AskUserQuestion` is optional closure when it doesn't", '(chain: routine, default: walk all)'],
     ['address-reviews: a half-landed pair (body)', walk, "**Row 4's offer — stop, or walk now — is", '(chain: decision)'],
     ['address-reviews: a half-landed pair (reference)', detail, 'it offers to stop (walk nothing, write no log', '(chain: decision)'],
     ['address-reviews: a decision-lane finding (classify)', walk, 'exists only as post-discussion closure per 3b.5', '(chain: decision)'],
     ['address-reviews: a decision-lane finding (closure prompt)', walk, 'is an OPTIONAL CLOSURE DEVICE', '(chain: decision)'],
     ["address-reviews: an unresolvable finding's alternatives", walk, 'Alternatives via **AskUserQuestion**', '(chain: decision)'],
     ['apply: which change', apply, 'use the **AskUserQuestion tool** to let the user select', '(chain: target)'],
-    ['apply: the consent prompt', apply, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
+    ['apply: the consent prompt', applyConsent, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
     ['apply: the gate inflection', apply, 'fire the gate INFLECTION PROMPT via **AskUserQuestion**', '(chain: decision)'],
     ['apply: a pause (the pause list)', apply, '**Pause if:**', '(chain: decision)'],
     ['apply: a pause (an unclear task)', apply, 'Task is unclear → ask for clarification', '(chain: decision)'],
@@ -385,8 +409,9 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     ['apply: a pause (the paused status)', apply, 'If paused: explain why and wait for guidance', '(chain: decision)'],
     ['apply: a pause (guardrails, an ambiguous task)', apply, 'If task is ambiguous, pause and ask before implementing', '(chain: decision)'],
     ['archive: which change', archive, 'Use the **AskUserQuestion tool** to let the user select.', '(chain: target)'],
-    ['archive: the consent prompt', archive, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
-    ['archive: a user-validation task line the closure cannot dispose of', archive, 'who repairs `tasks.md` before the archive proceeds, or aborts', '(chain: decision)'],
+    ['archive: the consent prompt', archiveConsent, 'fire a consent **AskUserQuestion**', '(chain: not a prompt)'],
+    ['archive: a user-validation task line the closure cannot dispose of', uvRef, 'who repairs `tasks.md` before the archive proceeds, or aborts', '(chain: decision)'],
+    ['archive: an unreadable tasks.md at the user-validation scan', archive, 'who repairs it before the archive proceeds, or aborts', '(chain: decision)'],
     ['archive: the sync assessment (deltas need syncing)', archive, '"Sync now (recommended)", "Archive without syncing"', '(chain: routine, default: Sync now)'],
     ['archive: the sync assessment (already synced)', archive, '"Archive now", "Sync anyway", "Cancel"', '(chain: routine, default: Archive now)'],
     ['archive: the gate inflection', gateRef, 'fire ONE inflection prompt via **AskUserQuestion**', '(chain: decision)'],
@@ -416,16 +441,16 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A chained archive takes the sync default
   it('a chained archive takes the sync default and records it', () => {
     expect(lineWith(archive, '"Sync now (recommended)", "Archive without syncing"')).toContain('(chain: routine, default: Sync now)');
-    const granted = lineWith(archive, '- **Granted** (an AI-mediated arrival');
-    expect(granted).toContain("a routine prompt takes the default its tag names, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`");
-    expect(granted).not.toMatch(/\(chain: /);
+    expect(grantedPath).toContain("a routine prompt takes the default its tag names, and the run summary's `final_assessment` records `The chain took the default: <prompt> — <answer>.`");
+    expect(grantedPath).not.toMatch(/\(chain: /);
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A pause in a chained apply stops the chain
   it('a pause in a chained apply is a decision: asked as on a typed apply, and the chain stops after it', () => {
     expect(lineWith(apply, 'Task is unclear → ask for clarification')).toContain('(chain: decision)');
     expect(apply).toContain(CHAIN_END_STEP_BASIC);
-    expect(CHAIN_END_STEP_BASIC).toContain('the command\'s own closing step states in one line that the chain stopped at a decision and runs nothing');
+    expect(CHAIN_END_STEP_BASIC).toContain(POINTER);
+    expect(ref('orbit-apply-change', 'chain-end-step.md')).toContain('the command\'s own closing step states in one line that the chain stopped at a decision and runs nothing');
     expect(CHAIN_END_STEP).toContain('the command\'s own closing step states in one line that the chain stopped at a decision and runs nothing');
   });
 
@@ -435,7 +460,7 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     expect(lineExact(archive, 'Prompt via `AskUserQuestion` (chain: decision):')).toContain('(chain: decision)');
     const step = archive.slice(archive.indexOf('## Step 1.5'), archive.indexOf('## Step 3.2'));
     expect(step).toContain('Prompt via `AskUserQuestion` (chain: decision):\n\n- **Address now**');
-    expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
+    expect(grantedPath).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: The sign-off stops a chained archive
@@ -447,12 +472,12 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
     expect(lineWith(step, '2. Ask with the **AskUserQuestion tool**')).toContain(
       '(chain: decision) — a decision prompt: an archive the `chain` object allowed asks it exactly as an archive the user typed, and the chain does not continue after it'
     );
-    expect(lineWith(archive, '- **Granted** (an AI-mediated arrival')).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
+    expect(grantedPath).toContain('a decision prompt is asked exactly as on a typed arrival, and the chain does not continue after it');
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A routine scoping prompt takes its default
   it('a chained walk takes the walk-all default and records it', () => {
-    const line = lineWith(walk, "an `AskUserQuestion` is optional closure when the response doesn't settle it");
+    const line = lineWith(walk, "an `AskUserQuestion` is optional closure when it doesn't");
     expect(line).toContain("On an arrival the change status's `chain` object allowed, no scoping prompt fires: every finding is walked, and the run summary's `final_assessment` carries `The chain took the default: triage scoping — walk all.`");
   });
 
@@ -460,12 +485,12 @@ describe('A chain treats each prompt by its kind — each listed prompt is tagge
   it('a decision prompt is asked as on a typed arrival, and the chain stops after the command', () => {
     expect(CHAIN_END_STEP).toContain('a `(chain: decision)` prompt is asked exactly as on a typed arrival, and after a decision the chain does not continue — the command\'s own closing step states in one line that the chain stopped at a decision and runs nothing');
     expect(walk).toContain(CHAIN_END_STEP_BASIC);
-    expect(CHAIN_END_STEP_BASIC).toContain("after a decision the chain does not continue");
+    expect(ref('orbit-address-reviews', 'chain-end-step.md')).toContain("after a decision the chain does not continue");
   });
 
   // @scenario text orbit-conventions :: A chain treats each prompt by its kind :: A typed arrival asks every prompt
   it('a typed arrival asks every prompt: only an allowed arrival reads the tags', () => {
-    expect(lineWith(walk, "an `AskUserQuestion` is optional closure when the response doesn't settle it")).toContain('On any arrival the user typed, scoping is asked as above.');
+    expect(lineWith(walk, "an `AskUserQuestion` is optional closure when it doesn't")).toContain('On any arrival the user typed, scoping is asked as above.');
     expect(CHAIN_END_STEP).toContain('The chained command runs as on a typed arrival except for its prompts');
   });
 });

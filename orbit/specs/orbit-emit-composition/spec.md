@@ -714,7 +714,7 @@ extension are rejected as engine-owned fields.
 
 ### Requirement: The explore grammar has one source in code
 
-The three productions `orbit-conventions` owns for `explore.md` — the status header, the Decision entry (ID opener and slot lines), and the Mechanism entry (`Domain:` table, `Closure:` token, residual slots, move lines) — SHALL be carried in code by ONE module, `src/core/explore-grammar.ts`, exporting the productions as the strings the spec fences and the regular expressions that match them. Every engine extension of the grammar SHALL import that module: the form parse this capability computes, the generated-surface test's grammar assertions, and the explore body template, which interpolates the module's strings so that the rendered skill's mirrors are BYTE-IDENTICAL to the pre-module render (the skill's hash pin does not move). A parity test SHALL read the OWNING spec text's three fenced productions — resolving the owner the way the generated-surface mirror test already does: ONE active change's delta holding the block when one exists, the baseline otherwise — and assert the module's strings equal them, so the spec remains the single stated source (R-crc-14), the module is a checked extension of it rather than a second statement, and parity stays enforceable while a later change is mid-flight on a production. Matching rules the spec states in PROSE rather than in a fence (e.g. the `Closure:` token "matched from line start to the first ` — `") have no fenced text to compare and are covered instead by the parse's fixture tests over the two exemplar entries the explore body carries.
+The three productions `orbit-conventions` owns for `explore.md` — the status header, the Decision entry (ID opener and slot lines), and the Mechanism entry (`Domain:` table, `Closure:` token, residual slots, move lines) — SHALL be carried in code by ONE module, `src/core/explore-grammar.ts`, exporting the productions as the strings the spec fences and the regular expressions that match them. Every engine extension of the grammar SHALL import that module: the form parse this capability computes, the generated-surface test's grammar assertions, and the explore skill template, which interpolates the module's strings so that the rendered skill's mirrors are BYTE-IDENTICAL to the literal mirrors they replaced (interpolating the strings moves no hash pin; a pin moves only with an edit to the text around them): the status header and the Decision entry in its body, and the Mechanism entry in its `references/mechanism-entries.md`, which carries the Mechanism grammar since `reduce-orbit-phase2`'s `cut-explore-onboard` (`orbit-explore-modifications`' `Nine moves applied per rule in the Mechanism section`). A parity test SHALL read the OWNING spec text's three fenced productions — resolving the owner the way the generated-surface mirror test already does: ONE active change's delta holding the block when one exists, the baseline otherwise — and assert the module's strings equal them, so the spec remains the single stated source (R-crc-14), the module is a checked extension of it rather than a second statement, and parity stays enforceable while a later change is mid-flight on a production. Matching rules the spec states in PROSE rather than in a fence (e.g. the `Closure:` token "matched from line start to the first ` — `") have no fenced text to compare and are covered instead by the parse's fixture tests over the two exemplar entries the explore skill's `references/mechanism-entries.md` carries.
 
 #### Scenario: Module and spec agree
 
@@ -723,8 +723,17 @@ The three productions `orbit-conventions` owns for `explore.md` — the status h
 
 #### Scenario: Body interpolation changes no byte
 
-- **WHEN** the explore body template interpolates the module's production strings in place of its literal mirrors
-- **THEN** the rendered `orbit-explore` skill is byte-identical to the literal render, and the skill-templates hash pin is unchanged
+- **WHEN** the explore skill template interpolates the module's production strings in place of its literal mirrors
+- **THEN** each mirror in the rendered `orbit-explore` skill is byte-identical to the literal it replaced, so the
+  interpolation alone moves no skill-templates hash pin (`cut-explore-onboard` re-pins explore for its moves, not for
+  the interpolation)
+
+#### Scenario: Each production is interpolated where the skill carries it
+
+- **WHEN** the explore skill is generated
+- **THEN** its body carries the status-header and Decision-entry productions once each, and its
+  `references/mechanism-entries.md` carries the Mechanism-entry production once, each equal to the module's string; the
+  body does not carry the Mechanism-entry production
 
 #### Scenario: The parse and the surface test share one regex
 
@@ -924,7 +933,7 @@ The `review` command's payload table SHALL admit `verification` — an array of 
 
 **The owed set.** An entry of a READABLE address-reviews record named in the emit's computed `verified_walks` OWES a verdict exactly when its disposition is `resolved`, at every severity — `stale`, `deferred` and `escalated` claim no edit and owe nothing. An owed entry is KEYED by the tuple the gate uses for resolution (trimmed, case-sensitive title + repo-relative file, any `:line` suffix stripped — per `orbit-engine-gates`' reviewed-gate resolution), and the payload's `verification[]` and `walk_entry` keys are normalized by the SAME rule before every check below (every refusal prints the normalized form); a key carried `resolved` by ANY walk of `verified_walks` is ONE owed entry, judged against the LATEST walk that carries it `resolved` — a later walk carrying the same key at another disposition (a `stale` call naming the earlier fix) does not lift the obligation, since that earlier edit is exactly what a verification checks; an UNREADABLE record owes nothing (it stays listed in `verified_walks`) — and for this record a walk the trail reader reads is ALSO unreadable when any of its entries normalizes to an empty title or an empty file, because no well-shaped verdict could name that key. `orbit-conventions`' pass-genre table says a verification answers "per resolution"; by this requirement that reads as per OWED (`resolved`) entry.
 
-**The verdicts**, stated once here as a fenced production. An adopter's installed review skill has none of our specs, so the review body carries this fence as a CHECKED MIRROR, held byte-equal by a parity test (R-crc-14's mirror corollary, as `reduce-orbit-phase1`'s R-rop-14 amends it: the body's copy carries no note saying it is a mirror or naming this requirement); no other surface restates it:
+**The verdicts**, stated once here as a fenced production. An adopter's installed review skill has none of our specs, so the review skill carries this fence as a CHECKED MIRROR in its `references/verification.md`, which a VERIFICATION-genre pass reads, held byte-equal by a parity test (R-crc-14's mirror corollary, as `reduce-orbit-phase1`'s R-rop-14 amends it: the copy carries no note saying it is a mirror or naming this requirement); no other surface restates it:
 
 ```
 landed — the resolution's edit is PRESENT, COMPLETE across every site the resolution claims, CLEAN (it introduced no defect), and NOT UNDONE by a later edit.
@@ -1123,7 +1132,7 @@ The surface SHALL compute audit-drift's two count fields from the payload's `fin
 | introduced | an `introduced.text` does not occur in its `path`, or the path resolves to no file | the entry index and title, the path, the text |
 | scope | a `sweep.scope` path resolves to no file or directory | the entry index and title, the path |
 
-An entry's CHECK SCOPE, and the one rule by which a PATH from any of these fields resolves, are stated in this fence (an installed skill cannot open this spec, so the review and walk bodies carry it as a CHECKED MIRROR held byte-equal by a parity test):
+An entry's CHECK SCOPE, and the one rule by which a PATH from any of these fields resolves, are stated in this fence (an installed skill cannot open this spec, so the review skill's `references/verification.md` and the walk skill's `references/sweep-record.md` carry it as a CHECKED MIRROR held byte-equal by a parity test):
 
 ```
 CHECK SCOPE — the union of: on a change-scoped walk, every file under the change directory except its .orbit-runs/ trail; the entry's file; its ripple_cascade.applied paths; its sweep.scope paths, a directory contributing the regular files under it (a symlink met inside a directory is not followed; a path named explicitly is read at its target). Files under .git/, node_modules/, dist/ and build/ are never read, however the path entered the scope; for the change directory's own files those names are read below the change directory.

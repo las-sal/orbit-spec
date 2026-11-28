@@ -10,10 +10,9 @@ import { generateSkillContent, getSkillTemplates } from '../../../src/core/share
  *
  * - a CHARACTER ceiling: its size when conditional-steps landed, plus 5%, rounded up (string length of the generated
  *   file, frontmatter included). A ceiling only moves DOWN in this program; stages B and C lower it.
- * - a LINE limit of 500 (Anthropic's guidance for a skill body), counted as `wc -l` counts (newlines), except explore,
- *   held by a line ceiling that may only go down — but for its one named rise, from 664 to 669, for the five lines the
- *   decision-writing bullet's labelled sub-bullets added (tighten-bodies, D-tb-17; R-rop-8 and RG3 as amended), which
- *   records-by-setting took back down to 664 when the bullet became its one-line basic content.
+ * - a LINE limit of 500 (Anthropic's guidance for a skill body), counted as `wc -l` counts (newlines), for every body.
+ *   Explore was held by a line ceiling of its own until cut-explore-onboard brought it under the limit (664 lines to
+ *   345): the ceiling was deleted, a lowering (reduce-orbit-phase2's G2, design D6).
  *
  * A failure names the body, its size and its ceiling, then states the rule for fixing it (D-cs-5, D-cs-10).
  */
@@ -24,31 +23,33 @@ const VERSION = (JSON.parse(readFileSync(path.join(repo, 'package.json'), 'utf-8
 /**
  * Each body's character ceiling: its size plus 5%, rounded up (2026-11-17, measured at version 2.0.2) — after
  * conditional-steps, lowered after once-per-session-detail for the eleven bodies whose emit step it moved, and lowered
- * again after tighten-bodies and after records-by-setting wherever the new size plus 5% is below the ceiling (each line
- * names its edit and its previous ceiling; a body whose new size plus 5% would exceed its ceiling keeps it, so none
- * rises).
+ * again after tighten-bodies, after records-by-setting, after cut-review-walk, after cut-propose-archive and after
+ * cut-explore-onboard (reduce-orbit-phase2's G2) wherever the
+ * new size plus 5% is below the ceiling (each line names its edit and its previous ceiling; a body whose new size plus 5%
+ * would exceed its ceiling keeps it, so none rises). A body that fits reduce-orbit-phase2's G1 (at most 5,000 estimated
+ * tokens, 20,000 characters) is capped at 20,000, so the suite fails the moment it regrows past G1 (cut-review-walk's
+ * system walk, 2026-11-24).
  */
 const CHARACTER_CEILING: Record<string, number> = {
-  'orbit-explore': 49997, // 47,616 (records-by-setting; was 52432)
-  'orbit-new-change': 4874, // 4,641 (records-by-setting; was 7409)
-  'orbit-continue-change': 8248, // 7,855 (records-by-setting; was 10803)
-  'orbit-apply-change': 16596, // 15,805 (records-by-setting; was 19150)
-  'orbit-ff-change': 12205, // 11,623 (records-by-setting; was 14759)
-  'orbit-sync-specs': 6597, // 6,282 (records-by-setting; was 9069)
-  'orbit-archive-change': 29573, // 28,164 (records-by-setting; was 32127)
-  'orbit-bulk-archive-change': 25585, // 24,366 (records-by-setting; was 28022)
-  'orbit-verify-change': 12803, // 12,193 (records-by-setting; was 15358)
-  'orbit-onboard': 23567, // 22,712 at records-by-setting, which kept the ceiling: its size plus 5% would exceed it
-  'orbit-propose': 34528, // 32,883 (records-by-setting; was 37082)
-  'orbit-review': 40326, // 38,405 (records-by-setting; was 42880)
-  'orbit-address-reviews': 45866, // 43,681 (records-by-setting; was 48420)
-  'orbit-audit-drift': 19840, // 18,895 (records-by-setting; was 22367)
-  'orbit-architect': 15601, // 14,858 (records-by-setting; was 18156)
+  'orbit-explore': 20000, // 19,854, under G1's 20,000 (cut-explore-onboard; was 49997)
+  'orbit-new-change': 4797, // 4,568 (cut-explore-onboard; was 4874)
+  'orbit-continue-change': 8172, // 7,782 (cut-explore-onboard; was 8248)
+  'orbit-apply-change': 14818, // 14,112 (cut-explore-onboard; was 14876)
+  'orbit-ff-change': 11123, // 10,593 (cut-explore-onboard; was 11200)
+  'orbit-sync-specs': 6497, // 6,187 (cut-explore-onboard; was 6573)
+  'orbit-archive-change': 20000, // 19,434, under G1's 20,000 (cut-propose-archive; was 29573; cut-explore-onboard kept it, its size plus 5% being 20,406)
+  'orbit-verify-change': 12726, // 12,120 (cut-explore-onboard; was 12803)
+  'orbit-onboard': 20000, // 19,939, under G1's 20,000 (cut-explore-onboard; was 23562)
+  'orbit-propose': 19309, // 18,389 (cut-explore-onboard; was 19386)
+  'orbit-review': 20000, // 19,876, under G1's 20,000 (cut-review-walk's system walk, 2026-11-24; cut-explore-onboard kept it)
+  'orbit-address-reviews': 20000, // 19,886, under G1's 20,000 (cut-review-walk's system walk, 2026-11-24; cut-explore-onboard kept it)
+  'orbit-audit-drift': 19764, // 18,822 (cut-explore-onboard; was 19840)
+  'orbit-architect': 15525, // 14,785 (cut-explore-onboard; was 15601)
 };
 
 const LINE_LIMIT = 500;
-/** Explore's own line ceiling (R-rop-8): it starts over the limit and may only go down. */
-const LINE_CEILING: Record<string, number> = { 'orbit-explore': 664 }; // 664 lines (records-by-setting; was 669)
+/** A body's own line ceiling, where one is over the limit: none since cut-explore-onboard (explore's was 664). */
+const LINE_CEILING: Record<string, number> = {};
 
 const BUDGET_RULE =
   "keep the step's basic content (when it runs, the command, the usual result, the link) in the body and move its procedure to a reference file — see skill_body_convention.md";
@@ -82,9 +83,9 @@ describe('skill body budget (R-rop-8)', () => {
     expect(Object.keys(CHARACTER_CEILING).sort()).toEqual(rendered().map(([d]) => d).sort());
   });
 
-  it("explore's line ceiling holds at 664 or lower, and only explore is over the 500-line limit", () => {
-    expect(LINE_CEILING['orbit-explore']).toBeLessThanOrEqual(664);
-    expect(Object.keys(LINE_CEILING)).toEqual(['orbit-explore']);
+  it('every body is under the 500-line limit, and no body has a line ceiling of its own (cut-explore-onboard)', () => {
+    expect(Object.keys(LINE_CEILING)).toEqual([]);
+    for (const [dir, text] of rendered()) expect(lines(text), dir).toBeLessThanOrEqual(LINE_LIMIT);
   });
 
   it('a breach names the body, its size and its ceiling, and states the rule naming skill_body_convention.md', () => {
