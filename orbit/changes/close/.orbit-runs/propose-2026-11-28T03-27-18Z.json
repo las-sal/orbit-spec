@@ -1,0 +1,16 @@
+{
+  "command": "propose",
+  "timestamp": "2026-11-28T03:27:18Z",
+  "change": "close",
+  "kind": "workflow",
+  "model": "claude-opus-5-5",
+  "final_assessment": "Proposed close, reduce-orbit-phase2's last stage, standalone. The engine refuses a change with no delta, and Sal chose (2026-11-28) to make G1 a lasting rule: one ADDED requirement in orbit-skill-generation, every generated skill body at most 5,000 estimated tokens as npm run size:report measures it (20,000 characters of SKILL.md), held by skill-body-budget.test.ts with a cap check and a cross-check against the size report's constants, and the two stale ceiling comments corrected. No body text changes. G0 to G3 are graded at archive in the stage's Shipped as and the status log. A probe at propose found no ceiling raised since e2eabb02 (G2). The macOS CI leg's two known failures stay outside the charter.",
+  "pr_attachment": {
+    "branch": "reduce-orbit-phase2",
+    "granularity": "per-architecture",
+    "doc": "reduce-orbit-phase2",
+    "url": "https://github.com/las-sal/orbit-spec/pull/47",
+    "state": "draft"
+  },
+  "next_recommended": "/orbit:review close — proposal artifacts ready; review before apply"
+}
